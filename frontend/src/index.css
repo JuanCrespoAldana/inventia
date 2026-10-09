@@ -1,0 +1,112 @@
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "tailwindcss";
+
+/* Sistema de diseño de Inventia.
+   Base oscura neutra con un único acento azul. Escala de radios fija:
+   controles (botones, campos) 12 px · tarjetas y paneles 16 px · etiquetas y chips pill. */
+@theme {
+  --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #0a0a0f;
+  --color-surface: #131319;
+  --color-surface-2: #1a1a22;
+  --color-surface-3: #23232d;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.16);
+  --color-accent: #4c6fff;
+  --color-accent-strong: #3b5bf0;
+  --color-accent-light: #8aa3ff;
+  --color-accent-dim: rgb(76 111 255 / 0.14);
+  --color-ink: #f5f6fa;
+  --color-ink-dim: #a4a7b5;
+  --color-ink-faint: #7b7e8c;
+  --color-success: #34d399;
+  --color-success-dim: rgb(52 211 153 / 0.14);
+  --color-warning: #fbbf24;
+  --color-warning-dim: rgb(251 191 36 / 0.14);
+  --color-danger: #f87171;
+  --color-danger-dim: rgb(248 113 113 / 0.14);
+
+  --radius-control: 0.75rem;
+  --radius-panel: 1rem;
+
+  --shadow-panel: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -16px rgb(0 0 8 / 0.6);
+  --shadow-pop: 0 24px 64px -16px rgb(0 0 8 / 0.8), 0 0 0 1px var(--color-line-strong);
+
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-light);
+  outline-offset: 2px;
+}
+
+/* Barras de desplazamiento discretas */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+select option {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}

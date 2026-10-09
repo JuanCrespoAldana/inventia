@@ -1,0 +1,38 @@
+# Dependencias de ejecución (versiones fijadas para builds reproducibles — RNF-039).
+# Para desarrollo y pruebas: pip install -r requirements-dev.txt
+
+# --- API ---
+fastapi==0.141.1
+starlette==1.6.0
+uvicorn==0.52.4
+httptools==0.8.0
+watchfiles==1.2.0
+websockets==17.1
+pydantic==2.13.5
+pydantic-settings==2.15.0
+email-validator==2.3.0
+slowapi==0.1.10
+
+# --- Base de datos ---
+SQLAlchemy==2.0.52
+asyncpg==0.31.0
+alembic==1.19.2
+greenlet==3.5.5
+
+# --- Seguridad ---
+argon2-cffi==25.1.0
+PyJWT==2.13.0
+
+# --- Reportes ---
+openpyxl==3.1.5
+
+# --- Analítica y predicción de demanda ---
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+statsmodels==0.15.0
+
+# --- Utilidades ---
+tzdata==2026.5
+httpx==0.28.1

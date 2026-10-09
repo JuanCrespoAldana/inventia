@@ -1,0 +1,48 @@
+# Secretos y configuración local (nunca se suben)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+coverage/
+.vite/
+*.log
+
+# Respaldos de base de datos
+respaldos/
+*.dump
+
+# Experimentos de ML
+ml/data/
+mlruns/
+*.pkl
+*.joblib
+
+# Editor / sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Material personal que no pertenece al proyecto (clases, apuntes, documentos de Office)
+privado/
+clases/
+apuntes/
+~$*
+*.docx
+*.pptx

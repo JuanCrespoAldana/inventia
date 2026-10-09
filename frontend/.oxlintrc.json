@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "import", "jsx-a11y"],
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/only-export-components": "off",
+    "react/incompatible-library": "off",
+    "react/no-unstable-nested-components": ["warn", { "allowAsProps": true }],
+    "react/react-in-jsx-scope": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "import/no-unassigned-import": "off",
+    "no-console": ["warn", { "allow": ["error", "warn"] }],
+    "typescript/no-explicit-any": "error"
+  },
+  "ignorePatterns": ["src/types/api.gen.ts", "dist", "coverage"]
+}

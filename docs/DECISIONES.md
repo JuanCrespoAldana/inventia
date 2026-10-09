@@ -1,0 +1,293 @@
+# Decisiones de diseño
+
+Registro de las decisiones técnicas y funcionales que no estaban resueltas por el documento de grado, o en las que
+la implementación se aparta de él por una razón concreta. Cada una indica el motivo, la alternativa descartada y
+dónde se refleja en el código. Los identificadores `D-03`, `D-04` y `D-05` coinciden con los citados en
+`backend/app/core/permisos.py`.
+
+## Índice
+
+| ID | Decisión |
+|---|---|
+| [D-01](#d-01) | Sin registro público: configuración inicial controlada |
+| [D-02](#d-02) | Nombre del producto y compatibilidad de variables de entorno |
+| [D-03](#d-03) | El Administrador recibe todos los permisos |
+| [D-04](#d-04) | Lectura básica compartida por todos los roles que operan |
+| [D-05](#d-05) | Anulación de ventas, niveles de stock y recálculo de alertas |
+| [D-06](#d-06) | Conversión de los roles de la versión anterior |
+| [D-07](#d-07) | Los roles de alcance «empresa» no tienen sede |
+| [D-08](#d-08) | Quién aprueba y quién confirma un traslado |
+| [D-09](#d-09) | Aprobar una recomendación de traslado no mueve existencias |
+| [D-10](#d-10) | Las recomendaciones pendientes se reemplazan, no se borran |
+| [D-11](#d-11) | Una sola fuente de existencias; el consolidado se calcula |
+| [D-12](#d-12) | Movimientos y auditoría de solo inserción |
+| [D-13](#d-13) | Las ventas se anulan, no se eliminan |
+| [D-14](#d-14) | Predicción: línea base, margen mínimo y omisión honesta |
+| [D-15](#d-15) | La predicción es de toda la empresa, no de una sede |
+| [D-16](#d-16) | Predicción en segundo plano dentro de la API |
+| [D-17](#d-17) | Agentes de IA con llaves propias de solo lectura |
+| [D-18](#d-18) | Tiempo en UTC; el «día» es el de la empresa |
+| [D-19](#d-19) | Estados como texto, sin tipos `ENUM` de PostgreSQL |
+| [D-20](#d-20) | Migraciones al arrancar el contenedor |
+| [D-21](#d-21) | SQLite solo para pruebas rápidas |
+| [D-22](#d-22) | Tipos del frontend generados desde la API |
+| [D-23](#d-23) | Gráficos propios en SVG |
+| [D-24](#d-24) | nginx reemplaza `X-Forwarded-For` |
+| [D-25](#d-25) | Reportes: CSV con coma y marca de orden de bytes |
+| [D-26](#d-26) | Directorio de sedes para filtros |
+| [D-27](#d-27) | Un solo color de acento y escala de radios fija |
+
+---
+
+<a id="d-01"></a>
+## D-01 · Sin registro público: configuración inicial controlada
+
+**Contexto.** La versión anterior permitía que cualquier persona se registrara y que el primer usuario en llegar
+quedara como administrador. En un sistema expuesto a Internet eso es un riesgo directo (RN-009, RNF-022).
+
+**Decisión.** No existe registro público. La primera empresa y su administrador se crean una sola vez, con el
+`SETUP_TOKEN` (obligatorio en producción, mínimo 16 caracteres) desde la pantalla **Configuración inicial**, o con
+`python -m app.cli inicializar`. Desde ese momento la ruta responde con conflicto. Los demás usuarios los crea un
+administrador.
+
+**Descartado.** Registro abierto con aprobación posterior (deja una superficie de ataque permanente).
+
+**Código.** `setup_service.py`, `api/setup.py`, `core/config.py`. **Pruebas.** `test_no_existe_registro_publico`,
+`test_setup_exige_token_si_esta_definido`, `test_setup_solo_una_vez`.
+
+<a id="d-02"></a>
+## D-02 · Nombre del producto y compatibilidad de variables de entorno
+
+**Decisión.** El producto se llama **Inventia**, como en el documento de grado. Los nombres de las variables de
+entorno que ya existían (`DATABASE_URL`, `SECRET_KEY`, `SMTP_*`, `FRONTEND_URL`, …) se conservaron, de modo que un
+`.env` anterior sigue funcionando; las variables nuevas son opcionales y tienen valores por defecto seguros.
+
+**Excepción.** `SECRET_KEY` ahora debe tener al menos 32 caracteres y no puede ser un valor de ejemplo conocido;
+el arranque falla con un mensaje claro si no se cumple.
+
+<a id="d-03"></a>
+## D-03 · El Administrador recibe todos los permisos
+
+**Contexto.** La matriz de casos de uso (tabla 19) atribuye «Generar predicción de demanda» y «Generar
+recomendación» solo al analista de compras y a la IA.
+
+**Decisión.** El Administrador tiene los 52 permisos, incluidos esos. Si no hubiera analista de compras, nadie
+podría generar predicciones, y una PyME pequeña suele tener una sola persona con ese cometido.
+
+**Código.** `permisos.py` (`ROLES_SISTEMA`).
+
+<a id="d-04"></a>
+## D-04 · Lectura básica compartida por todos los roles que operan
+
+**Contexto.** La matriz no da a algunos roles permiso para consultar sedes, categorías o productos.
+
+**Decisión.** Todo rol que consulta inventario también puede **leer** sedes, categorías y productos. Sin esos datos
+las pantallas no podrían mostrar nombres ni ofrecer filtros. Es solo lectura; las altas y cambios siguen siendo del
+administrador.
+
+<a id="d-05"></a>
+## D-05 · Anulación de ventas, niveles de stock y recálculo de alertas
+
+**Contexto.** El documento no asigna estas funciones, pero son necesarias para operar (corregir un error de venta,
+fijar mínimos y máximos, refrescar alertas).
+
+**Decisión.** Se asignan al **Encargado de sede** (dentro de su sede) y al **Administrador**.
+
+### Diferencias frente a la matriz de casos de uso
+
+Todo lo que la tabla 19 concede está concedido. Lo siguiente es lo que la implementación **añade**:
+
+| Rol | Permisos añadidos | Motivo |
+|---|---|---|
+| Administrador | Predicción y recomendaciones (D-03); reportes de traslados y alertas; llaves de agentes | Que nunca quede un proceso sin responsable |
+| Encargado de sede | Anular ventas, configurar niveles, recalcular alertas (D-05); reportes de traslados, alertas y recomendaciones | Operación diaria de la sede |
+| Usuario de inventario | Leer sedes (D-04); reporte de alertas | Mostrar nombres y filtros; ver qué reponer |
+| Gerente | Leer categorías (D-04); reportes de traslados, alertas y recomendaciones | Seguimiento completo sin poder operar |
+| Analista de compras | Leer sedes y categorías (D-04); reportes de alertas y recomendaciones | Compras necesita ver sedes y qué se recomienda |
+
+Un administrador puede quitar cualquiera de estos permisos creando un rol personalizado.
+
+<a id="d-06"></a>
+## D-06 · Conversión de los roles de la versión anterior
+
+**Contexto.** La versión anterior tenía dos roles fijos: `ADMIN_GENERAL` y `USUARIO_SEDE`.
+
+**Decisión.** La migración 0003 convierte `ADMIN_GENERAL` en **Administrador** y `USUARIO_SEDE` en **Usuario de
+inventario** (el de menor privilegio que equivale a su uso anterior). Un `USUARIO_SEDE` sin sede asignada queda
+**inhabilitado** hasta que un administrador le asigne una, porque un rol de sede sin sede no podría operar. Un
+administrador puede después reasignar a cada persona el rol que corresponda.
+
+<a id="d-07"></a>
+## D-07 · Los roles de alcance «empresa» no tienen sede
+
+**Decisión.** Un usuario con un rol de alcance `empresa` ve todas las sedes y no se le asocia ninguna: si se
+intenta asignarle una, se ignora. Un rol de alcance `sede` **exige** sede. Así no hay usuarios con una sede
+«decorativa» que parezca limitar su acceso sin hacerlo.
+
+**Código.** `usuario_service._resolver_sede`. **Prueba.** `test_rol_de_sede_exige_sede_y_rol_de_empresa_no_la_admite`.
+
+<a id="d-08"></a>
+## D-08 · Quién aprueba y quién confirma un traslado
+
+**Contexto.** La matriz permite aprobar al administrador y al encargado, y confirmar también al usuario de
+inventario, pero no dice de qué sede.
+
+**Decisión.**
+
+- **Solicitar:** cualquier usuario con permiso, para traslados que *salgan de su sede o lleguen a ella*.
+- **Aprobar o rechazar:** quien administra la **sede de origen** (es quien se compromete a entregar).
+- **Confirmar:** quien administra la **sede de destino** (es quien comprueba que la mercancía llegó).
+- Las existencias cambian **solo al confirmar**, en una única transacción. Un rol de empresa (por ejemplo,
+  administrador) puede actuar en cualquier sede.
+
+**Descartado.** Mover existencias al aprobar (deja mercancía «en tránsito» invisible en ambas sedes).
+
+**Pruebas.** `test_traslado_permisos_por_sede`, `test_traslado_flujo_completo_y_atomico`.
+
+<a id="d-09"></a>
+## D-09 · Aprobar una recomendación de traslado no mueve existencias
+
+**Decisión.** Aprobar una recomendación de traslado crea una **solicitud** de traslado (en estado «solicitado»,
+vinculada a la recomendación). Esa solicitud sigue el circuito normal de D-08. Así RNF-034 (validación humana) se
+cumple dos veces: quien aprueba la sugerencia y quienes aprueban y reciben el traslado.
+
+**Pruebas.** `test_aprobar_un_traslado_crea_la_solicitud_pero_no_mueve_existencias`,
+`test_dos_aprobaciones_simultaneas_crean_un_solo_traslado`.
+
+<a id="d-10"></a>
+## D-10 · Las recomendaciones pendientes se reemplazan, no se borran
+
+**Decisión.** Al generar de nuevo, las recomendaciones *pendientes* anteriores pasan al estado `reemplazada` y se
+conservan. Las *aprobadas* no se duplican. Las rechazadas y ejecutadas no se tocan. Se puede reconstruir qué se
+sugirió y cuándo.
+
+<a id="d-11"></a>
+## D-11 · Una sola fuente de existencias; el consolidado se calcula
+
+**Decisión.** La cantidad vive solo en `inventario_sede`. El inventario consolidado (RNF-019) se calcula siempre
+sumando esas filas; no existe una tabla de totales que pueda desincronizarse.
+
+<a id="d-12"></a>
+## D-12 · Movimientos y auditoría de solo inserción
+
+**Decisión.** `movimientos` y `auditoria` no admiten `UPDATE` ni `DELETE`: un disparador de PostgreSQL lo impide
+aunque alguien escriba SQL a mano. Los errores se corrigen con ajustes o movimientos compensatorios. Cada
+movimiento guarda saldo anterior y posterior, de modo que el historial se puede auditar por sí solo.
+
+**Consecuencia.** En SQLite (pruebas rápidas) el disparador no existe; la prueba que lo verifica solo corre en
+PostgreSQL.
+
+<a id="d-13"></a>
+## D-13 · Las ventas se anulan, no se eliminan
+
+**Decisión.** Una venta anulada se conserva con quién la anuló, cuándo y por qué; las existencias se reintegran con
+movimientos de «anulación» (no se borra el movimiento original). Solo se puede anular una vez y dentro del plazo
+`dias_max_anulacion` (30 por defecto, configurable por empresa). Las ventas anuladas no cuentan en reportes ni en la
+demanda que usa la predicción.
+
+<a id="d-14"></a>
+## D-14 · Predicción: línea base, margen mínimo y omisión honesta
+
+**Decisión.** Un modelo avanzado solo se usa si supera al mejor modelo simple por al menos un 3 % de error en
+validación temporal, y una serie sin datos suficientes se omite con su motivo en vez de recibir un número inventado.
+Detalle y justificación en [PREDICCION.md](PREDICCION.md).
+
+**Descartado.** Elegir siempre el modelo de menor error en validación sin margen (premia el azar) y rellenar
+series cortas con promedios globales (oculta la falta de datos).
+
+<a id="d-15"></a>
+## D-15 · La predicción es de toda la empresa, no de una sede
+
+**Decisión.** Solo roles de alcance `empresa` pueden *solicitar* una predicción; un rol limitado a una sede
+recibe un rechazo explícito. Las recomendaciones de traslado necesitan ver todas las sedes a la vez. Los roles de
+sede sí **consultan** los resultados de su sede.
+
+<a id="d-16"></a>
+## D-16 · Predicción en segundo plano dentro de la API
+
+**Decisión.** La predicción corre como tarea en segundo plano de FastAPI (responde `202` y la interfaz consulta
+el avance), con tiempo máximo, tope de series y una sola ejecución activa por empresa.
+
+**Descartado.** Una cola externa (Celery, Redis): añade servicios que operar para un volumen que una PyME no
+necesita. **Límite asumido:** el cálculo comparte proceso con la API; para catálogos muy grandes se recomienda
+programarlo con `python -m app.cli predecir` fuera de horario. Si el servicio se reinicia a mitad de una ejecución,
+esta se cierra como fallida al arrancar.
+
+<a id="d-17"></a>
+## D-17 · Agentes de IA con llaves propias de solo lectura
+
+**Contexto.** RNF-049 pide que los agentes consulten información autorizada.
+
+**Decisión.** Los agentes usan **llaves de API** propias (`X-API-Key`), no cuentas de usuario: de solo lectura,
+con alcances explícitos, sede opcional, vencimiento (90 días por defecto) y revocación inmediata. Solo se guarda su
+huella SHA-256. Las llaves no sirven en la API normal ni los tokens de usuario en `/api/agentes`. Ninguna ruta de
+agentes modifica datos.
+
+<a id="d-18"></a>
+## D-18 · Tiempo en UTC; el «día» es el de la empresa
+
+**Decisión.** Todas las fechas se guardan en UTC. El «día» de una venta, de un reporte o de una serie de demanda se
+calcula en la zona horaria de la empresa (`APP_TIMEZONE`, por defecto `America/Bogota`). Una venta a las 11 p. m.
+cuenta para ese día aunque en UTC ya sea el siguiente.
+
+<a id="d-19"></a>
+## D-19 · Estados como texto, sin tipos `ENUM` de PostgreSQL
+
+**Decisión.** Los estados y tipos se guardan como texto y se validan en la aplicación. Añadir un valor nuevo no
+exige migrar tipos nativos (que en PostgreSQL son incómodos de modificar) y mantiene compatibles SQLite y
+PostgreSQL.
+
+<a id="d-20"></a>
+## D-20 · Migraciones al arrancar el contenedor
+
+**Decisión.** El contenedor del backend ejecuta `alembic upgrade head` antes de arrancar y, si falla, termina con
+error: nunca sirve tráfico con un esquema a medias. Con `RUN_MIGRATIONS=false` se omite el paso (por ejemplo, si
+varias réplicas ejecutan las migraciones en un trabajo aparte).
+
+<a id="d-21"></a>
+## D-21 · SQLite solo para pruebas rápidas
+
+**Decisión.** SQLite permite ejecutar casi toda la batería sin instalar nada. Lo que depende de PostgreSQL
+(concurrencia real, índices parciales, disparadores y migraciones) se marca con `@pytest.mark.postgres` y corre
+cuando se define `TEST_DATABASE_URL`. **La aplicación está soportada solo sobre PostgreSQL.**
+
+<a id="d-22"></a>
+## D-22 · Tipos del frontend generados desde la API
+
+**Decisión.** `frontend/src/types/api.gen.ts` se genera del esquema OpenAPI (`npm run tipos`) y la integración
+continua verifica que esté al día. Un cambio de contrato que rompa la interfaz se detecta al compilar.
+
+<a id="d-23"></a>
+## D-23 · Gráficos propios en SVG
+
+**Decisión.** Los gráficos (líneas con banda de incertidumbre, barras) están hechos a mano con SVG: pesan una
+fracción de una librería, no cargan nada externo y permiten representar cosas específicas, como el tramo parcial
+del día en curso o la banda del intervalo de predicción.
+
+<a id="d-24"></a>
+## D-24 · nginx reemplaza `X-Forwarded-For`
+
+**Decisión.** nginx **reemplaza** la cabecera con la IP real del cliente en lugar de agregarla. Si la anexara, un
+cliente podría enviar su propia cabecera y falsear la IP para evadir el límite de intentos. La API solo confía en
+esa cabecera si `TRUST_PROXY_HEADERS=true`.
+
+<a id="d-25"></a>
+## D-25 · Reportes: CSV con coma y marca de orden de bytes
+
+**Decisión.** Los CSV usan coma como separador y UTF-8 con BOM, para que Excel muestre bien las tildes y la «ñ».
+Los Excel (`.xlsx`) incluyen una hoja «Resumen» con los criterios del reporte. Los reportes grandes se truncan con
+un aviso en lugar de agotar la memoria.
+
+<a id="d-26"></a>
+## D-26 · Directorio de sedes para filtros
+
+**Decisión.** `GET /api/sedes/directorio` devuelve solo id y nombre de las sedes que el usuario puede ver, sin
+exigir permisos de administración. Permite a una interfaz mostrar filtros y etiquetas sin dar acceso a datos de
+gestión.
+
+<a id="d-27"></a>
+## D-27 · Un solo color de acento y escala de radios fija
+
+**Decisión.** La interfaz usa una única paleta con un solo color de acento y una escala fija de radios de esquina
+y sombras, definida como variables de diseño. Fuentes (Plus Jakarta Sans y Space Grotesk) e iconos van empaquetados.
+La coherencia visual (RNF-044) se obtiene reutilizando los mismos componentes en todas las pantallas.
