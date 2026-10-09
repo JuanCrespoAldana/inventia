@@ -15,8 +15,9 @@ y por rol. No necesita conocimientos técnicos.
 5. [Predicción de demanda y recomendaciones](#5-predicción-de-demanda-y-recomendaciones)
 6. [Reportes](#6-reportes)
 7. [Administración](#7-administración)
-8. [Mensajes frecuentes y qué hacer](#8-mensajes-frecuentes-y-qué-hacer)
-9. [Glosario](#9-glosario)
+8. [Sistema Integrado de Gestión (SIG)](#8-sistema-integrado-de-gestión-sig)
+9. [Mensajes frecuentes y qué hacer](#9-mensajes-frecuentes-y-qué-hacer)
+10. [Glosario](#10-glosario)
 
 ---
 
@@ -67,7 +68,7 @@ crearse un administrador.
 
 | Zona | Qué contiene |
 |---|---|
-| Menú lateral | Las secciones a las que tiene acceso: Inventario, Operación, Inteligencia y Administración. En celular se abre con el botón de menú |
+| Menú lateral | Las secciones a las que tiene acceso: Inventario, Operación, Inteligencia, SIG y Administración. El grupo **SIG** se despliega con sus cuatro apartados. En celular se abre con el botón de menú |
 | Panel de control | Resumen de su operación (según permisos): ventas por día, productos más vendidos, inventario por sede, alertas prioritarias, resumen de la predicción de demanda y movimientos recientes |
 | Encabezado de cada página | Título, descripción y el botón de la acción principal (por ejemplo **Nueva venta**) |
 | Filtros | Buscador y filtros sobre cada lista. Quedan en la dirección de la página: puede copiar el enlace y compartirlo |
@@ -94,6 +95,12 @@ Las acciones delicadas (inhabilitar, anular, rechazar, revocar) siempre piden un
 Su empresa puede haber creado roles propios con otras combinaciones; en **Mi perfil** ve cuántos permisos tiene
 activos.
 
+**Sistema Integrado de Gestión (SIG).** Todos los roles envían PQRS y consultan los apartados de Seguridad y Salud en
+el Trabajo, Calidad y Gestión ambiental. Solo el Administrador gestiona (responde PQRS, configura las pausas, cambia el
+estado de no conformidades y garantías, configura los parámetros ambientales). El Encargado de sede y el Usuario de
+inventario además **reportan** no conformidades y garantías de su sede. Los detalles están en la
+[sección 8](#8-sistema-integrado-de-gestión-sig).
+
 ---
 
 ## 4. Tareas del día a día
@@ -118,7 +125,15 @@ cómo se reparten. El total se calcula siempre a partir de las sedes: no se pued
 1. **Existencias → Registrar entrada**.
 2. Elija el motivo (compra, devolución de cliente, inventario inicial, producción u otro).
 3. Agregue los productos y las cantidades. Puede agregar varias líneas; un producto solo puede aparecer una vez.
-4. Pulse **Registrar entrada**.
+4. Si quiere, escriba una **observación** (por ejemplo, «llegaron dos cajas golpeadas»). Queda como la primera del
+   historial de esa entrada.
+5. Pulse **Registrar entrada**.
+
+Cada entrada queda registrada con su propio número. Para verla después, o agregarle más observaciones, vaya a
+**Movimientos → Entradas de mercancía** y pulse la entrada. Las observaciones **se acumulan**: cada una conserva quién la
+escribió y cuándo, y no se pueden editar ni borrar. Agregar una observación no cambia las existencias. Si la mercancía
+llegó con un defecto, desde ese mismo detalle puede pulsar **Reportar no conformidad** y el reporte nace ya enlazado con la
+entrada, sin volver a escribir sus datos (ver [8.3](#83-calidad-no-conformidades-y-garantías)).
 
 ### 4.3 Registrar una salida (pérdida, consumo, devolución al proveedor)
 
@@ -331,7 +346,125 @@ nada.
 
 ---
 
-## 8. Mensajes frecuentes y qué hacer
+## 8. Sistema Integrado de Gestión (SIG)
+
+El menú lateral tiene un grupo **SIG** con cuatro apartados. Cada uno es una pantalla con el mismo estilo que el resto
+de la aplicación y muestra solo lo que su rol permite.
+
+### 8.1 PQRS y sugerencias
+
+Sirve para que cualquier persona del sistema envíe una **petición**, una **queja**, un **reclamo** o una **sugerencia** y
+vea cómo va su trámite.
+
+**Enviar una solicitud (todos los roles)**
+
+1. **SIG → PQRS y sugerencias → Nueva solicitud**.
+2. Elija el **tipo**, escriba el **asunto** y la **descripción**. Su nombre, su sede y la fecha se registran solos.
+3. Si quiere, adjunte **evidencias** (fotos JPG, PNG o WebP, o PDF; hasta 5 archivos de 3 MB cada uno).
+4. Pulse **Enviar solicitud**. Aparece una confirmación con el número de radicado.
+
+En **Mis solicitudes** ve las que ha enviado, el estado en que están (pendiente, en revisión, en proceso o resuelta), la
+respuesta de la administración y el historial de cambios. Solo usted y la administración ven sus solicitudes.
+
+**Gestionar las solicitudes (Administrador)**
+
+1. En **Todas las solicitudes** filtre por tipo, estado, persona o fechas, o busque por asunto o número. Arriba ve cuántas
+   hay en cada estado.
+2. Abra una solicitud para leerla y ver sus evidencias.
+3. Cambie el **estado** y/o escriba una **respuesta** o comentario. Para marcarla como **resuelta** es obligatorio responder.
+4. Cada cambio queda en el historial con quién, cuándo y el comentario; el historial no se puede alterar.
+
+> El sistema **no envía correos** cuando llega una solicitud. La administración debe revisar la bandeja y su contador de
+> pendientes con regularidad.
+
+### 8.2 Seguridad y Salud en el Trabajo (SST): pausas activas
+
+**Qué verá si no es administrador.** Cada cierto tiempo de uso (60 minutos por defecto; lo configura la administración) se
+abre una ventana de **pausa activa** con un mensaje, un ejercicio, las instrucciones paso a paso, el tiempo sugerido y
+recomendaciones de postura, cuidado de los ojos, las manos y la forma de sentarse. Al terminar pulse **Realicé la pausa**;
+si no es buen momento, pulse **Omitir por ahora**.
+
+- La pausa **no aparece mientras tiene un formulario abierto, una venta o un traslado a medio armar, un guardado en curso
+  o mientras está escribiendo** (espera unos segundos tras la última tecla); espera a que termine y se muestra después. No
+  se pierde nada de lo que escribía. Si vuelve a la aplicación tras una ausencia, tiene un par de minutos antes de que aparezca.
+- No se repite ni se muestra dos veces a la vez, ni aunque tenga la aplicación abierta en varias pestañas o recargue la página.
+- Cada pausa queda registrada (fecha, persona, actividad y si la realizó u omitió).
+- En **SIG → Seguridad y Salud en el Trabajo → Ejercicios** puede repasar todos los ejercicios cuando quiera, y en **Mi
+  historial** ve sus propias pausas.
+
+**Qué puede hacer el Administrador.** No recibe pausas automáticas, pero ve todo el contenido y puede abrir una **vista
+previa** de cada pausa. Además tiene tres pestañas:
+
+| Pestaña | Para qué sirve |
+|---|---|
+| **Cumplimiento** | Cuántas pausas se mostraron, realizaron y omitieron, por persona y por día |
+| **Frecuencia** | Activar o desactivar las pausas automáticas y fijar el intervalo (de 1 a 480 minutos) |
+| **Contenido** | Crear, editar, desactivar o eliminar los ejercicios (mensaje, instrucciones, duración y recomendaciones) |
+
+### 8.3 Calidad: no conformidades y garantías
+
+La pantalla tiene tres pestañas: **Guía** (qué es una no conformidad y una garantía, cuándo reportarlas y cómo hacerlo
+bien), **No conformidades** y **Garantías**.
+
+**Reportar una no conformidad** (Administrador, Encargado de sede y Usuario de inventario)
+
+1. **SIG → Calidad → No conformidades → Reportar no conformidad**, o **Reportar no conformidad** desde el detalle de una
+   entrada de mercancía.
+2. Elija el producto y complete la referencia (si la hay), el **tipo** (defecto de fábrica, daño en transporte, producto
+   equivocado, cantidad incorrecta, empaque deteriorado, no cumple la especificación u otro), la descripción, la fecha en
+   que se detectó, la **cantidad afectada** y las observaciones. Puede adjuntar evidencias.
+3. Si viene de una entrada, queda enlazada con ella.
+
+Estados: **reportado → en revisión → en proceso de solución → resuelto → cerrado**. El Administrador cambia el estado,
+asigna un responsable y registra la solución. Cada cambio y cada observación quedan en el historial.
+
+**Reportar una garantía**
+
+1. **SIG → Calidad → Garantías → Reportar garantía**.
+2. Indique el producto y la cantidad, el **documento de respaldo** (factura de compra, entrada de inventario, venta u otro)
+   con su referencia, la fecha de compra, hasta cuándo cubre la garantía, el defecto y las observaciones. Puede adjuntar
+   evidencias.
+
+Estados: **reportada → pendiente de revisión → enviada al proveedor → aprobada o rechazada → solucionada → cerrada**. El
+Administrador registra el proveedor, la fecha de envío, la **respuesta del proveedor**, la solución y su fecha, y asigna
+un responsable.
+
+> **Reportar o gestionar una no conformidad o una garantía nunca cambia las existencias.** Si hay que sacar la mercancía
+> defectuosa del inventario, registre una **salida** (motivo «Deterioro» o «Devolución al proveedor») como siempre; así el
+> movimiento queda con su propio responsable y no se descuenta dos veces.
+
+### 8.4 Gestión ambiental
+
+Muestra cuántos **vehículos eléctricos** se han vendido y una **estimación** del CO₂ que ayudan a evitar. Se alimenta solo:
+cada venta confirmada se contabiliza automáticamente, y si se anula deja de sumar. No hay que registrar nada a mano.
+
+Tiene cuatro pestañas:
+
+| Pestaña | Qué muestra |
+|---|---|
+| **Panel** | Vehículos vendidos (dato **real**) y CO₂ evitado (**estimación**) del año elegido, acumulado por mes y por año, gráficos mensual y anual y distribución por tipo de vehículo. Se puede filtrar por año y por sede |
+| **Historial** | Cada venta de vehículos contabilizada, con filtros (estado, tipo, sede, fechas, con o sin CO₂ estimado) y enlace a la venta |
+| **Metodología** | La fórmula, un ejemplo con números redondos (no son datos de la empresa), los parámetros vigentes y las reglas de conteo |
+| **Configuración** (solo Administrador) | Qué categorías son vehículos y con qué parámetros se estima el CO₂ |
+
+**Importante: sin parámetros no hay cifra de CO₂.** Los vehículos vendidos se cuentan siempre, pero el CO₂ solo se calcula
+cuando el Administrador configura los datos. Mientras tanto el panel muestra «Pendiente de parametrización» en vez de un
+número. Para configurarlo:
+
+1. **SIG → Gestión ambiental → Configuración**.
+2. Defina el **factor de emisión de la red eléctrica** (kg de CO₂ por kWh), su año y su fuente. La pantalla ofrece como
+   ayuda el valor publicado por la UPME; revíselo y confirme que sigue vigente antes de guardarlo.
+3. Marque cada **categoría que sea vehículo** (por ejemplo, Bicicletas eléctricas) y complete su tipo, propulsión, recorrido
+   anual estimado (km), consumo eléctrico (kWh por 100 km), la emisión del vehículo de combustión con el que se compara (g
+   de CO₂ por km) y la fuente de esos datos.
+4. Si ya había ventas, pulse **Incorporar ventas anteriores** para contarlas y calcular su CO₂.
+
+Los datos de referencia deben salir de fuentes oficiales o técnicas y quedar documentados en el campo «fuente». Cada
+registro conserva los parámetros con los que se calculó: cambiar la configuración después **no altera** lo ya calculado.
+
+---
+
+## 9. Mensajes frecuentes y qué hacer
 
 | Mensaje | Qué significa | Qué hacer |
 |---|---|---|
@@ -343,10 +476,12 @@ nada.
 | «No se pudo conectar con el servidor» | Sin red o servicio detenido | Revise su conexión y reintente; si persiste, avise a quien administra el sistema |
 | «Historial insuficiente» (predicción) | El producto tiene pocos días de ventas | Es esperado en productos nuevos; se calculará cuando haya al menos 28 días y 5 con ventas |
 | «Solo se pueden confirmar traslados aprobados» | El traslado no está en la etapa correcta o ya lo confirmó otra persona | Actualice la página para ver su estado actual |
+| «Pendiente de parametrización» (gestión ambiental) | Faltan el factor de la red o los parámetros de la categoría | Pida al Administrador que los configure en **SIG → Gestión ambiental → Configuración** |
+| «El registro está cerrado: no admite más archivos» | Una PQRS resuelta, o una no conformidad o garantía cerrada, ya no recibe evidencias | Si falta algo, registre una nueva solicitud o agregue una observación |
 
 ---
 
-## 9. Glosario
+## 10. Glosario
 
 | Término | Significado |
 |---|---|
@@ -362,3 +497,12 @@ nada.
 | **WAPE** | Error relativo del pronóstico: 20 % significa que, en promedio, se equivocó en una quinta parte de lo vendido |
 | **Línea base** | Pronóstico simple (promedio de 28 días) contra el que debe ganar cualquier modelo más complejo |
 | **Recomendación** | Sugerencia calculada por el sistema que una persona debe aprobar o rechazar |
+| **SIG** | Sistema Integrado de Gestión: PQRS, seguridad y salud en el trabajo, calidad y gestión ambiental |
+| **PQRS** | Petición, queja, reclamo o sugerencia |
+| **SST** | Seguridad y Salud en el Trabajo; aquí, las pausas activas |
+| **Pausa activa** | Breve descanso con un ejercicio guiado para cuidar el cuerpo durante la jornada |
+| **No conformidad** | Producto o proceso que no cumple lo acordado o esperado (defecto, daño, producto equivocado…) |
+| **Garantía** | Reclamo al proveedor por un defecto cubierto, desde que se reporta hasta que se soluciona |
+| **Evidencia** | Foto o PDF que respalda una PQRS, una no conformidad o una garantía |
+| **CO₂ evitado** | Estimación de las emisiones que se ahorran al usar un vehículo eléctrico en lugar de uno de combustión; depende de los parámetros configurados |
+| **Factor de emisión de la red** | Kilogramos de CO₂ que genera la electricidad por cada kWh |

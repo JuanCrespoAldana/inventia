@@ -91,6 +91,93 @@ export const CONFIANZA: Record<string, { etiqueta: string; tono: Tono }> = {
   baja: { etiqueta: "Baja", tono: "danger" },
 };
 
+/* --- Sistema Integrado de Gestión (SIG) --- */
+
+export const TIPO_PQRS: Record<string, { etiqueta: string; tono: Tono; ayuda: string }> = {
+  peticion: { etiqueta: "Petición", tono: "accent", ayuda: "Solicita información, un servicio o una acción." },
+  queja: { etiqueta: "Queja", tono: "warning", ayuda: "Expresa inconformidad con la conducta de una persona o el servicio recibido." },
+  reclamo: { etiqueta: "Reclamo", tono: "danger", ayuda: "Exige que se corrija una falla o se cumpla algo que se esperaba." },
+  sugerencia: { etiqueta: "Sugerencia", tono: "success", ayuda: "Propone una mejora para el sistema o la operación." },
+};
+
+export const ESTADO_PQRS: Record<string, { etiqueta: string; tono: Tono }> = {
+  pendiente: { etiqueta: "Pendiente", tono: "warning" },
+  en_revision: { etiqueta: "En revisión", tono: "accent" },
+  en_proceso: { etiqueta: "En proceso", tono: "accent" },
+  resuelta: { etiqueta: "Resuelta", tono: "success" },
+};
+
+export const TIPO_NC: Record<string, string> = {
+  defecto_de_fabrica: "Defecto de fábrica",
+  dano_en_transporte: "Daño en el transporte",
+  producto_equivocado: "Producto equivocado",
+  cantidad_incorrecta: "Cantidad incorrecta",
+  empaque_deteriorado: "Empaque deteriorado",
+  no_cumple_especificacion: "No cumple la especificación",
+  otro: "Otro",
+};
+
+export const ESTADO_NC: Record<string, { etiqueta: string; tono: Tono }> = {
+  reportado: { etiqueta: "Reportado", tono: "warning" },
+  en_revision: { etiqueta: "En revisión", tono: "accent" },
+  en_proceso_solucion: { etiqueta: "En proceso de solución", tono: "accent" },
+  resuelto: { etiqueta: "Resuelto", tono: "success" },
+  cerrado: { etiqueta: "Cerrado", tono: "neutral" },
+};
+
+export const ESTADO_GARANTIA: Record<string, { etiqueta: string; tono: Tono }> = {
+  reportada: { etiqueta: "Reportada", tono: "warning" },
+  pendiente_revision: { etiqueta: "Pendiente de revisión", tono: "warning" },
+  enviada_proveedor: { etiqueta: "Enviada al proveedor", tono: "accent" },
+  aprobada: { etiqueta: "Aprobada", tono: "success" },
+  rechazada: { etiqueta: "Rechazada", tono: "danger" },
+  solucionada: { etiqueta: "Solucionada", tono: "success" },
+  cerrada: { etiqueta: "Cerrada", tono: "neutral" },
+};
+
+export const DOCUMENTO_GARANTIA: Record<string, string> = {
+  factura_compra: "Factura de compra",
+  entrada_inventario: "Entrada de inventario",
+  venta: "Venta",
+  otro: "Otro documento",
+};
+
+export const AREA_PAUSA: Record<string, string> = {
+  cuello: "Cuello",
+  hombros: "Hombros",
+  espalda: "Espalda",
+  manos_munecas: "Manos y muñecas",
+  ojos: "Ojos",
+  piernas: "Piernas",
+  respiracion: "Respiración",
+};
+
+export const ESTADO_PAUSA: Record<string, { etiqueta: string; tono: Tono }> = {
+  mostrada: { etiqueta: "Sin responder", tono: "warning" },
+  realizada: { etiqueta: "Realizada", tono: "success" },
+  omitida: { etiqueta: "Omitida", tono: "neutral" },
+};
+
+export const TIPO_VEHICULO: Record<string, string> = {
+  bicicleta_electrica: "Bicicleta eléctrica",
+  patineta_electrica: "Patineta eléctrica",
+  motocicleta_electrica: "Motocicleta eléctrica",
+  otro: "Otro vehículo",
+};
+
+export const PROPULSION: Record<string, string> = {
+  electrica: "Eléctrica",
+  asistida_pedaleo: "Asistida por pedaleo",
+};
+
+export const EVENTO_HISTORIAL: Record<string, string> = {
+  creacion: "Registro creado",
+  estado: "Cambio de estado",
+  respuesta: "Respuesta",
+  observacion: "Observación",
+  gestion: "Gestión",
+};
+
 export const UNIDADES_MEDIDA: Record<string, string> = {
   unidad: "Unidad",
   caja: "Caja",

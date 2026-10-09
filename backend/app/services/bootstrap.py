@@ -3,7 +3,7 @@
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.permisos import CODIGOS_PERMISOS, PERMISOS, ROLES_SISTEMA
+from app.core.permisos import CODIGOS_PERMISOS, PERMISOS, ROLES_POR_CLAVE, ROLES_SISTEMA
 from app.models.acceso import Permiso, Rol, RolPermiso
 
 
@@ -12,7 +12,10 @@ async def sincronizar_permisos(db: AsyncSession) -> None:
 
     - Inserta los permisos nuevos y actualiza la descripción de los existentes.
     - Elimina los obsoletos (sus asignaciones caen por ON DELETE CASCADE).
-    - Los permisos nuevos se añaden automáticamente a los roles «Administrador» de cada empresa.
+    - Los permisos nuevos se añaden automáticamente a los roles «Administrador» de cada empresa y a los demás
+      roles del SISTEMA cuyo conjunto por defecto los incluya (p. ej. «pqrs.crear» a todos). Los roles creados
+      por la empresa no se tocan: su administrador decide. Solo se actúa sobre permisos NUEVOS, así que si una
+      empresa le quitó un permiso a un rol, no se le vuelve a poner.
     """
     existentes = {p.codigo: p for p in (await db.scalars(select(Permiso))).all()}
     nuevos: list[str] = []
@@ -30,10 +33,14 @@ async def sincronizar_permisos(db: AsyncSession) -> None:
     await db.flush()
 
     if nuevos:
-        admins = (await db.scalars(select(Rol).where(Rol.clave == "admin"))).all()
-        for rol in admins:
+        roles = (await db.scalars(select(Rol).where(Rol.es_sistema.is_(True)))).all()
+        for rol in roles:
+            definicion = ROLES_POR_CLAVE.get(rol.clave)
+            if definicion is None:
+                continue
             for codigo in nuevos:
-                db.add(RolPermiso(rol_id=rol.id, permiso_codigo=codigo))
+                if codigo in definicion.permisos:
+                    db.add(RolPermiso(rol_id=rol.id, permiso_codigo=codigo))
         await db.flush()
 
 

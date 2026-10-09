@@ -3,6 +3,78 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa
 [versionado semántico](https://semver.org/lang/es/).
 
+## [1.1.0] · 2026-10-09
+
+Agrega el **Sistema Integrado de Gestión (SIG)** pedido después de la primera entrega: PQRS y sugerencias, Seguridad y
+Salud en el Trabajo (pausas activas), Calidad (no conformidades y garantías) y Gestión ambiental, además de las
+observaciones por entrada de inventario. Las decisiones están en D-28 a D-33 de
+[`docs/DECISIONES.md`](docs/DECISIONES.md) y la correspondencia con lo solicitado, en
+[`docs/TRAZABILIDAD.md`](docs/TRAZABILIDAD.md#4-sistema-integrado-de-gestión-versión-11).
+
+### Para quien actualiza una instalación existente
+
+1. Copie los archivos nuevos sobre el proyecto y detenga la API.
+2. Ejecute `npm run migrar` (aplica `0004_sig`; **solo agrega** tablas y una columna opcional, no modifica datos).
+3. Inicie la API: al arrancar asigna **sola** los 9 permisos nuevos a los roles de fábrica de cada empresa (ver D-28).
+   Los roles que la empresa creó por su cuenta no los reciben; el administrador los concede desde **Roles y permisos**.
+4. No hay variables de entorno nuevas ni dependencias nuevas.
+5. Para que la gestión ambiental calcule CO₂, el administrador debe configurarla (**SIG → Gestión ambiental →
+   Configuración**). Mientras tanto cuenta los vehículos vendidos y muestra «pendiente de parametrización».
+
+### Agregado
+
+**Menú SIG** con cuatro apartados, cada uno con su pantalla y sus permisos (9 permisos nuevos: ahora son 61).
+
+**PQRS y sugerencias**
+- Cualquier rol envía petición, queja, reclamo o sugerencia con evidencias opcionales y consulta el estado de las suyas.
+- El administrador ve todas, filtra por tipo, estado, persona y fecha, cambia el estado, responde y consulta el historial
+  de cambios (de solo inserción). No se envían correos de aviso: no existe un sistema de notificaciones (D-29).
+
+**Seguridad y Salud en el Trabajo**
+- Pausas activas automáticas para quien no administra: mensaje, ejercicio, instrucciones, duración y recomendaciones.
+  Intervalo configurable (60 minutos por defecto). El servidor decide cuándo toca y evita repeticiones o pausas
+  simultáneas, aunque haya varias pestañas; la pausa espera si hay un formulario abierto o una venta a medio armar.
+- Los administradores no las reciben, pero ven el contenido, una vista previa y el cumplimiento por persona y día. Pueden
+  editar los ejercicios y la frecuencia (D-32).
+
+**Calidad**
+- Guía educativa, no conformidades (tipo, cantidad afectada, estados, evidencias, historial de observaciones) y
+  garantías (documento de respaldo, fechas, proveedor, respuesta y solución, estados e historial).
+- Una no conformidad puede nacer de una entrada de inventario sin volver a digitar sus datos. **Registrar o gestionar
+  calidad nunca modifica las existencias** (D-30).
+
+**Entradas de inventario**
+- Cada entrada tiene ahora número propio y un historial de **observaciones acumulativas** (autor y fecha, de solo
+  inserción). Nueva pestaña **Entradas de mercancía** en Movimientos y botón para reportar una no conformidad desde el detalle.
+
+**Gestión ambiental**
+- Cuenta los vehículos de las ventas confirmadas (solo categorías marcadas como vehículo; las anuladas dejan de
+  sumar; cada línea de venta se cuenta una vez) y **estima el CO₂ evitado** con parámetros configurables y documentados.
+  Sin parámetros no se inventan cifras (D-33).
+- Panel con totales, acumulado mensual y anual, gráficos, historial con filtros, metodología y configuración.
+
+**Evidencias adjuntas** (JPEG, PNG, WebP y PDF; 3 MB y 5 por registro) con validación por contenido (D-31).
+
+**Operación y pruebas**
+- Migración `0004_sig`: 15 tablas, la columna `movimientos.entrada_id` y disparadores de solo inserción.
+- `npm run demo:sig` (y `--con-sig` en `npm run demo`) cargan datos de ejemplo del SIG.
+- Pruebas nuevas de backend (PQRS, calidad, SST, ambiental, permisos al actualizar, demostración y migración) y de
+  frontend (pausas, ambiental, reglas de calidad, adjuntos, navegación).
+
+### Cambiado
+
+- `inventario_service.registrar_entrada` crea la cabecera de la entrada y enlaza sus movimientos; `ventas_service`
+  contabiliza o excluye los vehículos al registrar o anular una venta. El resultado de las operaciones existentes no
+  cambia.
+- `Modal` aplaza las pausas activas mientras está abierto (propiedad `bloqueaPausas`, activa por defecto).
+- Los nuevos permisos se reparten solos a los roles de fábrica al arrancar la API (antes solo se agregaban al
+  administrador).
+- Versión 1.1.0 en `package.json`, `frontend/package.json` y la API.
+
+### Conocido
+
+Ver «Limitaciones del sistema → Sistema Integrado de Gestión» en [`docs/LIMITACIONES.md`](docs/LIMITACIONES.md).
+
 ## [1.0.0] · 2026-10-09
 
 Primera versión completa. Reestructura el proyecto anterior para cumplir el documento de grado (RF-001 a RF-038,

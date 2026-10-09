@@ -12,6 +12,9 @@ from app.schemas.inventario import (
     AjusteCrear,
     ConsolidadoFila,
     EntradaCrear,
+    EntradaDetalle,
+    EntradaObservacionCrear,
+    EntradaResumen,
     InventarioFila,
     MovimientoSalida,
     NivelesActualizar,
@@ -19,7 +22,7 @@ from app.schemas.inventario import (
     SalidaCrear,
 )
 from app.schemas.sede import SedeResumen
-from app.services import inventario_service as svc
+from app.services import entradas_service, inventario_service as svc
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/api", tags=["Inventario"])
@@ -30,9 +33,11 @@ class InventarioSedePagina(Pagina[InventarioFila]):
 
 
 async def _resultado(db: AsyncSession, mensaje: str, movs, alertas) -> ResultadoOperacion:
+    salidas = await svc.movimientos_a_salidas(db, movs)
+    primera = salidas[0] if salidas else None
     return ResultadoOperacion(
-        mensaje=mensaje, movimientos=await svc.movimientos_a_salidas(db, movs),
-        alertas_abiertas=alertas["abiertas"], alertas_resueltas=alertas["resueltas"],
+        mensaje=mensaje, movimientos=salidas, alertas_abiertas=alertas["abiertas"], alertas_resueltas=alertas["resueltas"],
+        entrada_id=primera.entrada_id if primera else None, entrada_numero=primera.entrada_numero if primera else None,
     )
 
 
@@ -69,6 +74,35 @@ async def inventario_consolidado(
 async def entrada(datos: EntradaCrear, ctx: Contexto = Depends(requiere("inventario.entrada")), db: AsyncSession = Depends(get_db)):
     movs, alertas = await svc.registrar_entrada(db, ctx, datos)
     return await _resultado(db, "Entrada registrada", movs, alertas)
+
+
+@router.get("/inventario/entradas", response_model=Pagina[EntradaResumen], summary="Entradas de mercancía registradas")
+async def entradas(
+    pag: ParametrosPagina = Depends(),
+    sede_id: int | None = Query(None, gt=0),
+    desde: date | None = Query(None),
+    hasta: date | None = Query(None),
+    numero: int | None = Query(None, gt=0, description="Número de la entrada"),
+    ctx: Contexto = Depends(requiere("movimientos.ver")),
+    db: AsyncSession = Depends(get_db),
+):
+    filas, total = await entradas_service.listar_entradas(db, ctx, pag, sede_id=sede_id, desde=desde, hasta=hasta, numero=numero)
+    return Pagina.crear(filas, total, pag.pagina, pag.tamano)
+
+
+@router.get("/inventario/entradas/{entrada_id}", response_model=EntradaDetalle,
+            summary="Detalle de una entrada con su historial de observaciones")
+async def entrada_detalle(entrada_id: int, ctx: Contexto = Depends(requiere("movimientos.ver")), db: AsyncSession = Depends(get_db)):
+    return await entradas_service.detalle(db, ctx, await entradas_service.obtener_entrada(db, ctx, entrada_id))
+
+
+@router.post("/inventario/entradas/{entrada_id}/observaciones", response_model=EntradaDetalle,
+             status_code=status.HTTP_201_CREATED, summary="Agregar una observación a una entrada")
+async def entrada_observar(
+    entrada_id: int, datos: EntradaObservacionCrear,
+    ctx: Contexto = Depends(requiere("inventario.entrada")), db: AsyncSession = Depends(get_db),
+):
+    return await entradas_service.agregar_observacion(db, ctx, entrada_id, datos)
 
 
 @router.post("/inventario/salidas", response_model=ResultadoOperacion, status_code=status.HTTP_201_CREATED,

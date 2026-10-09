@@ -11,6 +11,9 @@ Decisiones respecto al documento (registradas en docs/DECISIONES.md):
          sin ellos las pantallas no podrían mostrar nombres ni filtros.
  - D-05  La anulación de ventas, la configuración de niveles mínimos/máximos y el
          recálculo de alertas no figuran en la matriz; se asignan al encargado y al administrador.
+ - D-28  El Sistema Integrado de Gestión (PQRS, SST, calidad y gestión ambiental) se añadió después de la
+         matriz: todos los roles envían PQRS, consultan SST/calidad/ambiental; quienes operan inventario
+         reportan no conformidades y garantías; solo el administrador gestiona (ver docs/DECISIONES.md).
 """
 
 from dataclasses import dataclass
@@ -87,12 +90,26 @@ PERMISOS: tuple[DefPermiso, ...] = (
     _P("auditoria.ver", "Auditoría", "Consultar la actividad completa de los usuarios"),
     _P("auditoria.operaciones", "Auditoría", "Consultar el historial de operaciones"),
     _P("agentes.gestionar", "Agentes de IA", "Administrar las llaves de acceso de agentes de IA"),
+    # --- Sistema Integrado de Gestión (SIG) ---
+    _P("pqrs.crear", "SIG · PQRS", "Enviar peticiones, quejas, reclamos y sugerencias y consultar las propias"),
+    _P("pqrs.gestionar", "SIG · PQRS", "Ver todas las PQRS, cambiar su estado y responderlas"),
+    _P("sst.ver", "SIG · SST", "Consultar las pausas activas y las recomendaciones de salud en el trabajo"),
+    _P("sst.gestionar", "SIG · SST", "Configurar las pausas activas (frecuencia, ejercicios) y ver su cumplimiento"),
+    _P("calidad.ver", "SIG · Calidad", "Consultar la guía, las no conformidades y las garantías"),
+    _P("calidad.reportar", "SIG · Calidad", "Registrar no conformidades y garantías y agregar observaciones"),
+    _P("calidad.gestionar", "SIG · Calidad", "Cambiar el estado, asignar responsables y cerrar no conformidades y garantías"),
+    _P("ambiental.ver", "SIG · Ambiental", "Consultar los indicadores de gestión ambiental"),
+    _P("ambiental.configurar", "SIG · Ambiental", "Configurar los parámetros de cálculo ambiental"),
 )
 
 CODIGOS_PERMISOS: frozenset[str] = frozenset(p.codigo for p in PERMISOS)
 
 _LECTURA_BASICA = {"sedes.ver", "categorias.ver", "productos.ver", "inventario.ver", "movimientos.ver",
                    "ventas.ver", "traslados.ver", "alertas.ver", "reportes.movimientos"}
+
+# SIG: todos los roles pueden enviar PQRS y consultar el material informativo; quien opera inventario también
+# reporta no conformidades y garantías (puede detectarlas al recibir o vender mercancía).
+_SIG_BASICO = {"pqrs.crear", "sst.ver", "calidad.ver", "ambiental.ver"}
 
 _OPERACION_DE_SEDE = {"inventario.entrada", "inventario.salida", "inventario.ajustar", "ventas.registrar",
                       "traslados.solicitar", "traslados.confirmar"}
@@ -112,6 +129,7 @@ ROLES_SISTEMA: tuple[DefRol, ...] = (
         alcance="empresa",
         permisos=frozenset(
             _LECTURA_BASICA
+            | _SIG_BASICO
             | {
                 "empresa.ver",
                 "inventario.consolidado",
@@ -136,7 +154,9 @@ ROLES_SISTEMA: tuple[DefRol, ...] = (
         permisos=frozenset(
             _LECTURA_BASICA
             | _OPERACION_DE_SEDE
+            | _SIG_BASICO
             | {
+                "calidad.reportar",
                 "roles.ver",
                 "inventario.niveles",
                 "ventas.anular",
@@ -159,7 +179,7 @@ ROLES_SISTEMA: tuple[DefRol, ...] = (
         nombre="Usuario de inventario",
         descripcion="Registra y consulta entradas, salidas, ventas, existencias y traslados de su sede.",
         alcance="sede",
-        permisos=frozenset(_LECTURA_BASICA | _OPERACION_DE_SEDE | {"reportes.alertas"}),
+        permisos=frozenset(_LECTURA_BASICA | _OPERACION_DE_SEDE | _SIG_BASICO | {"reportes.alertas", "calidad.reportar"}),
     ),
     DefRol(
         clave="analista_compras",
@@ -168,6 +188,7 @@ ROLES_SISTEMA: tuple[DefRol, ...] = (
         alcance="empresa",
         permisos=frozenset(
             _LECTURA_BASICA
+            | _SIG_BASICO
             | {
                 "inventario.consolidado",
                 "prediccion.ver",

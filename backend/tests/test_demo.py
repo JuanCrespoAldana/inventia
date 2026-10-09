@@ -3,11 +3,16 @@
 import pytest
 from sqlalchemy import func, select
 
-from app import cli, demo
+from app import cli, demo, demo_sig
 from app.core.exceptions import Conflicto
+from app.models.ambiental import AmbRegistro
+from app.models.calidad import Garantia, NoConformidad
 from app.models.catalogo import Producto
 from app.models.empresa import Empresa
+from app.models.inventario import EntradaInventario
+from app.models.pqrs import Pqrs
 from app.models.sede import Sede
+from app.models.sst import SstPausa
 from app.models.usuario import Usuario
 from tests.ayuda import PASSWORD, crear_empresa, iniciar_sesion
 
@@ -76,3 +81,42 @@ def test_el_cli_no_acepta_a_la_vez_empresa_existente_y_empresa_adicional(capsys)
         cli.main(["cargar-demo", "--en-empresa-existente", "--permitir-con-datos"])
     assert salida.value.code == 2
     assert "no se pueden usar juntos" in capsys.readouterr().err
+
+
+async def test_la_demo_del_sig_carga_datos_coherentes_y_no_se_duplica(cliente, db):
+    await crear_empresa(db, cliente, correo="duena@empresa.example")
+    await demo.cargar_demo(db, dias=DIAS, productos=PRODUCTOS, en_empresa_existente=True)
+
+    r = await demo_sig.cargar_demo_sig(db)
+
+    contar = lambda modelo: db.scalar(select(func.count()).select_from(modelo))  # noqa: E731
+    assert (await contar(Pqrs), await contar(NoConformidad), await contar(Garantia)) == (r.pqrs, r.no_conformidades, r.garantias) == (5, 3, 3)
+    assert await contar(EntradaInventario) == r.entradas == 2
+    assert await contar(SstPausa) == r.pausas > 0
+    # La primera no conformidad nace de una observación de la entrada y no cambió el inventario por sí sola.
+    nc = await db.scalar(select(NoConformidad).where(NoConformidad.numero == 1))
+    assert nc.entrada_id is not None and nc.entrada_observacion_id is not None
+
+    # Las pausas son solo de personas a las que aplican: la administración queda fuera.
+    admin = await db.scalar(select(Usuario).where(Usuario.email == "duena@empresa.example"))
+    assert not await db.scalar(select(func.count()).select_from(SstPausa).where(SstPausa.usuario_id == admin.id))
+
+    # Gestión ambiental: las ventas previas a la configuración se incorporan y quedan calculadas con parámetros rotulados.
+    assert r.ambiental_configurado and r.vehiculos_incorporados > 0
+    assert await contar(AmbRegistro) == r.vehiculos_incorporados
+    assert not await db.scalar(select(func.count()).select_from(AmbRegistro).where(AmbRegistro.co2_evitado_kg.is_(None)))
+    assert "DEMOSTRACIÓN" in demo_sig.FUENTE_DEMO and "DEMOSTRACIÓN" in demo_sig.FUENTE_FACTOR_DEMO
+
+    # Cargarla de nuevo no duplica nada.
+    with pytest.raises(Conflicto) as repetida:
+        await demo_sig.cargar_demo_sig(db)
+    assert repetida.value.codigo == "demo_sig_ya_cargada"
+    await db.rollback()
+    assert await contar(Pqrs) == 5
+
+
+async def test_la_demo_del_sig_exige_usuarios_operativos(cliente, db):
+    await crear_empresa(db, cliente)
+    with pytest.raises(Conflicto) as error:
+        await demo_sig.cargar_demo_sig(db)
+    assert error.value.codigo == "demo_sig_faltan_usuarios"

@@ -2,7 +2,7 @@
 
 Registro de las decisiones técnicas y funcionales que no estaban resueltas por el documento de grado, o en las que
 la implementación se aparta de él por una razón concreta. Cada una indica el motivo, la alternativa descartada y
-dónde se refleja en el código. Los identificadores `D-03`, `D-04` y `D-05` coinciden con los citados en
+dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D-28` coinciden con los citados en
 `backend/app/core/permisos.py`.
 
 ## Índice
@@ -36,6 +36,12 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04` y `D-05` coi
 | [D-25](#d-25) | Reportes: CSV con coma y marca de orden de bytes |
 | [D-26](#d-26) | Directorio de sedes para filtros |
 | [D-27](#d-27) | Un solo color de acento y escala de radios fija |
+| [D-28](#d-28) | Sistema Integrado de Gestión (SIG): alcance, roles y permisos |
+| [D-29](#d-29) | PQRS: historial inmutable y sin avisos por correo |
+| [D-30](#d-30) | Entradas de inventario con observaciones; las no conformidades no mueven existencias |
+| [D-31](#d-31) | Evidencias adjuntas guardadas en la base de datos, con límites estrictos |
+| [D-32](#d-32) | Pausas activas: el servidor decide, el navegador solo muestra |
+| [D-33](#d-33) | Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados |
 
 ---
 
@@ -71,7 +77,7 @@ el arranque falla con un mensaje claro si no se cumple.
 **Contexto.** La matriz de casos de uso (tabla 19) atribuye «Generar predicción de demanda» y «Generar
 recomendación» solo al analista de compras y a la IA.
 
-**Decisión.** El Administrador tiene los 52 permisos, incluidos esos. Si no hubiera analista de compras, nadie
+**Decisión.** El Administrador tiene todos los permisos del catálogo (61), incluidos esos. Si no hubiera analista de compras, nadie
 podría generar predicciones, y una PyME pequeña suele tener una sola persona con ese cometido.
 
 **Código.** `permisos.py` (`ROLES_SISTEMA`).
@@ -291,3 +297,157 @@ gestión.
 **Decisión.** La interfaz usa una única paleta con un solo color de acento y una escala fija de radios de esquina
 y sombras, definida como variables de diseño. Fuentes (Plus Jakarta Sans y Space Grotesk) e iconos van empaquetados.
 La coherencia visual (RNF-044) se obtiene reutilizando los mismos componentes en todas las pantallas.
+
+<a id="d-28"></a>
+## D-28 · Sistema Integrado de Gestión (SIG): alcance, roles y permisos
+
+**Contexto.** La versión 1.1 añade un módulo SIG con cuatro apartados (PQRS y sugerencias, Seguridad y Salud en el
+Trabajo, Calidad y Gestión ambiental). La matriz de casos de uso del documento de grado no lo contemplaba, así que
+sus permisos no tienen una fila de origen.
+
+**Decisión.** Se agregan 9 permisos (de 52 a 61), agrupados en módulos «SIG · …»:
+
+| Permiso | Quién lo recibe de fábrica |
+|---|---|
+| `pqrs.crear`, `sst.ver`, `calidad.ver`, `ambiental.ver` | Todos los roles (lectura básica del SIG) |
+| `calidad.reportar` | Encargado de sede y Usuario de inventario (son quienes reciben y venden mercancía) |
+| `pqrs.gestionar`, `sst.gestionar`, `calidad.gestionar`, `ambiental.configurar` | Solo el Administrador (D-03) |
+
+En una instalación que ya existía, la API asigna los permisos nuevos a los roles de fábrica de cada empresa la primera vez
+que arranca con la versión 1.1 (`sincronizar_permisos`); los roles creados por la empresa no los reciben y su
+administrador decide. Si una empresa le quita después un permiso a un rol de fábrica, no se le vuelve a poner.
+
+Consecuencias: el Administrador **no recibe pausas activas automáticas** (ver D-32), porque se decide por permiso y no por
+nombre de rol; si una empresa crea un rol personalizado con `sst.gestionar`, ese rol tampoco las recibe.
+El menú lateral muestra el grupo **SIG** con sus cuatro apartados y cada pantalla oculta lo que el rol no puede
+hacer, pero la autoridad real está en el servidor: todas las rutas `/api/sig/*` exigen el permiso.
+Las PQRS propias son visibles para quien las envió aunque no tenga `pqrs.gestionar`; las de otras personas, no.
+
+**Descartado.** Atar el SIG a un rol «Calidad» nuevo: añade un rol que cada empresa tendría que poblar y no resuelve
+nada que los permisos por separado no resuelvan.
+
+**Código.** `core/permisos.py`, `api/pqrs.py`, `api/calidad.py`, `api/sst.py`, `api/ambiental.py`, `bootstrap.py`.
+**Pruebas.** `test_sig_*.py` (permisos, aislamiento por empresa y por sede) y `test_sig_permisos.py` (reparto de los permisos
+nuevos en una instalación que ya existía).
+
+<a id="d-29"></a>
+## D-29 · PQRS: historial inmutable y sin avisos por correo
+
+**Contexto.** El requisito pide notificar a la administración «solo si ya existe un sistema real de notificaciones».
+En el proyecto solo existe el correo de recuperación de contraseña; no hay cola, bandeja ni notificaciones internas.
+
+**Decisión.** No se simulan avisos ni se envían correos. La administración ve el conteo por estado en la propia
+bandeja de PQRS y puede filtrar por estado `pendiente`. Cada cambio de estado y cada respuesta se guarda en
+`pqrs_historial`, una tabla de **solo inserción** (disparador en PostgreSQL, igual que `movimientos` y `auditoria`,
+D-12): se conserva quién, cuándo, de qué estado a cuál y con qué comentario. Para marcar una PQRS como `resuelta`
+se exige una respuesta, y la persona que la envió ya no puede añadirle adjuntos.
+
+**Descartado.** Enviar un correo por cada PQRS: exigiría un servicio SMTP siempre configurado y un manejo de reintentos
+que el resto del sistema no necesita. Queda como mejora (ver `LIMITACIONES.md`).
+
+**Código.** `models/pqrs.py`, `services/pqrs_service.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
+
+<a id="d-30"></a>
+## D-30 · Entradas de inventario con observaciones; las no conformidades no mueven existencias
+
+**Contexto.** Antes, una entrada de mercancía era solo un movimiento por producto, sin un registro que la agrupara ni
+un lugar donde anotar observaciones. El SIG necesita enlazar una no conformidad o una garantía con la recepción de origen
+sin que la persona vuelva a escribir los datos.
+
+**Decisión.**
+- Cada entrada crea una cabecera `entradas_inventario` (con consecutivo por empresa) y sus movimientos apuntan a ella
+  (`movimientos.entrada_id`, nulo para los movimientos anteriores a la versión 1.1). No cambia el cálculo de existencias:
+  `inventario_sede` sigue siendo la única fuente (D-11).
+- Las observaciones se guardan en `entrada_observaciones`, una por fila, con autor y fecha, y **no se editan ni se
+  borran** (solo inserción). Agregar una no sobrescribe las anteriores ni toca existencias.
+- Una no conformidad puede nacer de una entrada (o de una de sus observaciones) y conserva el vínculo.
+- **Registrar o gestionar una no conformidad o una garantía nunca modifica el inventario.** Si hay que dar de baja la
+  mercancía, se hace con una salida (`deterioro`, `devolucion_proveedor`), que es una operación aparte, con sus
+  propios permisos y su movimiento. Así no hay descuentos por duplicado ni existencias que cambien por un reporte.
+
+**Código.** `models/inventario.py`, `services/entradas_service.py`, `services/calidad_service.py`.
+**Pruebas.** `test_sig_calidad_entradas.py` (la no conformidad no cambia existencias ni movimientos).
+
+<a id="d-31"></a>
+## D-31 · Evidencias adjuntas guardadas en la base de datos, con límites estrictos
+
+**Decisión.** Las evidencias de PQRS, no conformidades y garantías se guardan en `sig_adjuntos` (columna binaria), no en
+el disco ni en un servicio externo. Motivos: la aplicación se despliega en contenedores sin volumen compartido, y así
+las copias de seguridad de la base de datos incluyen las evidencias y el aislamiento por empresa se resuelve con las
+mismas consultas. Límites: 3 MB por archivo, 5 por registro, solo JPEG, PNG, WebP y PDF.
+
+Seguridad: el tipo se determina por los **primeros bytes** del archivo (no por la extensión ni por lo que declara el
+navegador); el nombre se limpia y nunca se usa como ruta; la descarga se entrega siempre como adjunto con
+`X-Content-Type-Options: nosniff`; se guarda el SHA-256; cada adjunto pertenece a exactamente un registro (restricción
+en la base de datos) y solo lo ve quien puede ver ese registro.
+
+**Descartado.** Almacenamiento en disco (se pierde al recrear el contenedor) y objetos externos (S3 y similares:
+credenciales, costos y una dependencia nueva para un volumen pequeño de archivos). Si el volumen creciera, el servicio
+`adjuntos_service` es el único lugar que habría que cambiar.
+
+**Código.** `models/adjunto.py`, `services/adjuntos_service.py`, `api/adjuntos.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
+
+<a id="d-32"></a>
+## D-32 · Pausas activas: el servidor decide, el navegador solo muestra
+
+**Contexto.** Las pausas deben aparecer solas a las personas que no administran, con un intervalo configurable, sin
+repetirse ni solaparse y sin interrumpir una operación crítica.
+
+**Decisión.**
+- **Intervalo.** `sst_configuracion` guarda si las pausas están activas y el intervalo en minutos (1 a 480). Por defecto,
+  60 minutos y activas. Las actividades (`sst_actividades`: mensaje, instrucciones, duración, recomendaciones de postura,
+  ojos, manos y asiento) son editables por la administración; la primera vez que se consulta la configuración de una
+  empresa se siembran ejercicios iniciales (una sola vez, aunque lleguen dos peticiones a la vez).
+- **El servidor decide.** `POST /api/sig/sst/pausa/iniciar` solo crea una pausa si pasó el intervalo desde la última
+  mostrada (con una tolerancia del 90 % por diferencias de reloj). Un índice único parcial garantiza una sola pausa
+  abierta por persona: dos pestañas, o recargar la página, reciben la **misma** pausa, no otra. Una pausa abierta que
+  nadie cierra se da por omitida a los 30 minutos para no bloquear la siguiente.
+- **El navegador solo muestra.** Un planificador puro (`programacion.ts`) calcula cuándo preguntar; un canal
+  `BroadcastChannel` coordina las pestañas abiertas del mismo navegador.
+- **No interrumpe operaciones críticas.** La pausa **se aplaza** y se muestra cuando se libera: mientras haya un diálogo
+  abierto (todos los formularios de la aplicación son diálogos), una venta o un traslado a medio armar, un guardado en
+  curso, la persona esté escribiendo (se espera 8 segundos tras la última tecla) o la pestaña no esté visible. Cada
+  pantalla lo declara con `lib/bloqueoPausas.ts`; el componente `Modal` lo hace por defecto. Si la persona estuvo
+  ausente y ya tocaba, se le da una cortesía de 2 minutos al volver en lugar de interrumpirla de inmediato.
+- **Administración excluida.** Quien tiene `sst.gestionar` no recibe pausas automáticas, pero puede ver el contenido y una
+  vista previa en la sección SST.
+- **Registro.** Cada pausa guarda fecha, persona, actividad (con el título copiado, por si luego se edita o se elimina la
+  actividad) y si fue completada u omitida; la administración ve el cumplimiento por persona y por día.
+
+**Descartado.** Decidir solo en el navegador (con `setInterval`): se duplicaría entre pestañas, se perdería al recargar
+y no habría registro confiable.
+
+**Código.** `services/sst_service.py`, `models/sst.py`, `features/sig/sst/*`, `lib/bloqueoPausas.ts`.
+**Pruebas.** `test_sig_sst.py`, `programacion.test.ts`, `PausasActivas.test.tsx`, `bloqueoPausas.test.tsx`.
+
+<a id="d-33"></a>
+## D-33 · Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados
+
+**Contexto.** El requisito pide mostrar CO₂ evitado sin inventar cifras, distinguir lo real de lo estimado, no contar
+ventas anuladas ni contar dos veces, y contar solo las categorías configuradas como vehículos.
+
+**Decisión.**
+- **Real:** unidades vendidas en ventas confirmadas y no anuladas, solo de categorías que la administración marcó como
+  vehículo (`amb_categorias`). Se cuentan **siempre**, haya o no parámetros.
+- **Estimado:** el CO₂ evitado. Solo existe si se configuran el factor de emisión de la red (`amb_configuracion`) y, por
+  categoría, el recorrido anual, el consumo eléctrico y la emisión del vehículo de combustión de referencia.
+  Sin eso, el registro queda con el CO₂ en blanco y el panel muestra «Pendiente de parametrización»: nunca un cero ni
+  un valor por defecto.
+- **Fórmula** (por unidad): `CO₂ (kg) = recorrido_anual × horizonte_años × (emisión_ref / 1000 − consumo / 100 × FE_red)`.
+  La calcula el servidor con `Decimal` y redondea a gramos. No se recorta a cero: si los parámetros hicieran que el
+  eléctrico emitiera más que la referencia, el resultado se muestra tal cual y no se oculta.
+- **Una vez por línea de venta:** `amb_registros` tiene un índice único sobre `venta_item_id`. Registrar la venta crea
+  los registros en la misma transacción; anular la venta los marca `anulado` (dejan de sumar, quedan en el historial).
+- **El historial no se reescribe:** cada registro guarda los parámetros con los que se calculó. Cambiar la configuración
+  afecta a las ventas nuevas y a los registros que seguían pendientes (se calculan al guardar la configuración o con el
+  botón «Incorporar ventas anteriores»), no a lo ya calculado.
+- **Sin valores por defecto escondidos.** El sistema no trae factor ni parámetros. La pantalla de configuración ofrece
+  como sugerencia, no vinculante, el factor de la red colombiana que publica la UPME (0,220 kg CO₂e/kWh, año 2024); la
+  persona debe aceptarlo y documentar la fuente. Los parámetros de vehículo son siempre de ingreso manual.
+- Los datos de demostración (`cargar-demo-sig`) usan valores marcados como «de demostración» en el campo fuente.
+
+**Descartado.** Valores por defecto para el recorrido y el consumo (serían cifras inventadas con apariencia de dato) y
+recalcular el historial al cambiar la configuración (cambiaría cifras ya reportadas).
+
+**Código.** `models/ambiental.py`, `services/ambiental_service.py`, `services/ventas_service.py` (ganchos al registrar y
+anular), `features/sig/ambiental/*`. **Pruebas.** `test_sig_ambiental.py`, `calculos.test.ts`, `AmbientalPage.test.tsx`.

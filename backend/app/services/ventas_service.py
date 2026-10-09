@@ -26,7 +26,7 @@ from app.schemas.catalogo import ProductoResumen
 from app.schemas.comunes import ParametrosPagina
 from app.schemas.sede import SedeResumen
 from app.schemas.ventas import VentaCrear, VentaDetalle, VentaItemSalida, VentaResumen
-from app.services import auditoria_service, inventario_service
+from app.services import ambiental_service, auditoria_service, inventario_service
 from app.services.alcance import obtener_sede_autorizada, resolver_filtro_sede
 from app.models.catalogo import Producto
 
@@ -77,6 +77,8 @@ async def registrar_venta(
         for prod, cant, _ in lineas
     ]
     await inventario_service.aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops, fecha=fecha)
+    # Gestión ambiental: cuenta las líneas que sean vehículos (misma transacción: si la venta falla, no se cuenta).
+    await ambiental_service.contabilizar_venta(db, venta, {prod.id: prod for prod, _, _ in lineas})
     await auditoria_service.registrar(
         db, modulo="ventas", accion="registrar", ctx=ctx, entidad="venta", entidad_id=venta.id, sede_id=sede.id,
         detalle={"numero": numero, "total": venta.total, "lineas": len(lineas)},
@@ -125,6 +127,7 @@ async def anular_venta(db: AsyncSession, ctx: Contexto, venta_id: int, motivo: s
         for i in venta.items
     ]
     await inventario_service.aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops)
+    await ambiental_service.anular_venta(db, venta.id)  # deja de contar para los indicadores ambientales
     await auditoria_service.registrar(
         db, modulo="ventas", accion="anular", ctx=ctx, entidad="venta", entidad_id=venta.id, sede_id=venta.sede_id,
         detalle={"numero": venta.numero, "motivo": motivo, "total": venta.total},

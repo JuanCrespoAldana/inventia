@@ -47,8 +47,9 @@ backend/app/
 ├── models/      Tablas SQLAlchemy.
 ├── schemas/     Esquemas pydantic de entrada y salida (generan el contrato OpenAPI).
 ├── core/        Configuración, seguridad, permisos, errores, contexto de petición, base de datos.
-├── cli.py       Administración desde la terminal (inicializar, predecir, cargar-demo, sincronizar-permisos).
-└── demo.py      Datos de demostración generados a través de los mismos servicios que usa la API.
+├── cli.py       Administración desde la terminal (inicializar, predecir, cargar-demo, cargar-demo-sig, sincronizar-permisos).
+├── demo.py      Datos de demostración generados a través de los mismos servicios que usa la API.
+└── demo_sig.py  Datos de demostración del SIG (PQRS, calidad, pausas, ambiental), también a través de los servicios.
 ```
 
 Reglas que se mantienen en todo el código:
@@ -76,7 +77,7 @@ flowchart LR
   del contexto. Hay pruebas que crean dos empresas y verifican que ninguna ve ni modifica datos de la otra.
 - **Multisede:** un rol con alcance `sede` queda restringido a la sede que tiene asignada; un rol con alcance
   `empresa` ve todas. El filtro se aplica en el servidor, no en la interfaz.
-- **Permisos:** 52 permisos agrupados por módulo. Cada ruta declara cuáles acepta (`requiere(a, b)` = «alguno de»).
+- **Permisos:** 61 permisos agrupados por módulo. Cada ruta declara cuáles acepta (`requiere(a, b)` = «alguno de»).
 
 ## Integridad del inventario
 
@@ -110,7 +111,9 @@ sequenceDiagram
 - La confirmación de un traslado es una «llave»: el `UPDATE` que pasa el estado de `aprobado` a `confirmado` solo
   tiene éxito una vez; si dos personas confirman a la vez, una de ellas recibe un conflicto y no se mueve nada.
 - `movimientos` y `auditoria` son de **solo inserción**: un disparador de PostgreSQL rechaza `UPDATE` y `DELETE`
-  incluso si alguien ejecuta SQL a mano. Los errores se corrigen con un movimiento compensatorio.
+  incluso si alguien ejecuta SQL a mano. Los errores se corrigen con un movimiento compensatorio. Lo mismo ocurre con
+  los historiales del SIG (`pqrs_historial`, `no_conformidad_historial`, `garantia_historial`) y con
+  `entrada_observaciones`.
 - Todas las fechas se guardan en UTC; el «día» de una venta se calcula en la zona horaria de la empresa.
 
 ## Ciclo de un traslado
@@ -180,6 +183,32 @@ Decisiones de interfaz que conviene conocer:
 - **Sin dependencias externas en tiempo de ejecución:** fuentes e iconos van empaquetados; la política de seguridad
   de contenido solo permite recursos del mismo origen.
 - **Carga diferida por ruta:** cada pantalla se descarga cuando se visita por primera vez.
+
+## Sistema Integrado de Gestión (SIG)
+
+El SIG reutiliza las mismas capas, el mismo contexto de petición y los mismos componentes de interfaz; no agrega
+dependencias ni servicios. Se publica bajo `/api/sig/*` y en el grupo **SIG** del menú (ver D-28 a D-33 en
+[DECISIONES.md](DECISIONES.md)).
+
+| Apartado | Servicios | Cómo se conecta con lo existente |
+|---|---|---|
+| PQRS y sugerencias | `pqrs_service`, `adjuntos_service` | Usa los usuarios, las sedes y los consecutivos por empresa (`secuencias`); cada cambio queda en `auditoria` y en `pqrs_historial` |
+| Seguridad y Salud en el Trabajo | `sst_service` | El servidor decide cuándo toca una pausa; la interfaz (`PausasActivas`) la pide y la muestra. Excluye a quien tenga `sst.gestionar` |
+| Calidad | `calidad_service`, `entradas_service` | Las no conformidades y garantías apuntan a productos, entradas, ventas y sedes, pero **nunca escriben en `inventario_sede` ni en `movimientos`** |
+| Gestión ambiental | `ambiental_service` | `ventas_service` lo invoca dentro de la transacción al registrar y al anular una venta; el índice único por línea de venta evita contarla dos veces |
+
+```mermaid
+flowchart LR
+    V[ventas_service<br/>registrar / anular] -- misma transacción --> A[ambiental_service<br/>amb_registros]
+    I[inventario_service<br/>registrar_entrada] -- misma transacción --> E[entradas_inventario<br/>+ entrada_observaciones]
+    E -. vínculo opcional .-> NC[calidad_service<br/>no conformidades / garantías]
+    NC -. no escribe .-> X[(inventario_sede · movimientos)]
+    P[PausasActivas<br/>en el navegador] -- pide la pausa --> S[sst_service<br/>decide y registra]
+```
+
+Dos puntos de integración con el código anterior conviene conocerlos: `inventario_service.registrar_entrada` ahora crea la
+cabecera de la entrada y enlaza sus movimientos, y `ventas_service` llama a `ambiental_service` al registrar y al anular
+una venta. El resto del SIG no toca los módulos existentes.
 
 ## Despliegue
 

@@ -180,6 +180,9 @@ siempre el permiso y, para roles de sede, restringe los resultados a la sede asi
 | GET | `/api/inventario` | Existencias de una sede | `inventario.ver` |
 | GET | `/api/inventario/consolidado` | Inventario consolidado de la empresa | `inventario.consolidado` |
 | POST | `/api/inventario/entradas` | Registrar entrada de productos | `inventario.entrada` |
+| GET | `/api/inventario/entradas` | Entradas de mercancía registradas (filtros: `sede_id`, `numero`, `desde`, `hasta`) | `movimientos.ver` |
+| GET | `/api/inventario/entradas/{entrada_id}` | Detalle de una entrada con sus líneas, sus observaciones y las no conformidades vinculadas | `movimientos.ver` |
+| POST | `/api/inventario/entradas/{entrada_id}/observaciones` | Agregar una observación (no reemplaza las anteriores ni cambia existencias) | `inventario.entrada` |
 | POST | `/api/inventario/salidas` | Registrar salida de productos | `inventario.salida` |
 | POST | `/api/inventario/ajustes` | Ajustar existencias a un conteo físico | `inventario.ajustar` |
 | PUT | `/api/inventario/niveles` | Configurar stock mínimo y máximo | `inventario.niveles` |
@@ -275,6 +278,72 @@ siempre el permiso y, para roles de sede, restringe los resultados a la sede asi
 | GET | `/api/agentes/predicciones` | Última predicción de demanda (son estimaciones, no ventas) | Llave de agente |
 | GET | `/api/agentes/recomendaciones` | Recomendaciones pendientes de aprobación humana | Llave de agente |
 
+
+#### SIG · PQRS y sugerencias
+
+Todas las rutas del SIG cuelgan de `/api/sig`. Quien no tiene `pqrs.gestionar` solo ve y adjunta en sus propias solicitudes.
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| GET | `/api/sig/pqrs` | Listar PQRS. `ambito=mias` (por defecto) devuelve las propias; `ambito=todas` exige gestionar. Filtros: `tipo`, `estado`, `usuario_id`, `desde`, `hasta`, `q` | `pqrs.crear` o `pqrs.gestionar` |
+| POST | `/api/sig/pqrs` | Enviar una PQRS (tipo, asunto, descripción); persona, sede y fecha se toman de la sesión | `pqrs.crear` |
+| GET | `/api/sig/pqrs/conteo` | Cantidad de PQRS por estado | `pqrs.gestionar` |
+| GET | `/api/sig/pqrs/{pqrs_id}` | Detalle con historial de cambios y respuesta | `pqrs.crear` (propia) o `pqrs.gestionar` |
+| PATCH | `/api/sig/pqrs/{pqrs_id}` | Cambiar el estado (`pendiente`, `en_revision`, `en_proceso`, `resuelta`) y/o responder; `resuelta` exige respuesta | `pqrs.gestionar` |
+
+#### SIG · Evidencias adjuntas
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| GET | `/api/sig/adjuntos` | Archivos de un registro (`entidad` = `pqrs`, `no_conformidad` o `garantia`; `entidad_id`) | El del registro |
+| POST | `/api/sig/adjuntos` | Adjuntar un archivo (cuerpo binario; máx. 3 MB, 5 por registro; JPEG, PNG, WebP o PDF) | El del registro, con permiso de escritura |
+| GET | `/api/sig/adjuntos/{adjunto_id}/archivo` | Descargar (siempre como adjunto, con `nosniff`) | El del registro |
+| DELETE | `/api/sig/adjuntos/{adjunto_id}` | Eliminar un archivo: quien lo subió o la administración, mientras el registro no esté cerrado | El del registro |
+
+#### SIG · Seguridad y Salud en el Trabajo
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| GET | `/api/sig/sst/pausa/estado` | Estado de las pausas de la persona (si están activas, intervalo, última pausa, si le corresponde recibirlas) | Sesión |
+| POST | `/api/sig/sst/pausa/iniciar` | Pedir la pausa que corresponde mostrar. El servidor decide si ya toca; si hay una abierta devuelve la misma | Sesión (la administración no recibe pausas automáticas) |
+| POST | `/api/sig/sst/pausa/{pausa_id}/cerrar` | Marcar la pausa como `completada` u `omitida` | Sesión (propia) |
+| GET | `/api/sig/sst/pausas` | Registro de pausas (las propias o, con permiso, todas) | `sst.ver` o `sst.gestionar` |
+| GET | `/api/sig/sst/resumen` | Cumplimiento de las pausas por persona y por día | `sst.gestionar` |
+| GET | `/api/sig/sst/actividades` | Ejercicios y recomendaciones | `sst.ver` o `sst.gestionar` |
+| POST | `/api/sig/sst/actividades` | Crear una actividad | `sst.gestionar` |
+| PATCH | `/api/sig/sst/actividades/{actividad_id}` | Editar o desactivar una actividad | `sst.gestionar` |
+| DELETE | `/api/sig/sst/actividades/{actividad_id}` | Eliminar una actividad (el registro de pausas conserva su título) | `sst.gestionar` |
+| GET | `/api/sig/sst/configuracion` | Intervalo y si las pausas están activas | `sst.ver` o `sst.gestionar` |
+| PUT | `/api/sig/sst/configuracion` | Cambiar el intervalo (1 a 480 min) o activar/desactivar | `sst.gestionar` |
+
+#### SIG · Calidad (no conformidades y garantías)
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| GET | `/api/sig/calidad/resumen` | Conteo de no conformidades y garantías por estado | `calidad.ver` |
+| GET | `/api/sig/calidad/no-conformidades` | Listar (filtros: estado, tipo, producto, entrada de origen, sede, fechas de detección, búsqueda) | `calidad.ver` |
+| POST | `/api/sig/calidad/no-conformidades` | Registrar una no conformidad; puede venir de una entrada. **No modifica existencias** | `calidad.reportar` o `calidad.gestionar` |
+| GET | `/api/sig/calidad/no-conformidades/{nc_id}` | Detalle con historial, observaciones y entrada de origen | `calidad.ver` |
+| PATCH | `/api/sig/calidad/no-conformidades/{nc_id}` | Cambiar estado, responsable o solución | `calidad.gestionar` |
+| POST | `/api/sig/calidad/no-conformidades/{nc_id}/observaciones` | Agregar una observación al historial | `calidad.reportar` o `calidad.gestionar` |
+| GET | `/api/sig/calidad/garantias` | Listar garantías | `calidad.ver` |
+| POST | `/api/sig/calidad/garantias` | Registrar una garantía (producto, documento de respaldo, fechas, defecto). **No modifica existencias** | `calidad.reportar` o `calidad.gestionar` |
+| GET | `/api/sig/calidad/garantias/{garantia_id}` | Detalle con historial, proveedor y solución | `calidad.ver` |
+| PATCH | `/api/sig/calidad/garantias/{garantia_id}` | Cambiar estado, responsable, respuesta del proveedor y solución | `calidad.gestionar` |
+| POST | `/api/sig/calidad/garantias/{garantia_id}/observaciones` | Agregar una observación al historial | `calidad.reportar` o `calidad.gestionar` |
+
+Las listas respetan el alcance de sede del rol: quien tiene alcance `sede` solo ve y registra en la suya.
+
+#### SIG · Gestión ambiental
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| GET | `/api/sig/ambiental/resumen` | Vehículos vendidos (dato real) y CO₂ evitado (estimación) por mes, año y tipo; estado de la parametrización. Filtros: `anio`, `sede_id` | `ambiental.ver` |
+| GET | `/api/sig/ambiental/registros` | Historial de líneas de venta contabilizadas (filtros: estado, tipo, sede, fechas, pendientes) | `ambiental.ver` |
+| GET | `/api/sig/ambiental/configuracion` | Factor de la red y parámetros por categoría | `ambiental.ver` |
+| PUT | `/api/sig/ambiental/factor-red` | Definir el factor de emisión de la red (valor, año y fuente) | `ambiental.configurar` |
+| PUT | `/api/sig/ambiental/categorias/{categoria_id}` | Marcar una categoría como vehículo y definir sus parámetros (o desmarcarla) | `ambiental.configurar` |
+| POST | `/api/sig/ambiental/sincronizar` | Incorporar ventas anteriores y calcular los registros pendientes | `ambiental.configurar` |
 
 #### Sistema
 

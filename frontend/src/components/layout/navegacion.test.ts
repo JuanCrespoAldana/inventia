@@ -46,4 +46,33 @@ describe("menú de navegación por permisos", () => {
     expect(etiquetas(["agentes.gestionar"])).toContain("Agentes de IA");
     expect(etiquetas(["usuarios.ver"])).not.toContain("Agentes de IA");
   });
+
+  describe("módulo SIG", () => {
+    const sig = (permisos: string[]) => gruposVisibles(crearSesion({ permisos })).find((g) => g.titulo === "SIG");
+
+    it("no aparece si la persona no tiene ningún permiso SIG", () => {
+      expect(sig(["ventas.ver"])).toBeUndefined();
+    });
+
+    it("es un menú desplegable con sus cuatro apartados", () => {
+      const grupo = sig(["pqrs.crear", "sst.ver", "calidad.ver", "ambiental.ver"]);
+      expect(grupo?.desplegable).toBeDefined();
+      expect(grupo?.items.map((i) => i.etiqueta)).toEqual(["PQRS y sugerencias", "Seguridad y Salud en el Trabajo", "Calidad", "Gestión ambiental"]);
+      expect(grupo?.items.map((i) => i.ruta)).toEqual(["/sig/pqrs", "/sig/sst", "/sig/calidad", "/sig/ambiental"]);
+    });
+
+    it("cada apartado depende de sus propios permisos", () => {
+      expect(sig(["pqrs.crear"])?.items.map((i) => i.ruta)).toEqual(["/sig/pqrs"]);
+      expect(sig(["pqrs.gestionar"])?.items.map((i) => i.ruta)).toEqual(["/sig/pqrs"]);
+      expect(sig(["calidad.reportar"])?.items.map((i) => i.ruta)).toEqual(["/sig/calidad"]);
+      expect(sig(["ambiental.configurar"])?.items.map((i) => i.ruta)).toEqual(["/sig/ambiental"]);
+      expect(sig(["sst.gestionar"])?.items.map((i) => i.ruta)).toEqual(["/sig/sst"]);
+    });
+
+    it("va antes de la administración", () => {
+      const titulos = gruposVisibles(crearSesion({ permisos: ["pqrs.crear", "empresa.ver"] })).map((g) => g.titulo);
+      expect(titulos.indexOf("SIG")).toBeGreaterThan(-1);
+      expect(titulos.indexOf("SIG")).toBeLessThan(titulos.indexOf("Administración"));
+    });
+  });
 });

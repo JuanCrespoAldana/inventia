@@ -10,6 +10,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    Text,
     UniqueConstraint,
     func,
 )
@@ -70,7 +71,48 @@ class Movimiento(Base):
     observacion: Mapped[str | None] = mapped_column(String(500), nullable=True)
     venta_id: Mapped[int | None] = mapped_column(ForeignKey("ventas.id"), nullable=True, index=True)
     traslado_id: Mapped[int | None] = mapped_column(ForeignKey("traslados.id"), nullable=True, index=True)
+    # Entradas registradas desde la versión 1.1: agrupa las líneas de una misma recepción de mercancía.
+    entrada_id: Mapped[int | None] = mapped_column(ForeignKey("entradas_inventario.id"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class EntradaInventario(Base):
+    """Cabecera de una entrada de mercancía (recepción). Agrupa los movimientos de sus líneas y es el punto
+    al que se asocian las observaciones de la recepción y, si hay un problema, las no conformidades.
+    No modifica existencias por sí misma: eso sigue haciéndolo únicamente ``Movimiento``."""
+
+    __tablename__ = "entradas_inventario"
+    __table_args__ = (
+        UniqueConstraint("empresa_id", "numero", name="uq_entradas_inventario_empresa_numero"),
+        Index("ix_entradas_inventario_empresa_fecha", "empresa_id", "fecha"),
+        Index("ix_entradas_inventario_sede_fecha", "sede_id", "fecha"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    empresa_id: Mapped[int] = mapped_column(ForeignKey("empresas.id"), nullable=False)
+    sede_id: Mapped[int] = mapped_column(ForeignKey("sedes.id"), nullable=False)
+    numero: Mapped[int] = mapped_column(Integer, nullable=False)
+    motivo: Mapped[str] = mapped_column(String(40), nullable=False)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
+    fecha: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class EntradaObservacion(Base):
+    """Observación de una entrada (estado de la mercancía, empaque, novedades con el proveedor...).
+
+    Es independiente de los datos del producto y se acumula: agregar una observación nueva NUNCA reemplaza las
+    anteriores. Solo se inserta (en PostgreSQL un disparador impide UPDATE y DELETE)."""
+
+    __tablename__ = "entrada_observaciones"
+    __table_args__ = (Index("ix_entrada_observaciones_entrada_fecha", "entrada_id", "fecha"),)
+
+    id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
+    entrada_id: Mapped[int] = mapped_column(ForeignKey("entradas_inventario.id"), nullable=False)
+    producto_id: Mapped[int | None] = mapped_column(ForeignKey("productos.id"), nullable=True)  # línea concreta
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
+    fecha: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    contenido: Mapped[str] = mapped_column(Text, nullable=False)
 
 
 class Secuencia(Base):
@@ -115,5 +157,6 @@ class Alerta(Base):
 
 
 proteger_solo_insercion(Movimiento.__table__)
+proteger_solo_insercion(EntradaObservacion.__table__)
 
-__all__ = ["InventarioSede", "Movimiento", "Secuencia", "Alerta"]
+__all__ = ["InventarioSede", "Movimiento", "EntradaInventario", "EntradaObservacion", "Secuencia", "Alerta"]

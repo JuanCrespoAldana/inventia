@@ -20,11 +20,11 @@ from sqlalchemy.orm import aliased
 from app.core.acceso import Contexto
 from app.core.exceptions import ExistenciasInsuficientes, NoEncontrado, ReglaNegocio
 from app.core.niveles import clasificar_stock, sql_estado_stock
-from app.core.sql import insertar
+from app.core.sql import insertar, siguiente_secuencia
 from app.core.tiempo import ahora_utc, fin_de_dia_utc, inicio_de_dia_utc
 from app.models.catalogo import Categoria, Producto
 from app.models.enums import TipoMovimiento
-from app.models.inventario import InventarioSede, Movimiento
+from app.models.inventario import EntradaInventario, EntradaObservacion, InventarioSede, Movimiento
 from app.models.operaciones import Traslado, Venta
 from app.models.sede import Sede
 from app.models.usuario import Usuario
@@ -60,6 +60,7 @@ class Operacion:
     sede_contraparte_id: int | None = None
     venta_id: int | None = None
     traslado_id: int | None = None
+    entrada_id: int | None = None
 
 
 async def _asegurar_fila(db: AsyncSession, empresa_id: int, sede_id: int, producto_id: int) -> None:
@@ -111,6 +112,7 @@ async def aplicar_movimiento(
         delta=operacion.delta, saldo_anterior=saldo - operacion.delta, saldo_posterior=saldo,
         sede_contraparte_id=operacion.sede_contraparte_id, usuario_id=usuario_id, fecha=fecha,
         observacion=operacion.observacion, venta_id=operacion.venta_id, traslado_id=operacion.traslado_id,
+        entrada_id=operacion.entrada_id,
     )
     db.add(movimiento)
     return movimiento
@@ -159,14 +161,29 @@ async def productos_de_empresa(
 async def registrar_entrada(db: AsyncSession, ctx: Contexto, datos: EntradaCrear):
     sede = await obtener_sede_autorizada(db, ctx, datos.sede_id, requerir_activa=True)
     productos = await productos_de_empresa(db, ctx.empresa_id, [i.producto_id for i in datos.items], requerir_activos=True)
+    fecha = ahora_utc()
+    # Cabecera de la entrada: agrupa las líneas y es el punto de anclaje de las observaciones y de las no
+    # conformidades. Las existencias siguen cambiando SOLO a través de los movimientos de abajo.
+    entrada = EntradaInventario(
+        empresa_id=ctx.empresa_id, sede_id=sede.id, numero=await siguiente_secuencia(db, ctx.empresa_id, "entrada"),
+        motivo=datos.motivo, usuario_id=ctx.usuario_id, fecha=fecha,
+    )
+    db.add(entrada)
+    await db.flush()
+    if datos.observacion:
+        db.add(EntradaObservacion(entrada_id=entrada.id, usuario_id=ctx.usuario_id, fecha=fecha, contenido=datos.observacion))
     ops = [
-        Operacion(sede.id, productos[i.producto_id], i.cantidad, TipoMovimiento.ENTRADA, datos.motivo, datos.observacion)
+        Operacion(
+            sede.id, productos[i.producto_id], i.cantidad, TipoMovimiento.ENTRADA, datos.motivo, datos.observacion,
+            entrada_id=entrada.id,
+        )
         for i in datos.items
     ]
-    movs, alertas = await aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops)
+    movs, alertas = await aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops, fecha=fecha)
     await auditoria_service.registrar(
-        db, modulo="inventario", accion="entrada", ctx=ctx, entidad="sede", entidad_id=sede.id, sede_id=sede.id,
-        detalle={"motivo": datos.motivo, "lineas": [{"producto": o.producto.codigo, "cantidad": o.delta} for o in ops]},
+        db, modulo="inventario", accion="entrada", ctx=ctx, entidad="entrada", entidad_id=entrada.id, sede_id=sede.id,
+        detalle={"numero": entrada.numero, "motivo": datos.motivo,
+                 "lineas": [{"producto": o.producto.codigo, "cantidad": o.delta} for o in ops]},
     )
     await db.commit()
     return movs, alertas
@@ -370,6 +387,8 @@ async def movimientos_a_salidas(db: AsyncSession, movimientos: list[Movimiento])
     traslado_ids = {m.traslado_id for m in movimientos if m.traslado_id}
     ventas = {i: n for i, n in (await db.execute(select(Venta.id, Venta.numero).where(Venta.id.in_(venta_ids)))).all()} if venta_ids else {}
     traslados = {i: n for i, n in (await db.execute(select(Traslado.id, Traslado.numero).where(Traslado.id.in_(traslado_ids)))).all()} if traslado_ids else {}
+    entrada_ids = {m.entrada_id for m in movimientos if m.entrada_id}
+    entradas = {i: n for i, n in (await db.execute(select(EntradaInventario.id, EntradaInventario.numero).where(EntradaInventario.id.in_(entrada_ids)))).all()} if entrada_ids else {}
     return [
         MovimientoSalida(
             id=m.id, fecha=m.fecha, tipo=m.tipo, motivo=m.motivo, delta=m.delta, saldo_anterior=m.saldo_anterior,
@@ -380,6 +399,7 @@ async def movimientos_a_salidas(db: AsyncSession, movimientos: list[Movimiento])
             usuario_id=m.usuario_id, usuario_nombre=usuarios.get(m.usuario_id),
             venta_id=m.venta_id, venta_numero=ventas.get(m.venta_id), traslado_id=m.traslado_id,
             traslado_numero=traslados.get(m.traslado_id),
+            entrada_id=m.entrada_id, entrada_numero=entradas.get(m.entrada_id),
         )
         for m in movimientos
     ]

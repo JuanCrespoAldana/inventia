@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { useBloquearPausas } from "@/lib/bloqueoPausas";
 import { IconButton } from "./Button";
 
 const ENFOCABLES = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -17,11 +18,16 @@ interface ModalProps {
   ancho?: "sm" | "md" | "lg" | "xl";
   /** Evita cerrar con Escape o clic fuera (p. ej. mientras se guarda). */
   bloqueado?: boolean;
+  /** Mientras está abierto no se muestran pausas activas (hay una operación en curso). Solo la pausa misma lo desactiva. */
+  bloqueaPausas?: boolean;
+  /** Quita el botón «Cerrar» del encabezado (el diálogo se resuelve solo con sus botones de acción). */
+  ocultarCierre?: boolean;
 }
 
 const ANCHOS = { sm: "max-w-md", md: "max-w-lg", lg: "max-w-2xl", xl: "max-w-4xl" };
 
-export function Modal({ abierto, onCerrar, titulo, descripcion, children, pie, ancho = "md", bloqueado = false }: ModalProps) {
+export function Modal({ abierto, onCerrar, titulo, descripcion, children, pie, ancho = "md", bloqueado = false, bloqueaPausas = true, ocultarCierre = false }: ModalProps) {
+  useBloquearPausas(abierto && bloqueaPausas);
   const idTitulo = useId();
   const idDescripcion = useId();
   const caja = useRef<HTMLDivElement>(null);
@@ -104,9 +110,11 @@ export function Modal({ abierto, onCerrar, titulo, descripcion, children, pie, a
                   </p>
                 )}
               </div>
-              <IconButton etiqueta="Cerrar" onClick={onCerrar} disabled={bloqueado} className="-mr-2 -mt-1">
-                <X className="size-4" aria-hidden />
-              </IconButton>
+              {!ocultarCierre && (
+                <IconButton etiqueta="Cerrar" onClick={onCerrar} disabled={bloqueado} className="-mr-2 -mt-1">
+                  <X className="size-4" aria-hidden />
+                </IconButton>
+              )}
             </header>
             <div className="overflow-y-auto px-5 py-5">{children}</div>
             {pie && <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-line bg-surface-2/40 px-5 py-3.5">{pie}</footer>}

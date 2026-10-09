@@ -71,6 +71,51 @@ export type CatalogoModelos = S["CatalogoModelos"];
 export type Recomendacion = S["RecomendacionSalida"];
 export type ResultadoGeneracion = S["ResultadoGeneracion"];
 
+/* --- Sistema Integrado de Gestión (SIG) --- */
+export type AdjuntoSig = S["AdjuntoSalida"];
+export type EntidadAdjunto = "pqrs" | "no_conformidad" | "garantia";
+
+export type PqrsResumen = S["PqrsResumen"];
+export type PqrsDetalle = S["PqrsDetalle"];
+export type PqrsCrear = S["PqrsCrear"];
+export type PqrsGestionar = S["PqrsGestionar"];
+export type PqrsConteo = S["PqrsConteo"];
+export type PqrsEvento = S["PqrsEvento"];
+
+export type ActividadSst = S["ActividadSalida"];
+export type ActividadSstCrear = S["ActividadCrear"];
+export type ActividadSstActualizar = S["ActividadActualizar"];
+export type ConfiguracionSst = S["ConfiguracionSst"];
+export type PausaEstado = S["PausaEstado"];
+export type PausaIniciada = S["PausaIniciada"];
+export type PausaMostrada = S["PausaMostrada"];
+export type PausaRegistro = S["PausaRegistro"];
+export type ResumenSst = S["ResumenSst"];
+
+export type NoConformidadResumen = S["NoConformidadResumen"];
+export type NoConformidadDetalle = S["NoConformidadDetalle"];
+export type NoConformidadCrear = S["NoConformidadCrear"];
+export type NoConformidadGestionar = S["NoConformidadGestionar"];
+export type GarantiaResumen = S["GarantiaResumen"];
+export type GarantiaDetalle = S["GarantiaDetalle"];
+export type GarantiaCrear = S["GarantiaCrear"];
+export type GarantiaGestionar = S["GarantiaGestionar"];
+export type EventoCalidad = S["EventoSalida"];
+export type ResumenCalidad = S["ResumenCalidad"];
+
+export type EntradaResumen = S["EntradaResumen"];
+export type EntradaDetalle = S["EntradaDetalle"];
+export type EntradaObservacion = S["EntradaObservacionSalida"];
+
+export type ResumenAmbiental = S["ResumenAmbiental"];
+export type CifrasAmbientales = S["Cifras"];
+export type ConfiguracionAmbiental = S["ConfiguracionAmbiental"];
+export type CategoriaAmbiental = S["CategoriaAmbientalSalida"];
+export type CategoriaAmbientalActualizar = S["CategoriaAmbientalActualizar"];
+export type FactorRedActualizar = S["FactorRedActualizar"];
+export type RegistroAmbiental = S["RegistroAmbiental"];
+export type ResultadoSincronizacion = S["ResultadoSincronizacion"];
+
 export type RegistroAuditoria = S["RegistroAuditoria"];
 export type OpcionesAuditoria = S["OpcionesAuditoria"];
 

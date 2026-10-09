@@ -13,11 +13,13 @@ import { useMutacion } from "@/hooks/useMutacion";
 import { useSedeActiva } from "@/hooks/useSedeActiva";
 import { normalizarError } from "@/lib/errors";
 import { buscarEnSede } from "@/features/inventario/fuentes";
+import { useBloquearPausas } from "@/lib/bloqueoPausas";
 
 export default function NuevaVentaPage() {
   const navegar = useNavigate();
   const sede = useSedeActiva();
   const [lineas, setLineas] = useState<Linea[]>([]);
+  useBloquearPausas(lineas.length > 0); // una operación a medio armar no se interrumpe con una pausa activa
   const [observacion, setObservacion] = useState("");
   const [intento, setIntento] = useState(false);
   const [error, setError] = useState<string | null>(null);

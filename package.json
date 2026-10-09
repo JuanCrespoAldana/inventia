@@ -1,6 +1,6 @@
 {
   "name": "inventia",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Inventia: sistema de inventario multisede con predicción de demanda para PyMEs.",
   "engines": { "node": ">=20" },
@@ -11,6 +11,7 @@
     "dev:frontend": "npm --prefix frontend run dev",
     "migrar": "node scripts/python.mjs -m alembic upgrade head",
     "demo": "node scripts/python.mjs -m app.cli cargar-demo --con-prediccion",
+    "demo:sig": "node scripts/python.mjs -m app.cli cargar-demo-sig",
     "test": "npm run test:backend && npm run test:frontend",
     "test:backend": "node scripts/python.mjs -m pytest",
     "test:frontend": "npm --prefix frontend test",

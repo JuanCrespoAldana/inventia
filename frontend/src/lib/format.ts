@@ -84,3 +84,11 @@ export function hoyISO(desplazamientoDias = 0): string {
 export function pluralizar(n: number, singular: string, plural: string): string {
   return `${entero(n)} ${n === 1 ? singular : plural}`;
 }
+
+/** Tamaño de archivo legible: 1,2 MB, 340 KB. */
+export function tamanoArchivo(bytes: number | null | undefined): string {
+  if (bytes === null || bytes === undefined || !Number.isFinite(bytes)) return VACIO;
+  if (bytes < 1024) return `${entero(bytes)} B`;
+  if (bytes < 1024 * 1024) return `${decimal(bytes / 1024, 0)} KB`;
+  return `${decimal(bytes / (1024 * 1024), 1)} MB`;
+}

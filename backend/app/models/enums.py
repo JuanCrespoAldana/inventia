@@ -96,3 +96,88 @@ class EstadoRecomendacion(StrEnum):
 class ResultadoAuditoria(StrEnum):
     EXITOSO = "exitoso"
     FALLIDO = "fallido"
+
+
+# ---- Sistema Integrado de Gestión (SIG) ---------------------------------------------------------------
+
+
+class TipoPqrs(StrEnum):
+    PETICION = "peticion"
+    QUEJA = "queja"
+    RECLAMO = "reclamo"
+    SUGERENCIA = "sugerencia"
+
+
+class EstadoPqrs(StrEnum):
+    PENDIENTE = "pendiente"
+    EN_REVISION = "en_revision"
+    EN_PROCESO = "en_proceso"
+    RESUELTA = "resuelta"
+
+
+class EstadoPausa(StrEnum):
+    MOSTRADA = "mostrada"
+    REALIZADA = "realizada"
+    OMITIDA = "omitida"
+
+
+class AreaPausa(StrEnum):
+    CUELLO = "cuello"
+    HOMBROS = "hombros"
+    ESPALDA = "espalda"
+    MANOS = "manos_munecas"
+    OJOS = "ojos"
+    PIERNAS = "piernas"
+    RESPIRACION = "respiracion"
+
+
+class TipoNoConformidad(StrEnum):
+    DEFECTO_FABRICA = "defecto_de_fabrica"
+    DANO_TRANSPORTE = "dano_en_transporte"
+    PRODUCTO_EQUIVOCADO = "producto_equivocado"
+    CANTIDAD_INCORRECTA = "cantidad_incorrecta"
+    EMPAQUE_DETERIORADO = "empaque_deteriorado"
+    NO_CUMPLE_ESPECIFICACION = "no_cumple_especificacion"
+    OTRO = "otro"
+
+
+class EstadoNoConformidad(StrEnum):
+    REPORTADO = "reportado"
+    EN_REVISION = "en_revision"
+    EN_SOLUCION = "en_proceso_solucion"
+    RESUELTO = "resuelto"
+    CERRADO = "cerrado"
+
+
+class EstadoGarantia(StrEnum):
+    REPORTADA = "reportada"
+    PENDIENTE_REVISION = "pendiente_revision"
+    ENVIADA_PROVEEDOR = "enviada_proveedor"
+    APROBADA = "aprobada"
+    RECHAZADA = "rechazada"
+    SOLUCIONADA = "solucionada"
+    CERRADA = "cerrada"
+
+
+class TipoDocumentoGarantia(StrEnum):
+    FACTURA_COMPRA = "factura_compra"
+    ENTRADA_INVENTARIO = "entrada_inventario"
+    VENTA = "venta"
+    OTRO = "otro"
+
+
+class TipoVehiculo(StrEnum):
+    BICICLETA = "bicicleta_electrica"
+    PATINETA = "patineta_electrica"
+    MOTOCICLETA = "motocicleta_electrica"
+    OTRO = "otro"
+
+
+class Propulsion(StrEnum):
+    ELECTRICA = "electrica"
+    ASISTIDA = "asistida_pedaleo"
+
+
+class EstadoRegistroAmbiental(StrEnum):
+    ACTIVO = "activo"
+    ANULADO = "anulado"

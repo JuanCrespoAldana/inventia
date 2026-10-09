@@ -17,14 +17,15 @@ import { aplicarErroresServidor, v } from "@/lib/formularios";
 import type { InventarioFila, ResultadoOperacion } from "@/types/api";
 import { buscarEnCatalogo, buscarEnSede } from "./fuentes";
 
-const INVALIDAR = [["inventario"], ["movimientos"], ["alertas"], ["dashboard"], ["recomendaciones"]];
+const INVALIDAR = [["inventario"], ["movimientos"], ["entradas"], ["alertas"], ["dashboard"], ["recomendaciones"]];
 
 function mensajeOperacion(r: ResultadoOperacion): string {
+  const numero = r.entrada_numero ? `Entrada #${r.entrada_numero}: ` : "";
   const extra = [
     r.alertas_abiertas ? `${r.alertas_abiertas} ${r.alertas_abiertas === 1 ? "alerta nueva" : "alertas nuevas"}` : "",
     r.alertas_resueltas ? `${r.alertas_resueltas} ${r.alertas_resueltas === 1 ? "alerta resuelta" : "alertas resueltas"}` : "",
   ].filter(Boolean);
-  return extra.length ? `${r.mensaje} (${extra.join(", ")}).` : r.mensaje;
+  return extra.length ? `${numero}${r.mensaje} (${extra.join(", ")}).` : `${numero}${r.mensaje}`;
 }
 
 interface PropsLinea {

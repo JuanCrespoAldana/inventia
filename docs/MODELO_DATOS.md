@@ -49,6 +49,32 @@ erDiagram
     empresas ||--o{ api_keys : emite
     usuarios ||--o{ password_reset_tokens : solicita
     empresas ||--o{ secuencias : numera
+
+    sedes ||--o{ entradas_inventario : recibe
+    usuarios ||--o{ entradas_inventario : registra
+    entradas_inventario ||--|{ movimientos : "origina (entrada_id)"
+    entradas_inventario ||--o{ entrada_observaciones : "anota"
+
+    usuarios ||--o{ pqrs : envia
+    pqrs ||--o{ pqrs_historial : "registra cambios"
+    pqrs ||--o{ sig_adjuntos : evidencia
+
+    productos ||--o{ no_conformidades : afecta
+    entradas_inventario |o--o{ no_conformidades : "origen opcional"
+    no_conformidades ||--o{ no_conformidad_historial : "registra cambios"
+    no_conformidades ||--o{ sig_adjuntos : evidencia
+    productos ||--o{ garantias : cubre
+    garantias ||--o{ garantia_historial : "registra cambios"
+    garantias ||--o{ sig_adjuntos : evidencia
+
+    empresas ||--|| sst_configuracion : configura
+    empresas ||--o{ sst_actividades : define
+    sst_actividades |o--o{ sst_pausas : "se muestra en"
+    usuarios ||--o{ sst_pausas : realiza
+
+    empresas ||--|| amb_configuracion : parametriza
+    categorias ||--o| amb_categorias : "marca como vehículo"
+    venta_items ||--o| amb_registros : "se contabiliza una vez"
 ```
 
 ## Tablas
@@ -95,6 +121,31 @@ Tipos de movimiento: `entrada`, `salida`, `ajuste`, `venta`, `anulacion_venta`, 
 | `predicciones` | Demanda estimada de un producto en una sede para un periodo | `(ejecucion_id, sede_id, producto_id)` único; guarda modelo, intervalo, confianza, métricas de validación, serie diaria y advertencias. Se borra en cascada con su ejecución |
 | `recomendaciones` | Sugerencias de reabastecimiento o traslado | Estados: `pendiente`, `aprobada`, `rechazada`, `ejecutada`, `reemplazada`; guarda la `justificacion` (datos de origen) y quién la revisó |
 
+### Sistema Integrado de Gestión (SIG)
+
+| Tabla | Propósito | Reglas relevantes |
+|---|---|---|
+| `entradas_inventario` | Cabecera de cada entrada de mercancía (sede, motivo, quién y cuándo) | `(empresa_id, numero)` único; los movimientos de tipo `entrada` apuntan a ella con `movimientos.entrada_id` (nulo en los movimientos anteriores a la versión 1.1) |
+| `entrada_observaciones` | Observaciones acumulativas de una entrada (opcionalmente de un producto de la entrada) | **Solo inserción** (disparador): no se editan ni se borran; guardan autor y fecha |
+| `pqrs` | Peticiones, quejas, reclamos y sugerencias | `(empresa_id, numero)` único; estado `pendiente`, `en_revision`, `en_proceso` o `resuelta`; persona y sede salen de la sesión; guarda la respuesta vigente, quién respondió y cuándo |
+| `pqrs_historial` | Cada creación, cambio de estado y respuesta | **Solo inserción** (disparador): estado anterior y nuevo, comentario, quién y cuándo |
+| `no_conformidades` | Producto que no cumple (tipo, descripción, fecha de detección, cantidad afectada, proveedor) | `(empresa_id, numero)` único; `CHECK cantidad_afectada > 0`; `entrada_id` y `entrada_observacion_id` opcionales enlazan con la recepción de origen; **no modifica `inventario_sede` ni `movimientos`** |
+| `no_conformidad_historial` | Creación, cambios de estado/responsable/solución y observaciones | **Solo inserción** (disparador) |
+| `garantias` | Reclamo de garantía de un producto (documento de respaldo, fechas, defecto, proveedor, respuesta y solución) | `(empresa_id, numero)` único; `CHECK cantidad > 0`; `entrada_id` o `venta_id` opcionales según el documento; **no modifica existencias** |
+| `garantia_historial` | Creación, cambios de estado y observaciones | **Solo inserción** (disparador) |
+| `sig_adjuntos` | Evidencias (JPEG, PNG, WebP, PDF) de una PQRS, no conformidad o garantía | `CHECK` de **exactamente un destino** entre `pqrs_id`, `no_conformidad_id` y `garantia_id`; `tamano > 0`; guarda SHA-256 y el contenido binario (`contenido`, cargado solo al descargar) |
+| `sst_configuracion` | Una fila por empresa: pausas activas encendidas o no e intervalo | `CHECK intervalo_minutos BETWEEN 1 AND 480`; valor inicial: activas, 60 min |
+| `sst_actividades` | Ejercicios de pausa activa (mensaje, instrucciones, duración, recomendaciones) | `CHECK duracion_segundos BETWEEN 10 AND 900`; `area`, `orden` y `activa` |
+| `sst_pausas` | Registro de cada pausa mostrada a una persona | Índice único **parcial** `uq_sst_pausa_abierta (usuario_id) WHERE estado = 'mostrada'`: nunca hay dos pausas abiertas de la misma persona; conserva el título de la actividad aunque esta se elimine |
+| `amb_configuracion` | Una fila por empresa: factor de emisión de la red eléctrica, año y fuente | Todo nulo mientras nadie lo configure («pendiente de parametrización») |
+| `amb_categorias` | Categorías que la empresa marcó como vehículo y sus parámetros de cálculo | `categoria_id` único; `distancia_anual_km > 0`, `consumo_kwh_100km >= 0`, `emision_referencia_gco2_km >= 0`, `horizonte_anios BETWEEN 1 AND 30`; los parámetros pueden estar nulos |
+| `amb_registros` | Una fila por línea de venta de un vehículo contabilizada | `venta_item_id` **único** (cada línea cuenta una vez); `unidades > 0`; `estado` `activo` o `anulado`; `co2_evitado_kg` nulo mientras falten parámetros; `parametros` (JSON) guarda los valores usados al calcular |
+
+Estados de **no conformidad**: `reportado`, `en_revision`, `en_proceso_solucion`, `resuelto`, `cerrado`. Estados de **garantía**:
+`reportada`, `pendiente_revision`, `enviada_proveedor`, `aprobada`, `rechazada`, `solucionada`, `cerrada`.
+Tipos de **no conformidad**: `defecto_de_fabrica`, `dano_en_transporte`, `producto_equivocado`, `cantidad_incorrecta`,
+`empaque_deteriorado`, `no_cumple_especificacion`, `otro`.
+
 ### Auditoría e integración
 
 | Tabla | Propósito | Reglas relevantes |
@@ -114,9 +165,13 @@ Tipos de movimiento: `entrada`, `salida`, `ajuste`, `venta`, `anulacion_venta`, 
 | `ix_recomendaciones_empresa_estado` | Recomendaciones pendientes |
 | `ix_predicciones_empresa_serie` | Última predicción de un producto en una sede |
 | `ix_auditoria_empresa_fecha`, `ix_auditoria_modulo_accion` | Consulta de auditoría con filtros |
+| `ix_pqrs_empresa_estado`, `ix_pqrs_usuario_created` | Bandeja de la administración por estado y «mis solicitudes» |
+| `ix_no_conformidades_empresa_estado`, `ix_garantias_empresa_estado` | Listas y conteos por estado |
+| `ix_sst_pausas_usuario_mostrada`, `ix_sst_pausas_empresa_mostrada` | Última pausa de una persona y cumplimiento por periodo |
+| `ix_amb_registros_empresa_estado_fecha` | Indicadores por mes y año |
 
 Las tablas con mayor crecimiento (`movimientos`, `auditoria`, `alertas`, `predicciones`) usan `BIGINT` como llave
-primaria en PostgreSQL.
+primaria en PostgreSQL; en el SIG, también `entrada_observaciones`, `sst_pausas` y `amb_registros`.
 
 ## Invariantes que el sistema garantiza
 
@@ -132,6 +187,11 @@ Estas propiedades las verifica `test_invariantes_de_inventario_tras_operar` y la
 5. Una venta anulada devuelve exactamente lo que descontó, una sola vez.
 6. No existen dos alertas activas iguales para la misma sede, producto y tipo.
 7. No existen consecutivos repetidos de venta ni de traslado dentro de una empresa.
+8. Registrar o gestionar una no conformidad o una garantía no cambia `inventario_sede` ni agrega movimientos.
+9. Los historiales de PQRS, no conformidades y garantías, y las observaciones de las entradas, nunca se modifican ni se borran.
+10. Una persona tiene como máximo una pausa activa abierta.
+11. Cada línea de venta tiene como máximo un registro ambiental; las ventas anuladas no suman en los indicadores.
+12. Un archivo adjunto pertenece a exactamente un registro (PQRS, no conformidad o garantía).
 
 ## Migraciones
 
@@ -140,6 +200,7 @@ Estas propiedades las verifica `test_invariantes_de_inventario_tras_operar` y la
 | `1951a4ae8cf0` | Modelos iniciales (versión anterior del proyecto) |
 | `5cb4ddecc152` | Códigos de recuperación de 6 dígitos |
 | `0003_inventia` | Reestructuración: RBAC con 5 roles, auditoría, catálogo, inventario por sede con movimientos, ventas, traslados, predicción, recomendaciones y llaves de agentes. **Conserva los datos** de la versión anterior |
+| `0004_sig` | Sistema Integrado de Gestión (versión 1.1): tablas de entradas y observaciones, PQRS, no conformidades, garantías, evidencias adjuntas, pausas activas y gestión ambiental; columna `movimientos.entrada_id`; disparadores de solo inserción. **No altera ni borra datos existentes**: las tablas nuevas empiezan vacías |
 
 Reglas de la migración 0003 sobre datos existentes:
 
@@ -151,5 +212,14 @@ Reglas de la migración 0003 sobre datos existentes:
 - Los nombres de sede repetidos se desambiguan añadiendo el identificador; las existencias negativas quedan en 0.
 - Es una migración **solo para PostgreSQL** (usa disparadores y JSONB). Las pruebas la ejecutan desde una base
   vacía, hacia atrás y hacia adelante, y con datos de la versión anterior.
+
+Reglas de la migración 0004 (`0004_sig`):
+
+- Solo agrega: tablas nuevas, la columna opcional `movimientos.entrada_id` (con su índice y llave foránea) y los
+  disparadores de solo inserción. Los movimientos existentes quedan con `entrada_id` nulo.
+- No necesita variables de entorno nuevas ni datos iniciales: las pausas activas siembran sus ejercicios la primera vez que
+  se consulta la configuración de cada empresa, y los permisos nuevos se sincronizan al iniciar la API.
+- `downgrade` elimina las tablas del SIG (**se pierden** sus registros) y la columna `movimientos.entrada_id`. Las pruebas
+  de migración ejecutan subir, bajar y volver a subir.
 
 Cómo crear una migración nueva: ver [DESARROLLO.md](DESARROLLO.md#migraciones).

@@ -3,7 +3,8 @@
     python -m app.cli inicializar --empresa "Mi Empresa" --admin-nombre "Nombre Apellido" --admin-correo yo@empresa.com
     python -m app.cli sincronizar-permisos
     python -m app.cli predecir [--empresa-id N] [--horizonte 14]
-    python -m app.cli cargar-demo [--dias 120] [--con-prediccion] [--en-empresa-existente]
+    python -m app.cli cargar-demo [--dias 120] [--con-prediccion] [--con-sig] [--en-empresa-existente]
+    python -m app.cli cargar-demo-sig
 
 La contraseña del administrador se lee de la variable ``INVENTIA_ADMIN_PASSWORD`` o se pide por
 consola (sin eco). Nunca se pasa por argumentos para que no quede en el historial del terminal.
@@ -102,8 +103,31 @@ async def _predecir(args: argparse.Namespace) -> int:
     return codigo
 
 
+async def _cargar_demo_sig(_args: argparse.Namespace) -> int:
+    from app import demo_sig
+    from app.core.database import fabrica_de_sesiones
+    from app.core.exceptions import ErrorNegocio
+
+    async with fabrica_de_sesiones()() as db:
+        try:
+            r = await demo_sig.cargar_demo_sig(db, avance=print)
+        except ErrorNegocio as exc:
+            print(exc.mensaje, file=sys.stderr)
+            return 1
+    print(
+        f"\nListo: {r.pqrs} solicitudes PQRS, {r.entradas} entradas, {r.no_conformidades} no conformidades, "
+        f"{r.garantias} garantías y {r.pausas} pausas activas registradas."
+    )
+    if r.ambiental_configurado:
+        print(
+            f"Gestión ambiental configurada con VALORES DE DEMOSTRACIÓN ({r.vehiculos_incorporados} líneas de ventas anteriores incorporadas). "
+            "Reemplázalos por datos documentados antes de usar las cifras en un informe."
+        )
+    return 0
+
+
 async def _cargar_demo(args: argparse.Namespace) -> int:
-    from app import demo
+    from app import demo, demo_sig
     from app.core.database import fabrica_de_sesiones
     from app.services import setup_service
 
@@ -128,6 +152,8 @@ async def _cargar_demo(args: argparse.Namespace) -> int:
             )
             if args.con_prediccion:
                 await demo.preparar_prediccion(db, resultado, print)
+            if args.con_sig:
+                await demo_sig.cargar_demo_sig(db, empresa_id=resultado.empresa_id, avance=print)
         except ErrorNegocio as exc:
             print(exc.mensaje, file=sys.stderr)
             return 1
@@ -164,12 +190,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--dias", type=int, default=120)
     p.add_argument("--semilla", type=int, default=7)
     p.add_argument("--con-prediccion", action="store_true", help="Además genera la predicción y las recomendaciones")
+    p.add_argument("--con-sig", action="store_true", help="Además carga datos de ejemplo del módulo SIG (PQRS, calidad, SST y gestión ambiental)")
     p.add_argument("--permitir-con-datos", action="store_true")
     p.add_argument(
         "--en-empresa-existente", action="store_true",
         help="Carga los datos en la empresa creada con la configuración inicial (conserva a su administrador)",
     )
     p.set_defaults(accion=_cargar_demo)
+
+    p = sub.add_parser("cargar-demo-sig", help="Carga datos de ejemplo del módulo SIG en la empresa existente (PQRS, calidad, SST y ambiental)")
+    p.set_defaults(accion=_cargar_demo_sig)
 
     args = parser.parse_args(argv)
     if args.comando == "predecir" and args.horizonte is not None and not 1 <= args.horizonte <= 90:

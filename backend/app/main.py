@@ -9,8 +9,8 @@ from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
 
 from app.api import (
-    agentes, alertas, auditoria, auth, categorias, dashboard, empresa, integraciones, inventario, predicciones, productos, recomendaciones,
-    reportes, roles, sedes, setup, traslados, usuarios, ventas,
+    adjuntos, agentes, alertas, ambiental, auditoria, auth, calidad, categorias, dashboard, empresa, integraciones, inventario, pqrs,
+    predicciones, productos, recomendaciones, reportes, roles, sedes, setup, sst, traslados, usuarios, ventas,
 )
 from app.core.config import settings
 from app.core.contexto import ContextoPeticionMiddleware
@@ -47,7 +47,7 @@ app = FastAPI(
         "Todas las rutas (salvo configuración inicial y recuperación de contraseña) exigen "
         "`Authorization: Bearer <token>` y validan permisos y sede en el servidor."
     ),
-    version="1.0.0",
+    version="1.1.0",
     lifespan=ciclo_de_vida,
     docs_url="/api/docs",
     redoc_url=None,
@@ -72,6 +72,7 @@ ROUTERS = (
     setup, auth, empresa, sedes, usuarios, roles, categorias, productos, inventario, alertas, ventas, traslados,
     predicciones, recomendaciones, auditoria, dashboard, reportes,
     integraciones, agentes,
+    pqrs, adjuntos, calidad, sst, ambiental,
 )
 for modulo in ROUTERS:
     app.include_router(modulo.router)

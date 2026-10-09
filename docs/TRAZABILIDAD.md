@@ -26,7 +26,9 @@ marcadas con (PG) solo se ejecutan contra PostgreSQL real (`TEST_DATABASE_URL`);
 `catinv` = `test_catalogo_inventario.py` · `conc` = `test_concurrencia.py` (PG) · `dash` = `test_dashboard_reportes.py` ·
 `flujo` = `test_flujo_integral.py` · `migr` = `test_migraciones.py` (PG) · `ml` = `test_ml.py` ·
 `pred` = `test_prediccion.py` · `reco` = `test_recomendaciones.py` · `auth` = `test_setup_auth.py` ·
-`vt` = `test_ventas_traslados.py`.
+`vt` = `test_ventas_traslados.py` · `sigpq` = `test_sig_pqrs_adjuntos.py` · `sigcal` = `test_sig_calidad_entradas.py` ·
+`sigsst` = `test_sig_sst.py` · `sigamb` = `test_sig_ambiental.py` · `sigperm` = `test_sig_permisos.py` ·
+`demo` = `test_demo.py`.
 
 `flujo::test_flujo_completo_de_una_empresa` recorre de principio a fin el escenario de integración de 17 pasos
 (configuración inicial → sedes → usuarios → productos → entradas → ventas → traslado → predicción →
@@ -197,12 +199,59 @@ recomendación → reportes → auditoría) y respalda de forma transversal a ca
 
 ---
 
-## 4. Resumen
+## 4. Sistema Integrado de Gestión (versión 1.1)
+
+El módulo SIG se pidió después del documento de grado, por lo que sus requisitos no tienen identificador allí. Aquí se
+numeran `SIG-01` a `SIG-10` siguiendo la solicitud recibida, y a continuación se relacionan los 12 escenarios de
+aceptación que esa solicitud exige comprobar. Las decisiones de diseño están en [D-28 a D-33](DECISIONES.md#d-28).
+
+### 4.1 Requisitos
+
+| ID | Requisito | Implementación | Evidencia | Estado |
+|---|---|---|---|---|
+| SIG-01 | Entrada **SIG** en el menú con cuatro apartados (PQRS y sugerencias, Seguridad y Salud en el Trabajo, Calidad, Gestión ambiental), cada uno con su vista y sus permisos | Grupo desplegable «SIG» en `components/layout/navegacion.ts` y `AppShell`; rutas `/sig/pqrs`, `/sig/sst`, `/sig/calidad`, `/sig/ambiental` protegidas por permiso | `navegacion.test.ts` (módulo SIG: visibilidad por rol); recorrido en navegador con administrador y operario | Cumplido |
+| SIG-02 | **PQRS**: tipo, asunto, descripción, usuario y fecha automáticos, evidencias opcionales, confirmación, estado de las propias; la administración lista, filtra, cambia el estado, responde y ve el historial | `api/pqrs.py` · `pqrs_service` · tablas `pqrs` y `pqrs_historial` · `PqrsPage.tsx`; adjuntos en `adjuntos_service`. No hay aviso por correo (D-29) | `sigpq::pqrs_flujo_completo`, `sigpq::pqrs_filtros_y_conteo`, `sigpq::pqrs_validaciones`, `sigpq::pqrs_aisladas_entre_empresas`, `sigpq::adjuntos_*` (3); recorrido en navegador | Cumplido |
+| SIG-03 | **Pausas activas** automáticas para quien no administra: mensaje, ejercicio, instrucciones, duración y recomendaciones; intervalo configurable con valor por defecto; sin repeticiones ni pausas simultáneas; sin interrumpir operaciones críticas; registro de cumplimiento; sección de administración | `sst_service` · `api/sst.py` · tablas `sst_*` · `PausasActivas.tsx`, `ModalPausa.tsx`, `programacion.ts`, `lib/bloqueoPausas.ts`, `SstPage.tsx` (D-32) | `sigsst::*` (8, una PG); `programacion.test.ts`, `PausasActivas.test.tsx`, `bloqueoPausas.test.tsx`; en navegador: la pausa aparece al operario, no aparece con un formulario abierto ni al administrador | Cumplido |
+| SIG-04 | **No conformidades**: sección educativa, formulario completo, estados, listado con filtros, historial, vínculo con la entrada de origen, **sin modificar el inventario** | `calidad_service` · `api/calidad.py` · tablas `no_conformidades` y `no_conformidad_historial` · `NoConformidades.tsx`, `GuiaCalidad.tsx` (D-30) | `sigcal::registrar_no_conformidad_no_modifica_inventario`, `sigcal::no_conformidad_nace_de_una_entrada_sin_digitar_dos_veces`, `sigcal::no_conformidad_validaciones`, `sigcal::no_conformidad_historial_de_observaciones_y_gestion`, `sigcal::no_conformidades_filtros_y_alcance_por_sede`; `reglas.test.ts` | Cumplido |
+| SIG-05 | **Garantías**: producto, documento de respaldo (factura, entrada, venta u otro), fechas, defecto, observaciones, evidencias, estados, respuesta del proveedor, solución y responsable | `calidad_service` · tablas `garantias` y `garantia_historial` · `Garantias.tsx` | `sigcal::garantia_ciclo_completo_con_historial`, `sigcal::garantia_con_documentos_de_entrada_y_venta`, `sigcal::garantias_filtros_y_alcance`, `sigcal::evidencias_de_calidad` | Cumplido |
+| SIG-06 | **Gestión ambiental**: ventas confirmadas de categorías configuradas como vehículo; panel con vehículos vendidos, CO₂ evitado estimado, acumulado mensual y anual, historial y gráficos; sin cifras inventadas; real distinguido de estimado; «pendiente de parametrización»; anuladas excluidas; sin doble conteo | `ambiental_service` · ganchos en `ventas_service` · tablas `amb_*` · `AmbientalPage.tsx` y pestañas (D-33) | `sigamb::*` (13); `calculos.test.ts`, `AmbientalPage.test.tsx`; en navegador con la demostración | Cumplido |
+| SIG-07 | **Observaciones por entrada** de inventario, enlazadas a ella, que no se pierden ni se sobrescriben | `entradas_service` · tablas `entradas_inventario` y `entrada_observaciones` (solo inserción) · `DialogoEntradaDetalle.tsx`, pestaña **Entradas de mercancía** de Movimientos | `sigcal::entrada_crea_cabecera_con_observacion_inicial`, `sigcal::observaciones_se_acumulan_y_no_se_pierden_al_reponer_stock`, `sigcal::observacion_de_entrada_validaciones_y_permisos` | Cumplido |
+| SIG-08 | **Historial de observaciones** en garantías y no conformidades | `*_historial` de solo inserción (disparador) · `LineaTiempo` en la interfaz | `sigcal::no_conformidad_historial_de_observaciones_y_gestion`, `sigcal::garantia_ciclo_completo_con_historial`, `migr::migracion_del_sig_conserva_datos_se_revierte_y_protege_historiales` (PG) | Cumplido |
+| SIG-09 | **Roles y permisos** aplicados en la interfaz y en el servidor | 9 permisos nuevos (de 52 a 61) en `core/permisos.py`; cada ruta `/api/sig/*` exige el suyo; alcance de sede en calidad y ambiental (D-28) | `sigpq::pqrs_flujo_completo` (403 al usuario sin permiso), `sigcal::*_filtros_y_alcance*`, `sigamb::permisos_y_alcance_por_sede`, `sigcal::observacion_de_entrada_validaciones_y_permisos`, `sigperm::actualizar_una_instalacion_existente_reparte_los_permisos_del_sig`, `sigperm::sincronizar_de_nuevo_no_devuelve_un_permiso_que_la_empresa_quito`; navegador: los endpoints de gestión responden 403 a un operario | Cumplido |
+| SIG-10 | **Base de datos y arquitectura**: reutilizar lo existente, migración compatible con Alembic, sin cambiar el *framework*, conservar los datos | Migración `0004_sig` (15 tablas nuevas y `movimientos.entrada_id`); mismas capas, convenciones y componentes del proyecto; sin dependencias nuevas ni variables de entorno nuevas | `migr::migracion_desde_base_vacia_y_alembic_check` (PG), `migr::migracion_hacia_atras_y_adelante` (PG), `migr::migracion_del_sig_conserva_datos_se_revierte_y_protege_historiales` (PG) | Cumplido |
+
+El requisito de **diseño coherente** de la solicitud se resolvió reutilizando los componentes de `components/ui` y los
+*tokens* de diseño existentes (RNF-041 y RNF-044); se revisó en navegador a 1440 y 390 px.
+
+### 4.2 Escenarios de aceptación
+
+| # | Escenario | Evidencia |
+|---|---|---|
+| 1 | Un usuario registra una PQRS y la administración la consulta | `sigpq::pqrs_flujo_completo`; navegador |
+| 2 | La administración cambia el estado de una PQRS y registra una respuesta | `sigpq::pqrs_flujo_completo` (estado, respuesta e historial) |
+| 3 | Las pausas activas aparecen solas a quien no administra, según la configuración | `sigsst::pausa_aparece_para_operativos_y_no_para_administracion`, `sigsst::administracion_configura_frecuencia_y_contenido`; `PausasActivas.test.tsx`, `programacion.test.ts`; navegador |
+| 4 | Los administradores no reciben las pausas automáticas | `sigsst::pausa_aparece_para_operativos_y_no_para_administracion`; navegador |
+| 5 | Una no conformidad se registra, consulta y actualiza sin modificar el inventario | `sigcal::registrar_no_conformidad_no_modifica_inventario`, `sigcal::no_conformidad_historial_de_observaciones_y_gestion` |
+| 6 | Una garantía conserva sus observaciones y su historial de seguimiento | `sigcal::garantia_ciclo_completo_con_historial` |
+| 7 | Las observaciones de una entrada quedan vinculadas a ella y no se pierden al agregar más unidades | `sigcal::observaciones_se_acumulan_y_no_se_pierden_al_reponer_stock` |
+| 8 | Una venta confirmada de un vehículo actualiza los indicadores según los parámetros configurados | `sigamb::configurar_calcula_las_ventas_pendientes_con_la_formula`, `sigamb::formula_documentada`, `sigamb::sin_parametrizar_cuenta_unidades_y_queda_pendiente`; `calculos.test.ts` |
+| 9 | Una venta anulada se excluye de los indicadores | `sigamb::venta_anulada_deja_de_contar_y_no_se_duplica` |
+| 10 | Las operaciones no generan duplicados ni alteran información histórica | `sigamb::ventas_simultaneas_no_duplican_registros`, `sigsst::peticiones_simultaneas_no_duplican_la_pausa` (PG), `sigsst::no_se_repiten_ni_se_solapan_pausas`, `sigamb::cambiar_parametros_no_altera_lo_ya_calculado`, `migr::migracion_del_sig_conserva_datos_se_revierte_y_protege_historiales` (PG) |
+| 11 | Los permisos impiden que un usuario no autorizado gestione información administrativa | Ver SIG-09 |
+| 12 | Las funcionalidades existentes (productos, inventario, ventas, usuarios…) siguen funcionando | Las 137 pruebas del backend anteriores a la versión 1.1 y el escenario integral de 17 pasos (`flujo::test_flujo_completo_de_una_empresa`) siguen pasando junto con las nuevas; ver [LIMITACIONES.md](LIMITACIONES.md#resultado-de-las-pruebas) |
+
+El escenario 12 menciona «compras»: el sistema no tiene un módulo de compras (ver LIMITACIONES); la recepción de mercancía
+se registra como entrada de inventario, que sí se verificó.
+
+---
+
+## 5. Resumen
 
 | Tipo | Total | Cumplido | Cumplido con una salvedad | Cumplido (navegador) | Parcial | Preparado, sin verificar | Fuera del software |
 |---|---|---|---|---|---|---|---|
 | Funcionales (RF) | 38 | 37 | 1 (RF-006: el envío real de correo no se probó) | 0 | 0 | 0 | 0 |
 | De negocio (RN) | 12 | 10 | 0 | 0 | 2 (RN-011, RN-012) | 0 | 0 |
 | No funcionales (RNF) | 50 | 35 | 1 (RNF-037: la integración continua no se ejecutó) | 4 | 6 (RNF-009, 011, 013, 015, 027, 043) | 2 (RNF-006, 020) | 2 (RNF-002, 039) |
+| SIG (versión 1.1) | 10 | 10 | 0 | 0 | 0 | 0 | 0 |
 
 Los puntos «parciales» y «sin verificar» se desarrollan en [LIMITACIONES.md](LIMITACIONES.md).

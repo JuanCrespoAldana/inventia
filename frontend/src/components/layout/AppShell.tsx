@@ -1,44 +1,127 @@
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { KeyRound, LogOut, Menu, X } from "lucide-react";
+import { ChevronDown, KeyRound, LogOut, Menu, X } from "lucide-react";
 import { useSesion, useAuth } from "@/auth/AuthContext";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/Logo";
 import { IconButton } from "@/components/ui/Button";
 import { PanelCargando } from "@/components/ui/Skeleton";
-import { gruposVisibles } from "./navegacion";
+import { PausasActivas } from "@/features/sig/sst/PausasActivas";
+import { gruposVisibles, type GrupoNavegacion, type ItemNavegacion } from "./navegacion";
+
+const CLAVE_SIG_ABIERTO = "inventia.menu.sig";
+
+function leerAbierto(): boolean {
+  try {
+    return localStorage.getItem(CLAVE_SIG_ABIERTO) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function guardarAbierto(valor: boolean) {
+  try {
+    localStorage.setItem(CLAVE_SIG_ABIERTO, valor ? "1" : "0");
+  } catch {
+    /* sin almacenamiento: el menú simplemente no recuerda su estado */
+  }
+}
+
+function EnlaceMenu({ item, alNavegar, sangrado = false }: { item: ItemNavegacion; alNavegar?: () => void; sangrado?: boolean }) {
+  return (
+    <NavLink
+      to={item.ruta}
+      end={item.fin}
+      title={item.etiqueta}
+      onClick={alNavegar}
+      className={({ isActive }) =>
+        cn(
+          "group flex items-center gap-3 rounded-(--radius-control) px-3 py-2 text-sm font-medium transition",
+          sangrado && "py-1.5",
+          isActive ? "bg-accent-dim text-accent-light" : "text-ink-dim hover:bg-white/5 hover:text-ink",
+        )
+      }
+    >
+      <item.icono className="size-[18px] shrink-0" aria-hidden />
+      <span className={sangrado ? "leading-snug" : "truncate"}>{item.etiqueta}</span>
+    </NavLink>
+  );
+}
+
+/** Menú desplegable (SIG): se abre solo al entrar en una de sus secciones y recuerda si la persona lo dejó abierto. */
+function GrupoDesplegable({ grupo, alNavegar }: { grupo: GrupoNavegacion; alNavegar?: () => void }) {
+  const { pathname } = useLocation();
+  const dentro = grupo.items.some((i) => pathname === i.ruta || pathname.startsWith(`${i.ruta}/`));
+  const [abierto, setAbierto] = useState(() => dentro || leerAbierto());
+  const [estabaDentro, setEstabaDentro] = useState(dentro);
+  const idLista = useId();
+  if (dentro !== estabaDentro) {
+    // Al entrar en una de sus secciones (enlace directo, atrás/adelante) el menú se abre solo.
+    setEstabaDentro(dentro);
+    if (dentro) setAbierto(true);
+  }
+  const Icono = grupo.desplegable!.icono;
+  const contenedor = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // En pantallas bajas el menú se desplaza: la sección activa debe quedar a la vista al entrar.
+    if (dentro) contenedor.current?.querySelector(`a[href="${pathname}"]`)?.scrollIntoView?.({ block: "nearest" });
+  }, [dentro, pathname]);
+
+  return (
+    <div ref={contenedor}>
+      <button
+        type="button"
+        aria-expanded={abierto}
+        aria-controls={idLista}
+        title={grupo.desplegable!.descripcion}
+        onClick={() => {
+          setAbierto(!abierto);
+          guardarAbierto(!abierto);
+        }}
+        className={cn(
+          "flex w-full items-center gap-3 rounded-(--radius-control) px-3 py-2 text-sm font-semibold transition",
+          dentro ? "text-accent-light" : "text-ink-dim hover:bg-white/5 hover:text-ink",
+        )}
+      >
+        <Icono className="size-[18px] shrink-0" aria-hidden />
+        <span className="flex-1 truncate text-left">{grupo.titulo}</span>
+        <ChevronDown className={cn("size-4 shrink-0 transition-transform", abierto && "rotate-180")} aria-hidden />
+      </button>
+      {abierto && (
+        <ul id={idLista} className="ml-[17px] mt-0.5 flex flex-col gap-0.5 border-l border-line pl-2">
+          {grupo.items.map((item) => (
+            <li key={item.ruta}>
+              <EnlaceMenu item={item} alNavegar={alNavegar} sangrado />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 function Menulateral({ alNavegar }: { alNavegar?: () => void }) {
   const sesion = useSesion();
   const grupos = gruposVisibles(sesion);
   return (
     <nav aria-label="Navegación principal" className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 pb-4">
-      {grupos.map((g) => (
-        <div key={g.titulo ?? "inicio"}>
-          {g.titulo && <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{g.titulo}</p>}
-          <ul className="flex flex-col gap-0.5">
-            {g.items.map((item) => (
-              <li key={item.ruta}>
-                <NavLink
-                  to={item.ruta}
-                  end={item.fin}
-                  onClick={alNavegar}
-                  className={({ isActive }) =>
-                    cn(
-                      "group flex items-center gap-3 rounded-(--radius-control) px-3 py-2 text-sm font-medium transition",
-                      isActive ? "bg-accent-dim text-accent-light" : "text-ink-dim hover:bg-white/5 hover:text-ink",
-                    )
-                  }
-                >
-                  <item.icono className="size-[18px] shrink-0" aria-hidden />
-                  <span className="truncate">{item.etiqueta}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {grupos.map((g) =>
+        g.desplegable ? (
+          <GrupoDesplegable key={g.titulo} grupo={g} alNavegar={alNavegar} />
+        ) : (
+          <div key={g.titulo ?? "inicio"}>
+            {g.titulo && <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{g.titulo}</p>}
+            <ul className="flex flex-col gap-0.5">
+              {g.items.map((item) => (
+                <li key={item.ruta}>
+                  <EnlaceMenu item={item} alNavegar={alNavegar} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ),
+      )}
     </nav>
   );
 }
@@ -111,6 +194,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-dvh bg-bg lg:grid lg:grid-cols-[264px_1fr]">
+      <PausasActivas />
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white">
         Saltar al contenido
       </a>

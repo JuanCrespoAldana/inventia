@@ -5,15 +5,20 @@ import {
   Boxes,
   Building2,
   ClipboardList,
+  BadgeCheck,
   FileBarChart,
+  HeartPulse,
   KeyRound,
   Layers,
+  Leaf,
   LayoutDashboard,
   MapPin,
+  MessageSquareText,
   PackageSearch,
   Receipt,
   ScrollText,
   ShieldCheck,
+  ShieldPlus,
   Sparkles,
   Tags,
   Truck,
@@ -34,6 +39,8 @@ export interface ItemNavegacion {
 export interface GrupoNavegacion {
   titulo: string | null;
   items: ItemNavegacion[];
+  /** Se muestra como un menú desplegable (con este icono) en lugar de un encabezado fijo. */
+  desplegable?: { icono: LucideIcon; descripcion: string };
 }
 
 const alguno = (...c: string[]) => (s: Sesion) => tieneAlguno(s, ...c);
@@ -69,6 +76,16 @@ export const NAVEGACION: GrupoNavegacion[] = [
         icono: FileBarChart,
         visible: alguno("reportes.inventario", "reportes.ventas", "reportes.movimientos", "reportes.traslados", "reportes.alertas", "reportes.predicciones", "reportes.recomendaciones"),
       },
+    ],
+  },
+  {
+    titulo: "SIG",
+    desplegable: { icono: ShieldPlus, descripcion: "Sistema Integrado de Gestión" },
+    items: [
+      { ruta: "/sig/pqrs", etiqueta: "PQRS y sugerencias", icono: MessageSquareText, visible: alguno("pqrs.crear", "pqrs.gestionar") },
+      { ruta: "/sig/sst", etiqueta: "Seguridad y Salud en el Trabajo", icono: HeartPulse, visible: alguno("sst.ver", "sst.gestionar") },
+      { ruta: "/sig/calidad", etiqueta: "Calidad", icono: BadgeCheck, visible: alguno("calidad.ver", "calidad.reportar", "calidad.gestionar") },
+      { ruta: "/sig/ambiental", etiqueta: "Gestión ambiental", icono: Leaf, visible: alguno("ambiental.ver", "ambiental.configurar") },
     ],
   },
   {

@@ -15,6 +15,7 @@ import { buscarEnSede } from "@/features/inventario/fuentes";
 import { useDirectorioSedes } from "@/hooks/useCatalogos";
 import { useMutacion } from "@/hooks/useMutacion";
 import { normalizarError } from "@/lib/errors";
+import { useBloquearPausas } from "@/lib/bloqueoPausas";
 
 export default function NuevoTrasladoPage() {
   const navegar = useNavigate();
@@ -29,6 +30,7 @@ export default function NuevoTrasladoPage() {
   const destino = destinoElegido ?? propia ?? sedes.find((s) => s.id !== origenElegido)?.id ?? null;
   const origen = origenElegido ?? sedes.find((s) => s.id !== destino)?.id ?? null;
   const [lineas, setLineas] = useState<Linea[]>([]);
+  useBloquearPausas(lineas.length > 0); // una operación a medio armar no se interrumpe con una pausa activa
   const [observacion, setObservacion] = useState("");
   const [intento, setIntento] = useState(false);
   const [error, setError] = useState<string | null>(null);

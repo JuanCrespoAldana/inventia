@@ -14,7 +14,7 @@ RNF-001 a RNF-050); la correspondencia punto por punto está en [`docs/TRAZABILI
 | Área | Funciones |
 |---|---|
 | **Empresa y sedes** | Varias empresas aisladas entre sí; sedes por empresa; parámetros configurables (plazos, cobertura, umbrales) |
-| **Usuarios y permisos** | 5 roles de fábrica (Administrador, Gerente, Encargado de sede, Usuario de inventario, Analista de compras), roles personalizados, 52 permisos, alcance por sede |
+| **Usuarios y permisos** | 5 roles de fábrica (Administrador, Gerente, Encargado de sede, Usuario de inventario, Analista de compras), roles personalizados, 61 permisos, alcance por sede |
 | **Catálogo** | Categorías y productos con código inmutable, costo y precio |
 | **Inventario** | Existencias por sede y consolidadas; entradas, salidas y ajustes con historial inmutable; mínimos y máximos |
 | **Ventas** | Registro multiproducto con descuento atómico de existencias; anulación con motivo y reintegro |
@@ -24,6 +24,7 @@ RNF-001 a RNF-050); la correspondencia punto por punto está en [`docs/TRAZABILI
 | **Recomendaciones** | Reabastecimiento y traslado con explicación en español; aprobación humana obligatoria |
 | **Reportes** | Siete reportes en vista previa, CSV y Excel |
 | **Auditoría** | Accesos y operaciones; registro inmutable |
+| **SIG** | PQRS y sugerencias con historial; pausas activas automáticas de seguridad y salud en el trabajo; no conformidades y garantías con evidencias e historial (sin tocar el inventario); observaciones por entrada; gestión ambiental con vehículos vendidos y CO₂ evitado estimado según parámetros documentados |
 | **Agentes de IA** | API de solo lectura con llaves propias, alcances, vencimiento y revocación |
 
 ## Inicio rápido
@@ -51,6 +52,7 @@ npm run setup          # entorno virtual, dependencias y backend/.env
 # edite backend/.env: DATABASE_URL y SECRET_KEY
 npm run migrar
 npm run demo           # opcional: empresa ficticia de movilidad eléctrica con 4 meses de ventas (base vacía); ver docs/DESARROLLO.md
+npm run demo:sig       # opcional: datos de ejemplo del SIG (PQRS, calidad, pausas, ambiental) en una empresa con la demostración
 npm run dev            # interfaz en :5173, API en :8000
 ```
 
@@ -128,6 +130,6 @@ Las pruebas que dependen de PostgreSQL (concurrencia, migraciones, disparadores)
 
 ## Estado
 
-Versión **1.0.0**. Backend y frontend completos y probados; la predicción se validó con datos sintéticos de
+Versión **1.1.0** (incluye el Sistema Integrado de Gestión). Backend y frontend completos y probados; la predicción se validó con datos sintéticos de
 demostración y debe medirse con las ventas reales de cada empresa antes de apoyarse en ella. Ver
 [`docs/LIMITACIONES.md`](docs/LIMITACIONES.md) para el detalle honesto de lo verificado y lo pendiente.

@@ -3,6 +3,103 @@
 
 export interface components {
     schemas: {
+        /** ActividadActualizar */
+        ActividadActualizar: {
+            /** Titulo */
+            titulo?: string | null;
+            /** Area */
+            area?: ("cuello" | "hombros" | "espalda" | "manos_munecas" | "ojos" | "piernas" | "respiracion") | null;
+            /** Mensaje */
+            mensaje?: string | null;
+            /** Instrucciones */
+            instrucciones?: string | null;
+            /** Duracion Segundos */
+            duracion_segundos?: number | null;
+            /** Recomendaciones */
+            recomendaciones?: string | null;
+            /** Orden */
+            orden?: number | null;
+            /** Activa */
+            activa?: boolean | null;
+        };
+        /** ActividadCrear */
+        ActividadCrear: {
+            /** Titulo */
+            titulo: string;
+            /**
+             * Area
+             * @enum {string}
+             */
+            area: "cuello" | "hombros" | "espalda" | "manos_munecas" | "ojos" | "piernas" | "respiracion";
+            /** Mensaje */
+            mensaje: string;
+            /** Instrucciones */
+            instrucciones: string;
+            /** Duracion Segundos */
+            duracion_segundos: number;
+            /** Recomendaciones */
+            recomendaciones?: string | null;
+            /**
+             * Orden
+             * @default 0
+             */
+            orden: number;
+            /**
+             * Activa
+             * @default true
+             */
+            activa: boolean;
+        };
+        /** ActividadSalida */
+        ActividadSalida: {
+            /** Id */
+            id: number;
+            /** Titulo */
+            titulo: string;
+            /** Area */
+            area: string;
+            /** Mensaje */
+            mensaje: string;
+            /** Instrucciones */
+            instrucciones: string;
+            /** Duracion Segundos */
+            duracion_segundos: number;
+            /** Recomendaciones */
+            recomendaciones: string | null;
+            /** Orden */
+            orden: number;
+            /** Activa */
+            activa: boolean;
+            /** Pasos */
+            readonly pasos: string[];
+            /** Consejos */
+            readonly consejos: string[];
+        };
+        /** AdjuntoSalida */
+        AdjuntoSalida: {
+            /** Id */
+            id: number;
+            /** Nombre */
+            nombre: string;
+            /** Tipo Mime */
+            tipo_mime: string;
+            /** Tamano */
+            tamano: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Subido Por */
+            subido_por: number;
+            /** Subido Por Nombre */
+            subido_por_nombre?: string | null;
+            /**
+             * Puede Eliminar
+             * @default false
+             */
+            puede_eliminar: boolean;
+        };
         /** AjusteCrear */
         AjusteCrear: {
             /** Sede Id */
@@ -74,6 +171,89 @@ export interface components {
             /** Descripcion */
             descripcion?: string | null;
         };
+        /** CategoriaAmbientalActualizar */
+        CategoriaAmbientalActualizar: {
+            /**
+             * Tipo Vehiculo
+             * @enum {string}
+             */
+            tipo_vehiculo: "bicicleta_electrica" | "patineta_electrica" | "motocicleta_electrica" | "otro";
+            /**
+             * Propulsion
+             * @enum {string}
+             */
+            propulsion: "electrica" | "asistida_pedaleo";
+            /** Distancia Anual Km */
+            distancia_anual_km?: number | string | null;
+            /** Consumo Kwh 100Km */
+            consumo_kwh_100km?: number | string | null;
+            /** Vehiculo Referencia */
+            vehiculo_referencia?: string | null;
+            /** Emision Referencia Gco2 Km */
+            emision_referencia_gco2_km?: number | string | null;
+            /**
+             * Horizonte Anios
+             * @default 1
+             */
+            horizonte_anios: number;
+            /** Fuente */
+            fuente?: string | null;
+            /**
+             * Activa
+             * @default true
+             */
+            activa: boolean;
+        };
+        /** CategoriaAmbientalSalida */
+        CategoriaAmbientalSalida: {
+            /** Categoria Id */
+            categoria_id: number;
+            /** Categoria Nombre */
+            categoria_nombre: string;
+            /** Es Vehiculo */
+            es_vehiculo: boolean;
+            /**
+             * Activa
+             * @default false
+             */
+            activa: boolean;
+            /** Tipo Vehiculo */
+            tipo_vehiculo?: string | null;
+            /** Propulsion */
+            propulsion?: string | null;
+            /** Distancia Anual Km */
+            distancia_anual_km?: number | null;
+            /** Consumo Kwh 100Km */
+            consumo_kwh_100km?: number | null;
+            /** Vehiculo Referencia */
+            vehiculo_referencia?: string | null;
+            /** Emision Referencia Gco2 Km */
+            emision_referencia_gco2_km?: number | null;
+            /**
+             * Horizonte Anios
+             * @default 1
+             */
+            horizonte_anios: number;
+            /** Fuente */
+            fuente?: string | null;
+            /**
+             * Parametros Completos
+             * @default false
+             */
+            parametros_completos: boolean;
+            /** Co2 Por Unidad Kg */
+            co2_por_unidad_kg?: number | null;
+            /**
+             * Unidades Vendidas
+             * @default 0
+             */
+            unidades_vendidas: number;
+            /**
+             * Unidades Sin Parametrizar
+             * @default 0
+             */
+            unidades_sin_parametrizar: number;
+        };
         /** CategoriaCrear */
         CategoriaCrear: {
             /** Nombre */
@@ -120,6 +300,63 @@ export interface components {
             updated_at: string;
         };
         /**
+         * Cifras
+         * @description ``unidades`` es un dato REAL (ventas confirmadas). ``co2_estimado_kg`` es una ESTIMACIÓN que solo
+         *     suma los registros ya parametrizados; ``unidades_sin_parametrizar`` quedan fuera de la estimación.
+         */
+        Cifras: {
+            /** Unidades */
+            unidades: number;
+            /** Co2 Estimado Kg */
+            co2_estimado_kg: number;
+            /** Unidades Sin Parametrizar */
+            unidades_sin_parametrizar: number;
+        };
+        /** CifrasAnio */
+        CifrasAnio: {
+            /** Unidades */
+            unidades: number;
+            /** Co2 Estimado Kg */
+            co2_estimado_kg: number;
+            /** Unidades Sin Parametrizar */
+            unidades_sin_parametrizar: number;
+            /** Anio */
+            anio: number;
+        };
+        /** CifrasMes */
+        CifrasMes: {
+            /** Unidades */
+            unidades: number;
+            /** Co2 Estimado Kg */
+            co2_estimado_kg: number;
+            /** Unidades Sin Parametrizar */
+            unidades_sin_parametrizar: number;
+            /** Mes */
+            mes: number;
+        };
+        /** CifrasTipo */
+        CifrasTipo: {
+            /** Unidades */
+            unidades: number;
+            /** Co2 Estimado Kg */
+            co2_estimado_kg: number;
+            /** Unidades Sin Parametrizar */
+            unidades_sin_parametrizar: number;
+            /** Tipo Vehiculo */
+            tipo_vehiculo: string;
+        };
+        /** ConfiguracionAmbiental */
+        ConfiguracionAmbiental: {
+            factor_red: components["schemas"]["FactorRedSalida"];
+            /** Categorias */
+            categorias: components["schemas"]["CategoriaAmbientalSalida"][];
+            /**
+             * Puede Configurar
+             * @default false
+             */
+            puede_configurar: boolean;
+        };
+        /**
          * ConfiguracionInicial
          * @description Alta controlada de la empresa y de su primer administrador (RF-007, RF-001).
          */
@@ -151,6 +388,20 @@ export interface components {
              */
             token_configuracion: string;
         };
+        /** ConfiguracionSst */
+        ConfiguracionSst: {
+            /** Pausas Activas */
+            pausas_activas: boolean;
+            /** Intervalo Minutos */
+            intervalo_minutos: number;
+        };
+        /** ConfiguracionSstActualizar */
+        ConfiguracionSstActualizar: {
+            /** Pausas Activas */
+            pausas_activas?: boolean | null;
+            /** Intervalo Minutos */
+            intervalo_minutos?: number | null;
+        };
         /** ConsolidadoFila */
         ConsolidadoFila: {
             producto: components["schemas"]["ProductoResumen"];
@@ -168,6 +419,13 @@ export interface components {
             sedes_en_alerta: number;
             /** Sedes */
             sedes: components["schemas"]["DesgloseSede"][];
+        };
+        /** ConteoEstado */
+        ConteoEstado: {
+            /** Estado */
+            estado: string;
+            /** Total */
+            total: number;
         };
         /** DesgloseSede */
         DesgloseSede: {
@@ -290,6 +548,128 @@ export interface components {
             /** Items */
             items: components["schemas"]["ItemCantidad"][];
         };
+        /** EntradaDetalle */
+        EntradaDetalle: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+            /** Motivo */
+            motivo: string;
+            sede: components["schemas"]["SedeResumen"];
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Unidades */
+            unidades: number;
+            /** Lineas */
+            lineas: number;
+            /** Observaciones */
+            observaciones: number;
+            /** No Conformidades */
+            no_conformidades: number;
+            /** Detalle Lineas */
+            detalle_lineas: components["schemas"]["EntradaLinea"][];
+            /** Historial Observaciones */
+            historial_observaciones: components["schemas"]["EntradaObservacionSalida"][];
+            /** No Conformidades Vinculadas */
+            no_conformidades_vinculadas: components["schemas"]["NoConformidadVinculo"][];
+            /**
+             * Puede Observar
+             * @default false
+             */
+            puede_observar: boolean;
+            /**
+             * Puede Reportar Calidad
+             * @default false
+             */
+            puede_reportar_calidad: boolean;
+        };
+        /** EntradaLinea */
+        EntradaLinea: {
+            producto: components["schemas"]["ProductoResumen"];
+            /** Cantidad */
+            cantidad: number;
+            /** Saldo Posterior */
+            saldo_posterior: number;
+        };
+        /** EntradaObservacionCrear */
+        EntradaObservacionCrear: {
+            /** Contenido */
+            contenido: string;
+            /**
+             * Producto Id
+             * @description Línea de la entrada a la que se refiere (opcional)
+             */
+            producto_id?: number | null;
+        };
+        /** EntradaObservacionSalida */
+        EntradaObservacionSalida: {
+            /** Id */
+            id: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Contenido */
+            contenido: string;
+            producto?: components["schemas"]["ProductoResumen"] | null;
+            /**
+             * No Conformidades
+             * @default []
+             */
+            no_conformidades: components["schemas"]["NoConformidadVinculo"][];
+        };
+        /** EntradaResumen */
+        EntradaResumen: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+            /** Motivo */
+            motivo: string;
+            sede: components["schemas"]["SedeResumen"];
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Unidades */
+            unidades: number;
+            /** Lineas */
+            lineas: number;
+            /** Observaciones */
+            observaciones: number;
+            /** No Conformidades */
+            no_conformidades: number;
+        };
+        /** EntradaVinculo */
+        EntradaVinculo: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+        };
         /** EstadoInstalacion */
         EstadoInstalacion: {
             /** Configurado */
@@ -298,6 +678,254 @@ export interface components {
             requiere_token: boolean;
             /** Nombre Aplicacion */
             nombre_aplicacion: string;
+        };
+        /**
+         * EventoSalida
+         * @description Una línea del historial de una no conformidad o de una garantía.
+         */
+        EventoSalida: {
+            /** Id */
+            id: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Evento */
+            evento: string;
+            /** Estado Anterior */
+            estado_anterior: string | null;
+            /** Estado Nuevo */
+            estado_nuevo: string | null;
+            /** Contenido */
+            contenido: string | null;
+        };
+        /** FactorRedActualizar */
+        FactorRedActualizar: {
+            /** Valor */
+            valor: number | string;
+            /** Anio */
+            anio: number;
+            /** Fuente */
+            fuente: string;
+        };
+        /** FactorRedSalida */
+        FactorRedSalida: {
+            /** Valor */
+            valor: number | null;
+            /** Anio */
+            anio: number | null;
+            /** Fuente */
+            fuente: string | null;
+        };
+        /** GarantiaCrear */
+        GarantiaCrear: {
+            /** Producto Id */
+            producto_id: number;
+            /** Sede Id */
+            sede_id?: number | null;
+            /**
+             * Cantidad
+             * @default 1
+             */
+            cantidad: number;
+            /**
+             * Documento Tipo
+             * @enum {string}
+             */
+            documento_tipo: "factura_compra" | "entrada_inventario" | "venta" | "otro";
+            /** Documento Referencia */
+            documento_referencia?: string | null;
+            /** Entrada Id */
+            entrada_id?: number | null;
+            /** Venta Id */
+            venta_id?: number | null;
+            /**
+             * Fecha Compra
+             * Format: date
+             */
+            fecha_compra: string;
+            /** Garantia Hasta */
+            garantia_hasta?: string | null;
+            /** Fecha Reporte */
+            fecha_reporte?: string | null;
+            /** Defecto */
+            defecto: string;
+            /** Proveedor */
+            proveedor?: string | null;
+            /** Observaciones */
+            observaciones?: string | null;
+        };
+        /** GarantiaDetalle */
+        GarantiaDetalle: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            producto: components["schemas"]["ProductoResumen"];
+            sede: components["schemas"]["SedeResumen"];
+            /** Cantidad */
+            cantidad: number;
+            /** Estado */
+            estado: string;
+            /** Documento Tipo */
+            documento_tipo: string;
+            /** Documento Referencia */
+            documento_referencia: string | null;
+            /**
+             * Fecha Compra
+             * Format: date
+             */
+            fecha_compra: string;
+            /**
+             * Fecha Reporte
+             * Format: date
+             */
+            fecha_reporte: string;
+            /** Proveedor */
+            proveedor: string | null;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Responsable Nombre */
+            responsable_nombre?: string | null;
+            /** En Garantia */
+            en_garantia?: boolean | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Observaciones
+             * @default 0
+             */
+            observaciones: number;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
+            /** Defecto */
+            defecto: string;
+            /** Garantia Hasta */
+            garantia_hasta: string | null;
+            entrada?: components["schemas"]["EntradaVinculo"] | null;
+            /** Venta Id */
+            venta_id: number | null;
+            /** Venta Numero */
+            venta_numero?: number | null;
+            /** Responsable Id */
+            responsable_id: number | null;
+            /** Fecha Envio Proveedor */
+            fecha_envio_proveedor: string | null;
+            /** Respuesta Proveedor */
+            respuesta_proveedor: string | null;
+            /** Fecha Respuesta Proveedor */
+            fecha_respuesta_proveedor: string | null;
+            /** Solucion */
+            solucion: string | null;
+            /** Fecha Solucion */
+            fecha_solucion: string | null;
+            /** Cerrada En */
+            cerrada_en: string | null;
+            /** Historial */
+            historial: components["schemas"]["EventoSalida"][];
+            /** Archivos */
+            archivos: components["schemas"]["AdjuntoSalida"][];
+            /**
+             * Puede Gestionar
+             * @default false
+             */
+            puede_gestionar: boolean;
+            /**
+             * Puede Observar
+             * @default false
+             */
+            puede_observar: boolean;
+            /**
+             * Puede Adjuntar
+             * @default false
+             */
+            puede_adjuntar: boolean;
+        };
+        /** GarantiaGestionar */
+        GarantiaGestionar: {
+            /** Estado */
+            estado?: ("reportada" | "pendiente_revision" | "enviada_proveedor" | "aprobada" | "rechazada" | "solucionada" | "cerrada") | null;
+            /** Responsable Id */
+            responsable_id?: number | null;
+            /** Proveedor */
+            proveedor?: string | null;
+            /** Fecha Envio Proveedor */
+            fecha_envio_proveedor?: string | null;
+            /** Respuesta Proveedor */
+            respuesta_proveedor?: string | null;
+            /** Fecha Respuesta Proveedor */
+            fecha_respuesta_proveedor?: string | null;
+            /** Solucion */
+            solucion?: string | null;
+            /** Fecha Solucion */
+            fecha_solucion?: string | null;
+            /** Comentario */
+            comentario?: string | null;
+        };
+        /** GarantiaResumen */
+        GarantiaResumen: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            producto: components["schemas"]["ProductoResumen"];
+            sede: components["schemas"]["SedeResumen"];
+            /** Cantidad */
+            cantidad: number;
+            /** Estado */
+            estado: string;
+            /** Documento Tipo */
+            documento_tipo: string;
+            /** Documento Referencia */
+            documento_referencia: string | null;
+            /**
+             * Fecha Compra
+             * Format: date
+             */
+            fecha_compra: string;
+            /**
+             * Fecha Reporte
+             * Format: date
+             */
+            fecha_reporte: string;
+            /** Proveedor */
+            proveedor: string | null;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Responsable Nombre */
+            responsable_nombre?: string | null;
+            /** En Garantia */
+            en_garantia?: boolean | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Observaciones
+             * @default 0
+             */
+            observaciones: number;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -479,6 +1107,10 @@ export interface components {
             traslado_id?: number | null;
             /** Traslado Numero */
             traslado_numero?: number | null;
+            /** Entrada Id */
+            entrada_id?: number | null;
+            /** Entrada Numero */
+            entrada_numero?: number | null;
         };
         /** NivelesActualizar */
         NivelesActualizar: {
@@ -503,6 +1135,186 @@ export interface components {
             stock_minimo: number;
             /** Stock Maximo */
             stock_maximo: number | null;
+        };
+        /** NoConformidadCrear */
+        NoConformidadCrear: {
+            /** Producto Id */
+            producto_id: number;
+            /**
+             * Sede Id
+             * @description Obligatoria salvo que se indique la entrada o la persona tenga una sola sede
+             */
+            sede_id?: number | null;
+            /** Referencia */
+            referencia?: string | null;
+            /**
+             * Tipo
+             * @enum {string}
+             */
+            tipo: "defecto_de_fabrica" | "dano_en_transporte" | "producto_equivocado" | "cantidad_incorrecta" | "empaque_deteriorado" | "no_cumple_especificacion" | "otro";
+            /** Descripcion */
+            descripcion: string;
+            /**
+             * Fecha Deteccion
+             * Format: date
+             */
+            fecha_deteccion: string;
+            /** Cantidad Afectada */
+            cantidad_afectada: number;
+            /** Proveedor */
+            proveedor?: string | null;
+            /** Observaciones */
+            observaciones?: string | null;
+            /** Entrada Id */
+            entrada_id?: number | null;
+            /** Entrada Observacion Id */
+            entrada_observacion_id?: number | null;
+        };
+        /** NoConformidadDetalle */
+        NoConformidadDetalle: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            producto: components["schemas"]["ProductoResumen"];
+            sede: components["schemas"]["SedeResumen"];
+            /** Tipo */
+            tipo: string;
+            /** Estado */
+            estado: string;
+            /**
+             * Fecha Deteccion
+             * Format: date
+             */
+            fecha_deteccion: string;
+            /** Cantidad Afectada */
+            cantidad_afectada: number;
+            /** Referencia */
+            referencia: string | null;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Responsable Nombre */
+            responsable_nombre?: string | null;
+            entrada?: components["schemas"]["EntradaVinculo"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Observaciones
+             * @default 0
+             */
+            observaciones: number;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
+            /** Descripcion */
+            descripcion: string;
+            /** Proveedor */
+            proveedor: string | null;
+            /** Solucion */
+            solucion: string | null;
+            /** Responsable Id */
+            responsable_id: number | null;
+            /** Resuelta En */
+            resuelta_en: string | null;
+            /** Cerrada En */
+            cerrada_en: string | null;
+            /** Observacion Origen */
+            observacion_origen?: string | null;
+            /** Historial */
+            historial: components["schemas"]["EventoSalida"][];
+            /** Archivos */
+            archivos: components["schemas"]["AdjuntoSalida"][];
+            /**
+             * Puede Gestionar
+             * @default false
+             */
+            puede_gestionar: boolean;
+            /**
+             * Puede Observar
+             * @default false
+             */
+            puede_observar: boolean;
+            /**
+             * Puede Adjuntar
+             * @default false
+             */
+            puede_adjuntar: boolean;
+        };
+        /**
+         * NoConformidadGestionar
+         * @description Gestión por parte de quien administra la calidad. Debe traer al menos un cambio.
+         */
+        NoConformidadGestionar: {
+            /** Estado */
+            estado?: ("reportado" | "en_revision" | "en_proceso_solucion" | "resuelto" | "cerrado") | null;
+            /** Responsable Id */
+            responsable_id?: number | null;
+            /** Proveedor */
+            proveedor?: string | null;
+            /** Solucion */
+            solucion?: string | null;
+            /** Comentario */
+            comentario?: string | null;
+        };
+        /** NoConformidadResumen */
+        NoConformidadResumen: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            producto: components["schemas"]["ProductoResumen"];
+            sede: components["schemas"]["SedeResumen"];
+            /** Tipo */
+            tipo: string;
+            /** Estado */
+            estado: string;
+            /**
+             * Fecha Deteccion
+             * Format: date
+             */
+            fecha_deteccion: string;
+            /** Cantidad Afectada */
+            cantidad_afectada: number;
+            /** Referencia */
+            referencia: string | null;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Responsable Nombre */
+            responsable_nombre?: string | null;
+            entrada?: components["schemas"]["EntradaVinculo"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Observaciones
+             * @default 0
+             */
+            observaciones: number;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
+        };
+        /** NoConformidadVinculo */
+        NoConformidadVinculo: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /** Estado */
+            estado: string;
         };
         /** OpcionesAuditoria */
         OpcionesAuditoria: {
@@ -563,10 +1375,75 @@ export interface components {
             /** Paginas */
             paginas: number;
         };
+        /** Pagina[EntradaResumen] */
+        Pagina_EntradaResumen_: {
+            /** Items */
+            items: components["schemas"]["EntradaResumen"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
+        /** Pagina[GarantiaResumen] */
+        Pagina_GarantiaResumen_: {
+            /** Items */
+            items: components["schemas"]["GarantiaResumen"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
         /** Pagina[MovimientoSalida] */
         Pagina_MovimientoSalida_: {
             /** Items */
             items: components["schemas"]["MovimientoSalida"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
+        /** Pagina[NoConformidadResumen] */
+        Pagina_NoConformidadResumen_: {
+            /** Items */
+            items: components["schemas"]["NoConformidadResumen"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
+        /** Pagina[PausaRegistro] */
+        Pagina_PausaRegistro_: {
+            /** Items */
+            items: components["schemas"]["PausaRegistro"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
+        /** Pagina[PqrsResumen] */
+        Pagina_PqrsResumen_: {
+            /** Items */
+            items: components["schemas"]["PqrsResumen"][];
             /** Total */
             total: number;
             /** Pagina */
@@ -606,6 +1483,19 @@ export interface components {
         Pagina_RecomendacionSalida_: {
             /** Items */
             items: components["schemas"]["RecomendacionSalida"][];
+            /** Total */
+            total: number;
+            /** Pagina */
+            pagina: number;
+            /** Tamano */
+            tamano: number;
+            /** Paginas */
+            paginas: number;
+        };
+        /** Pagina[RegistroAmbiental] */
+        Pagina_RegistroAmbiental_: {
+            /** Items */
+            items: components["schemas"]["RegistroAmbiental"][];
             /** Total */
             total: number;
             /** Pagina */
@@ -680,6 +1570,22 @@ export interface components {
             /** Paginas */
             paginas: number;
         };
+        /** Parametrizacion */
+        Parametrizacion: {
+            /**
+             * Estado
+             * @enum {string}
+             */
+            estado: "completa" | "parcial" | "pendiente" | "sin_categorias";
+            /** Mensaje */
+            mensaje: string;
+            /** Categorias Vehiculo */
+            categorias_vehiculo: number;
+            /** Categorias Parametrizadas */
+            categorias_parametrizadas: number;
+            /** Factor Red Definido */
+            factor_red_definido: boolean;
+        };
         /**
          * ParametrosEmpresa
          * @description Reglas configurables del inventario y la predicción (se documentan en docs/PREDICCION.md).
@@ -702,6 +1608,76 @@ export interface components {
             /** Dias Max Anulacion */
             dias_max_anulacion?: number | null;
         };
+        /** PausaCerrar */
+        PausaCerrar: {
+            /**
+             * Resultado
+             * @enum {string}
+             */
+            resultado: "realizada" | "omitida";
+            /** Duracion Segundos */
+            duracion_segundos?: number | null;
+        };
+        /** PausaEstado */
+        PausaEstado: {
+            /** Aplica */
+            aplica: boolean;
+            /** Activo */
+            activo: boolean;
+            /** Intervalo Minutos */
+            intervalo_minutos: number;
+            /**
+             * Ahora
+             * Format: date-time
+             */
+            ahora: string;
+            /** Ultima Pausa En */
+            ultima_pausa_en: string | null;
+            pendiente: components["schemas"]["PausaMostrada"] | null;
+        };
+        /** PausaIniciada */
+        PausaIniciada: {
+            /** Mostrar */
+            mostrar: boolean;
+            pausa?: components["schemas"]["PausaMostrada"] | null;
+            /** Proxima En */
+            proxima_en?: string | null;
+            /** Motivo */
+            motivo?: string | null;
+        };
+        /** PausaMostrada */
+        PausaMostrada: {
+            /** Id */
+            id: number;
+            /**
+             * Mostrada En
+             * Format: date-time
+             */
+            mostrada_en: string;
+            actividad: components["schemas"]["ActividadSalida"] | null;
+        };
+        /** PausaRegistro */
+        PausaRegistro: {
+            /** Id */
+            id: number;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Actividad Titulo */
+            actividad_titulo: string;
+            /**
+             * Mostrada En
+             * Format: date-time
+             */
+            mostrada_en: string;
+            /** Estado */
+            estado: string;
+            /** Cerrada En */
+            cerrada_en: string | null;
+            /** Duracion Segundos */
+            duracion_segundos: number | null;
+        };
         /** PermisoSalida */
         PermisoSalida: {
             /** Codigo */
@@ -710,6 +1686,155 @@ export interface components {
             modulo: string;
             /** Descripcion */
             descripcion: string;
+        };
+        /** PqrsConteo */
+        PqrsConteo: {
+            /** Total */
+            total: number;
+            /** Pendiente */
+            pendiente: number;
+            /** En Revision */
+            en_revision: number;
+            /** En Proceso */
+            en_proceso: number;
+            /** Resuelta */
+            resuelta: number;
+        };
+        /** PqrsCrear */
+        PqrsCrear: {
+            /**
+             * Tipo
+             * @enum {string}
+             */
+            tipo: "peticion" | "queja" | "reclamo" | "sugerencia";
+            /** Asunto */
+            asunto: string;
+            /** Descripcion */
+            descripcion: string;
+        };
+        /** PqrsDetalle */
+        PqrsDetalle: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /** Tipo */
+            tipo: string;
+            /** Asunto */
+            asunto: string;
+            /** Estado */
+            estado: string;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            sede?: components["schemas"]["SedeResumen"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Respondida */
+            respondida: boolean;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
+            /** Descripcion */
+            descripcion: string;
+            /** Respuesta */
+            respuesta: string | null;
+            /** Respondida Por Nombre */
+            respondida_por_nombre?: string | null;
+            /** Respondida En */
+            respondida_en?: string | null;
+            /** Historial */
+            historial: components["schemas"]["PqrsEvento"][];
+            /** Archivos */
+            archivos: components["schemas"]["AdjuntoSalida"][];
+            /**
+             * Puede Gestionar
+             * @default false
+             */
+            puede_gestionar: boolean;
+            /**
+             * Puede Adjuntar
+             * @default false
+             */
+            puede_adjuntar: boolean;
+        };
+        /** PqrsEvento */
+        PqrsEvento: {
+            /** Id */
+            id: number;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            fecha: string;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            /** Evento */
+            evento: string;
+            /** Estado Anterior */
+            estado_anterior: string | null;
+            /** Estado Nuevo */
+            estado_nuevo: string | null;
+            /** Comentario */
+            comentario: string | null;
+        };
+        /**
+         * PqrsGestionar
+         * @description Cambia el estado y/o registra la respuesta administrativa. Debe traer al menos uno de los dos.
+         */
+        PqrsGestionar: {
+            /** Estado */
+            estado?: ("pendiente" | "en_revision" | "en_proceso" | "resuelta") | null;
+            /** Respuesta */
+            respuesta?: string | null;
+        };
+        /** PqrsResumen */
+        PqrsResumen: {
+            /** Id */
+            id: number;
+            /** Numero */
+            numero: number;
+            /** Tipo */
+            tipo: string;
+            /** Asunto */
+            asunto: string;
+            /** Estado */
+            estado: string;
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre?: string | null;
+            sede?: components["schemas"]["SedeResumen"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Respondida */
+            respondida: boolean;
+            /**
+             * Adjuntos
+             * @default 0
+             */
+            adjuntos: number;
         };
         /** PrediccionSalida */
         PrediccionSalida: {
@@ -895,6 +2020,38 @@ export interface components {
              */
             acciones: string[];
         };
+        /** RegistroAmbiental */
+        RegistroAmbiental: {
+            /** Id */
+            id: number;
+            /**
+             * Fecha
+             * Format: date
+             */
+            fecha: string;
+            /** Venta Id */
+            venta_id: number;
+            /** Venta Numero */
+            venta_numero?: number | null;
+            sede: components["schemas"]["SedeResumen"];
+            producto: components["schemas"]["ProductoResumen"];
+            /** Categoria */
+            categoria?: string | null;
+            /** Tipo Vehiculo */
+            tipo_vehiculo: string;
+            /** Propulsion */
+            propulsion: string;
+            /** Unidades */
+            unidades: number;
+            /** Estado */
+            estado: string;
+            /** Parametrizado */
+            parametrizado: boolean;
+            /** Co2 Estimado Kg */
+            co2_estimado_kg: number | null;
+            /** Anulado En */
+            anulado_en: string | null;
+        };
         /** RegistroAuditoria */
         RegistroAuditoria: {
             /** Id */
@@ -963,6 +2120,10 @@ export interface components {
              * @default 0
              */
             alertas_resueltas: number;
+            /** Entrada Id */
+            entrada_id?: number | null;
+            /** Entrada Numero */
+            entrada_numero?: number | null;
         };
         /** ResultadoRecalculo */
         ResultadoRecalculo: {
@@ -977,6 +2138,13 @@ export interface components {
             /** Series Evaluadas */
             series_evaluadas: number;
         };
+        /** ResultadoSincronizacion */
+        ResultadoSincronizacion: {
+            /** Incorporados */
+            incorporados: number;
+            /** Calculados */
+            calculados: number;
+        };
         /** ResumenAlertas */
         ResumenAlertas: {
             /** Total */
@@ -989,6 +2157,67 @@ export interface components {
             por_prioridad: {
                 [key: string]: number;
             };
+        };
+        /** ResumenAmbiental */
+        ResumenAmbiental: {
+            /** Anio */
+            anio: number;
+            parametrizacion: components["schemas"]["Parametrizacion"];
+            mes_actual: components["schemas"]["Cifras"];
+            anio_seleccionado: components["schemas"]["Cifras"];
+            acumulado: components["schemas"]["Cifras"];
+            /** Meses */
+            meses: components["schemas"]["CifrasMes"][];
+            /** Anios */
+            anios: components["schemas"]["CifrasAnio"][];
+            /** Por Tipo */
+            por_tipo: components["schemas"]["CifrasTipo"][];
+            /** Anios Disponibles */
+            anios_disponibles: number[];
+        };
+        /** ResumenCalidad */
+        ResumenCalidad: {
+            /** No Conformidades */
+            no_conformidades: components["schemas"]["ConteoEstado"][];
+            /** Garantias */
+            garantias: components["schemas"]["ConteoEstado"][];
+            /** No Conformidades Abiertas */
+            no_conformidades_abiertas: number;
+            /** Garantias Abiertas */
+            garantias_abiertas: number;
+        };
+        /** ResumenSst */
+        ResumenSst: {
+            /**
+             * Desde
+             * Format: date
+             */
+            desde: string;
+            /** Mostradas */
+            mostradas: number;
+            /** Realizadas */
+            realizadas: number;
+            /** Omitidas */
+            omitidas: number;
+            /** Sin Responder */
+            sin_responder: number;
+            /** Cumplimiento */
+            cumplimiento: number | null;
+            /** Por Usuario */
+            por_usuario: components["schemas"]["ResumenUsuarioSst"][];
+        };
+        /** ResumenUsuarioSst */
+        ResumenUsuarioSst: {
+            /** Usuario Id */
+            usuario_id: number;
+            /** Usuario Nombre */
+            usuario_nombre: string | null;
+            /** Mostradas */
+            mostradas: number;
+            /** Realizadas */
+            realizadas: number;
+            /** Omitidas */
+            omitidas: number;
         };
         /** RevisionRecomendacion */
         RevisionRecomendacion: {
@@ -1547,6 +2776,11 @@ export interface components {
         VerificarCodigoSalida: {
             /** Session Token */
             session_token: string;
+        };
+        /** _Observacion */
+        _Observacion: {
+            /** Contenido */
+            contenido: string;
         };
     };
     responses: never;

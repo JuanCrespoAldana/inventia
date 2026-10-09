@@ -13,7 +13,7 @@ despliega el sistema. Cubre RN-009 y RNF-022 a RNF-028.
 | Enumeración de usuarios | En el ingreso: mismo mensaje y mismo coste de cálculo si el correo no existe (hash de relleno). En la recuperación: la respuesta es idéntica exista o no la cuenta | `auth_service.py` |
 | Recuperación | Código de 6 dígitos, solo se guarda su huella SHA-256, un solo uso, vence a los 15 min, máx. 5 intentos; el paso final exige un token de sesión de un solo uso | `auth_service.py`, `models/password_reset_token.py` |
 | Primer administrador | No existe registro público. La configuración inicial solo funciona mientras no haya ninguna empresa, exige `SETUP_TOKEN` (obligatorio en producción) y está protegida contra ejecuciones simultáneas | `setup_service.py`, `config.py` |
-| Autorización | 52 permisos; cada ruta exige permisos en el servidor; alcance de sede aplicado en cada consulta | `core/permisos.py`, `api/deps.py`, `core/acceso.py` |
+| Autorización | 61 permisos; cada ruta exige permisos en el servidor; alcance de sede aplicado en cada consulta | `core/permisos.py`, `api/deps.py`, `core/acceso.py` |
 | Aislamiento | `empresa_id` en todas las tablas de negocio; las consultas lo toman del contexto autenticado, nunca del cuerpo ni de la URL | `services/*` |
 | Escalada de privilegios | No se puede conceder un permiso que uno no tiene, ni crear un rol más poderoso que el propio; no se puede quitar el rol ni inhabilitar al último administrador | `rol_service.py`, `usuario_service.py` |
 | Auditoría | Accesos (exitosos y fallidos) y operaciones, con usuario, IP, resultado y `request_id`; tabla de solo inserción con disparador en PostgreSQL; nunca guarda contraseñas ni llaves | `auditoria_service.py`, `models/base.py` |
@@ -23,6 +23,8 @@ despliega el sistema. Cubre RN-009 y RNF-022 a RNF-028.
 | CORS | Solo `FRONTEND_URL` y `CORS_ORIGINS`; sin credenciales (el token va en la cabecera `Authorization`, no en cookies) | `main.py` |
 | Errores | Los errores internos devuelven un mensaje genérico y un `request_id`; el detalle técnico solo queda en el registro del servidor | `core/exceptions.py` |
 | Base de datos | SSL obligatorio para servidores remotos (`DATABASE_SSL=auto`); consultas parametrizadas (SQLAlchemy) | `core/database.py` |
+| Evidencias adjuntas (SIG) | Solo JPEG, PNG, WebP y PDF, reconocidos por sus **primeros bytes** (no por extensión ni por el tipo que declara el navegador); 3 MB por archivo y 5 por registro; nombre limpiado y nunca usado como ruta; el contenido vive en la base de datos y se descarga siempre como adjunto con `nosniff`; solo lo ve quien puede ver el registro | `services/adjuntos_service.py`, `api/adjuntos.py` |
+| Historiales del SIG | `pqrs_historial`, `no_conformidad_historial`, `garantia_historial` y `entrada_observaciones` son de solo inserción (disparador) | `alembic/versions/0004_sig.py` |
 | Contenedores | Imagen del backend y de nginx sin privilegios de administrador; sin secretos en las imágenes; PostgreSQL publicado solo en `127.0.0.1` | `Dockerfile`, `docker-compose.yml` |
 | Dependencias | Versiones fijadas y archivo de bloqueo; sin cargar scripts ni fuentes de terceros en el navegador | `requirements.txt`, `package-lock.json` |
 
@@ -38,6 +40,12 @@ permisos desde la pantalla **Roles y permisos**; los cinco del sistema no se pue
 | Encargado de sede | Sede | Operar su sede (entradas, salidas, ajustes, ventas, anulaciones); solicitar, aprobar y confirmar traslados; configurar mínimos y máximos; ver y aprobar recomendaciones | Ver otras sedes, administrar usuarios, ver el consolidado |
 | Usuario de inventario | Sede | Entradas, salidas, ajustes y ventas de su sede; solicitar y confirmar traslados; consultar existencias y alertas | Anular ventas, aprobar traslados, configurar niveles, ver predicciones |
 | Analista de compras | Empresa | Consultar el consolidado, ventas y alertas; generar predicciones y recomendaciones; aprobar recomendaciones; reportes de compras | Registrar operaciones de inventario, administrar usuarios |
+
+**Sistema Integrado de Gestión (SIG).** Los nueve permisos nuevos se reparten así (D-28): todos los roles pueden enviar
+PQRS y consultar los apartados de SST, calidad y gestión ambiental; el Encargado de sede y el Usuario de inventario además
+reportan no conformidades y garantías de su sede; solo el Administrador gestiona PQRS, pausas activas, el estado de
+calidad y los parámetros ambientales. El Gerente y el Analista de compras consultan pero no reportan.
+Quien tenga `sst.gestionar` no recibe pausas activas automáticas.
 
 Las diferencias frente a la matriz de casos de uso del documento de grado están justificadas en
 [DECISIONES.md](DECISIONES.md).
@@ -62,6 +70,9 @@ relevantes para seguridad:
 | No se puede escalar privilegios | `test_no_se_puede_escalar_privilegios_creando_roles` |
 | Protección del último administrador | `test_no_se_puede_inhabilitar_al_ultimo_administrador`, `test_no_se_puede_quitar_el_rol_al_ultimo_administrador` |
 | La auditoría no guarda secretos y no se puede alterar | `test_auditoria_registra_altas_y_cambios_sin_secretos`, `test_auditoria_y_movimientos_son_de_solo_insercion` |
+| Una persona solo ve sus PQRS; solo quien gestiona ve las de todos | `test_pqrs_flujo_completo`, `test_pqrs_aisladas_entre_empresas` (SIG) |
+| Las evidencias rechazan archivos peligrosos, falsos o excesivos y respetan la visibilidad del registro | `test_adjuntos_rechaza_archivos_peligrosos_o_excesivos`, `test_adjuntos_pqrs_subir_descargar_eliminar` (SIG) |
+| Los historiales del SIG no se pueden alterar, aunque se use SQL directo | `test_migracion_del_sig_conserva_datos_se_revierte_y_protege_historiales` (PostgreSQL) |
 | Las llaves de agentes se guardan como huella, son de solo lectura y respetan alcance y sede | `test_la_llave_se_muestra_una_vez_y_solo_se_guarda_su_huella`, `test_los_agentes_son_de_solo_lectura_y_la_llave_no_sirve_en_la_api_normal`, `test_una_llave_limitada_a_una_sede_no_ve_las_demas` |
 
 ## Responsabilidades de quien despliega
@@ -103,6 +114,8 @@ Estas medidas **no** las puede resolver el código; la guía paso a paso está e
   tiempo de respuesta. El espacio de 6 dígitos es pequeño: la protección real son los 5 intentos y los 15 minutos
   de vigencia, y el límite de solicitudes por IP.
 - **La política de contraseñas no consulta listas de contraseñas filtradas.**
+- **Las evidencias del SIG no se analizan en busca de virus.** Solo se limita su tipo (por contenido), tamaño y cantidad,
+  y se entregan como descarga. Si la empresa recibe archivos de personas externas, debe añadir un análisis antivirus.
 
 ## Cómo informar una vulnerabilidad
 

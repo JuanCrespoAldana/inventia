@@ -131,3 +131,71 @@ async def test_auditoria_y_movimientos_son_de_solo_insercion():
         await _ejecutar(url, "UPDATE auditoria SET accion='x'")
     with pytest.raises(Exception, match="solo inserción"):
         await _ejecutar(url, "DELETE FROM auditoria")
+
+
+async def test_migracion_del_sig_conserva_datos_se_revierte_y_protege_historiales():
+    """0004_sig solo agrega: no toca lo existente, se puede deshacer y los historiales nuevos no se pueden alterar."""
+    url = _url_migraciones()
+    await _recrear_base(url)
+    assert _alembic(url, "upgrade", "5cb4ddecc152").returncode == 0
+    await _ejecutar(
+        url,
+        "INSERT INTO empresas(nombre) VALUES ('Empresa Heredada')",
+        "INSERT INTO sedes(empresa_id,nombre,ciudad) VALUES (1,'Norte','Bogotá')",
+        "INSERT INTO productos(empresa_id,sku,nombre,precio) VALUES (1,'A-1','Tornillo',150.5)",
+        "INSERT INTO inventario_sede(sede_id,producto_id,cantidad,stock_minimo) VALUES (1,1,100,10)",
+        "INSERT INTO usuarios(empresa_id,sede_id,nombre,email,password_hash,rol,activo) VALUES "
+        "(1,NULL,'Admin','admin@heredada.com','x','ADMIN_GENERAL',true)",
+    )
+    assert _alembic(url, "upgrade", "0003_inventia").returncode == 0
+    antes = await _consulta(url, "select count(*), coalesce(sum(delta),0) from movimientos")
+
+    r = _alembic(url, "upgrade", "head")
+    assert r.returncode == 0, r.stderr[-2000:]
+    assert await _consulta(url, "select count(*), coalesce(sum(delta),0) from movimientos") == antes
+    assert (await _consulta(url, "select count(*) from movimientos where entrada_id is not null"))[0][0] == 0
+    tablas_sig = {"entradas_inventario", "entrada_observaciones", "pqrs", "pqrs_historial", "no_conformidades",
+                  "no_conformidad_historial", "garantias", "garantia_historial", "sig_adjuntos", "sst_configuracion",
+                  "sst_actividades", "sst_pausas", "amb_configuracion", "amb_categorias", "amb_registros"}
+    existentes = {f[0] for f in await _consulta(url, "select tablename from pg_tables where schemaname='public'")}
+    assert tablas_sig <= existentes
+
+    # Historiales de solo inserción: se puede agregar, no editar ni borrar.
+    await _ejecutar(
+        url,
+        "INSERT INTO pqrs(empresa_id, numero, tipo, asunto, descripcion, usuario_id) "
+        "VALUES (1, 1, 'queja', 'Asunto', 'Descripción', 1)",
+        "INSERT INTO pqrs_historial(pqrs_id, usuario_id, evento, estado_nuevo) VALUES (1, 1, 'creacion', 'pendiente')",
+    )
+    with pytest.raises(Exception, match="solo inserción"):
+        await _ejecutar(url, "UPDATE pqrs_historial SET comentario='alterado'")
+    with pytest.raises(Exception, match="solo inserción"):
+        await _ejecutar(url, "DELETE FROM pqrs_historial")
+    # Una evidencia pertenece a un único registro.
+    with pytest.raises(Exception, match="un_solo_destino"):
+        await _ejecutar(
+            url,
+            "INSERT INTO sig_adjuntos(empresa_id, nombre, tipo_mime, tamano, sha256, contenido, subido_por) "
+            "VALUES (1, 'a.pdf', 'application/pdf', 3, 'x', 'abc', 1)",
+        )
+    # Una persona no puede tener dos pausas abiertas.
+    await _ejecutar(
+        url,
+        "INSERT INTO sst_pausas(empresa_id, usuario_id, actividad_titulo, mostrada_en, estado) VALUES (1, 1, 'Cuello', now(), 'mostrada')",
+    )
+    with pytest.raises(Exception, match="uq_sst_pausa_abierta"):
+        await _ejecutar(
+            url,
+            "INSERT INTO sst_pausas(empresa_id, usuario_id, actividad_titulo, mostrada_en, estado) VALUES (1, 1, 'Ojos', now(), 'mostrada')",
+        )
+
+    # Deshacer solo el SIG: las tablas desaparecen y lo anterior queda intacto.
+    r = _alembic(url, "downgrade", "0003_inventia")
+    assert r.returncode == 0, r.stderr[-2000:]
+    existentes = {f[0] for f in await _consulta(url, "select tablename from pg_tables where schemaname='public'")}
+    assert not (tablas_sig & existentes)
+    assert await _consulta(url, "select count(*), coalesce(sum(delta),0) from movimientos") == antes
+    columnas = {f[0] for f in await _consulta(url, "select column_name from information_schema.columns where table_name='movimientos'")}
+    assert "entrada_id" not in columnas
+    assert _alembic(url, "upgrade", "head").returncode == 0
+    assert _alembic(url, "check").returncode == 0
