@@ -30,7 +30,7 @@ pillow==13.0.0  # lo exige reportlab; se fija para builds reproducibles
 
 # --- Analítica y predicción de demanda ---
 numpy==2.5.3
-pandas==3.0.6
+pandas==3.1.0
 scipy==1.18.1
 scikit-learn==1.9.1
 statsmodels==0.15.0
