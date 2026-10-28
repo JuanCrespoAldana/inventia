@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # Etapa 1: compilar la aplicación (React + Vite + TypeScript).
-FROM node:22-alpine AS compilacion
+FROM node:26-alpine AS compilacion
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
