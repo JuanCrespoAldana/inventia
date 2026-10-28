@@ -1,10 +1,11 @@
 """SIG · observaciones de entrada, no conformidades y garantías."""
 
-from datetime import date, timedelta
+from datetime import timedelta
 
 from sqlalchemy import func, select
 
 from app.model.inventario import InventarioSede, Movimiento
+from app.util.tiempo import hoy_local
 from tests.ayuda import crear_categoria, crear_empresa, crear_producto, crear_sede, crear_usuario, existencias
 
 
@@ -113,7 +114,7 @@ async def test_observacion_de_entrada_validaciones_y_permisos(cliente, db):
 def datos_nc(producto_id, **extra):
     return {
         "producto_id": producto_id, "tipo": "dano_en_transporte", "descripcion": "Dos unidades llegaron con la carcasa rota",
-        "fecha_deteccion": date.today().isoformat(), "cantidad_afectada": 2, "referencia": "LOTE-2210", **extra,
+        "fecha_deteccion": hoy_local().isoformat(), "cantidad_afectada": 2, "referencia": "LOTE-2210", **extra,
     }
 
 
@@ -162,7 +163,7 @@ async def test_no_conformidad_nace_de_una_entrada_sin_digitar_dos_veces(cliente,
 
 async def test_no_conformidad_validaciones(cliente, db):
     admin, norte, sur, casco, bateria, ana, pedro, gerente = await escenario(cliente, db)
-    manana = (date.today() + timedelta(days=2)).isoformat()
+    manana = (hoy_local() + timedelta(days=2)).isoformat()
     assert (await ana.post("/api/sig/calidad/no-conformidades", datos_nc(casco["id"], fecha_deteccion=manana))).status_code == 422
     assert (await ana.post("/api/sig/calidad/no-conformidades", datos_nc(casco["id"], cantidad_afectada=0))).status_code == 422
     assert (await ana.post("/api/sig/calidad/no-conformidades", datos_nc(casco["id"], tipo="inventado"))).status_code == 422
@@ -242,7 +243,7 @@ async def test_no_conformidades_filtros_y_alcance_por_sede(cliente, db):
 
 
 def datos_garantia(producto_id, **extra):
-    hoy = date.today()
+    hoy = hoy_local()
     return {
         "producto_id": producto_id, "documento_tipo": "factura_compra", "documento_referencia": "FC-1020",
         "fecha_compra": (hoy - timedelta(days=30)).isoformat(), "garantia_hasta": (hoy + timedelta(days=300)).isoformat(),
@@ -270,9 +271,9 @@ async def test_garantia_ciclo_completo_con_historial(cliente, db):
     r = await admin.patch(base, {"estado": "aprobada"})
     assert r.status_code == 400 and r.json()["codigo"] == "respuesta_requerida"
     r = await admin.patch(base, {"estado": "enviada_proveedor"})
-    assert r.json()["estado"] == "enviada_proveedor" and r.json()["fecha_envio_proveedor"] == date.today().isoformat()
+    assert r.json()["estado"] == "enviada_proveedor" and r.json()["fecha_envio_proveedor"] == hoy_local().isoformat()
     r = await admin.patch(base, {"estado": "aprobada", "respuesta_proveedor": "Aprobamos el cambio de la batería"})
-    assert r.json()["estado"] == "aprobada" and r.json()["fecha_respuesta_proveedor"] == date.today().isoformat()
+    assert r.json()["estado"] == "aprobada" and r.json()["fecha_respuesta_proveedor"] == hoy_local().isoformat()
     r = await admin.patch(base, {"estado": "solucionada"})
     assert r.status_code == 400 and r.json()["codigo"] == "solucion_requerida"
     r = await admin.patch(base, {"estado": "solucionada", "solucion": "Entregamos una batería nueva al cliente"})
@@ -307,9 +308,9 @@ async def test_garantia_con_documentos_de_entrada_y_venta(cliente, db):
     r = await ana.post("/api/sig/calidad/garantias", datos_garantia(casco["id"], documento_tipo="entrada_inventario", documento_referencia=None, entrada_id=e["entrada_id"]))
     assert r.status_code == 400 and r.json()["codigo"] == "producto_fuera_de_entrada"
     assert (await ana.post("/api/sig/calidad/garantias", datos_garantia(bateria["id"], documento_referencia=None))).status_code == 422
-    futuro = (date.today() + timedelta(days=3)).isoformat()
+    futuro = (hoy_local() + timedelta(days=3)).isoformat()
     assert (await ana.post("/api/sig/calidad/garantias", datos_garantia(bateria["id"], fecha_compra=futuro))).status_code == 422
-    vencida = datos_garantia(bateria["id"], garantia_hasta=(date.today() - timedelta(days=1)).isoformat())
+    vencida = datos_garantia(bateria["id"], garantia_hasta=(hoy_local() - timedelta(days=1)).isoformat())
     assert (await ana.post("/api/sig/calidad/garantias", vencida)).json()["en_garantia"] is False
 
 

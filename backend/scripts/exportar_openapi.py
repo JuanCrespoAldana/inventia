@@ -11,7 +11,9 @@ import os
 import sys
 from pathlib import Path
 
-os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+# No se conecta: crear el motor es perezoso. Se usa el controlador de PostgreSQL (asyncpg) porque va en requirements.txt;
+# aiosqlite solo se instala con requirements-dev.txt y en CI este script corre solo con las dependencias de producción.
+os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/inventia")
 os.environ.setdefault("SECRET_KEY", "x" * 48)
 os.environ.setdefault("ENVIRONMENT", "test")
 

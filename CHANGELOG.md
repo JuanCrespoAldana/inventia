@@ -66,6 +66,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 
 ### Corregido
 
+- **Integración continua (GitHub Actions):** el generador de tipos del frontend (`backend/scripts/exportar_openapi.py`) usaba
+  SQLite por defecto, que solo se instala con `requirements-dev.txt`; ahora usa el controlador de PostgreSQL, que va en
+  `requirements.txt`, y corre solo con las dependencias de producción. Además, ocho pruebas de calidad
+  (`tests/test_sig_calidad_entradas.py`) calculaban «hoy» con la hora del computador en vez de la zona de la empresa, por lo que
+  fallaban cuando el servidor está en UTC y en Colombia ya son más de las 7 p. m.; ahora usan `hoy_local()`.
 - **Reportes recortados:** cuando la vista previa (200 filas) o el PDF (1.000 filas) se recortan, el resumen suma solo las filas mostradas. Ahora la vista previa, el PDF y la hoja de resumen del Excel lo dicen, y el aviso de la vista previa ya no afirma «primeros 200 de 200 registros».
 - **Un número enorme en la URL ya no produce error 500** (D-37): un identificador o filtro que no cabe en la base de
   datos (p. ej. `?numero=99999999999`) se responde con 422 en unas 30 rutas. Lo encontró el fuzzing con Schemathesis; el
