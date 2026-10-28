@@ -14,7 +14,7 @@ ENV VITE_API_URL=$VITE_API_URL VITE_LOCALE=$VITE_LOCALE VITE_MONEDA=$VITE_MONEDA
 RUN npm run build
 
 # Etapa 2: nginx sin privilegios sirviendo los archivos estáticos.
-FROM nginxinc/nginx-unprivileged:1.27-alpine AS final
+FROM nginxinc/nginx-unprivileged:1.31-alpine AS final
 COPY --from=compilacion /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080
