@@ -135,6 +135,9 @@ function ResumenUltima({ e }: { e: Ejecucion }) {
               <dt className="text-xs text-ink-faint">Error global (WAPE)</dt>
               <dd className="tabular mt-1 font-display text-2xl font-semibold">{r.wape_global == null ? "—" : porcentaje(r.wape_global * 100)}</dd>
               <dd className="text-xs text-ink-faint">Línea base: {r.wape_linea_base_global == null ? "—" : porcentaje(r.wape_linea_base_global * 100)}</dd>
+              <dd className="tabular text-xs text-ink-faint">
+                RMSE {r.rmse_global == null ? "—" : `${decimal(r.rmse_global, 2)} u./día`} · MAPE {r.mape_global == null ? "—" : porcentaje(r.mape_global * 100)}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-ink-faint">Mejora frente a la línea base</dt>
@@ -242,6 +245,8 @@ function TablaOmitidas({ ejecucionId }: { ejecucionId: number }) {
         descripcion="Series omitidas de la última ejecución"
         idDe={(o) => `${o.sede_id}-${o.producto_id}`}
         filas={detalle.data ? filas : undefined}
+        paginar={15}
+        reiniciarCon={String(ejecucionId)}
         cargando={detalle.isPending}
         error={detalle.error}
         onReintentar={() => detalle.refetch()}
@@ -300,7 +305,7 @@ function ComoSeCalcula() {
           <li>Se exige historia mínima{c ? `: ${c.minimo_dias_historia} días, con ventas en al menos ${c.minimo_dias_con_ventas}` : ""}. Si no se cumple, la serie se omite y se informa el motivo.</li>
           <li>Se comparan varios modelos con una validación temporal: se entrena con el pasado y se evalúa en los días siguientes (nunca se mezcla futuro con pasado).</li>
           <li>La <strong className="text-ink">línea base</strong> es el promedio de los últimos 28 días. Un modelo avanzado solo se elige si reduce el error{c ? ` al menos ${c.mejora_minima_modelo_avanzado_pct} %` : ""} frente al mejor modelo simple.</li>
-          <li>El error se reporta como WAPE (error absoluto ponderado) y MAE; el rango del 80 % describe la incertidumbre de la demanda del período.</li>
+          <li>El error se reporta como WAPE (error absoluto ponderado, la métrica con la que se elige el modelo), MAE, RMSE y MAPE. El MAPE solo se calcula sobre los días con ventas porque no existe cuando la venta es cero. El rango del 80 % describe la incertidumbre de la demanda del período.</li>
           <li>La <strong className="text-ink">confianza</strong> (alta, media o baja) resume cuánta historia hay y qué tan estable fue el error en la validación.</li>
         </ol>
         {modelos.isPending && <p>Cargando el catálogo de modelos…</p>}

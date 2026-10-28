@@ -1,0 +1,247 @@
+{
+  "ventana_dias": 56,
+  "revision_dias": 7,
+  "transito_traslado_dias": 2,
+  "plazo_entrega_dias": 7,
+  "dias_seguridad": 3,
+  "dias_cobertura_objetivo": 21,
+  "series": 105,
+  "series_con_pronostico": 103,
+  "politicas": {
+    "A": {
+      "nombre": "Sin reposición",
+      "demanda_total": 9708,
+      "ventas_atendidas": 2535,
+      "ventas_perdidas": 7173,
+      "nivel_de_servicio": 0.2611248454882571,
+      "dias_con_quiebre": 2467,
+      "dias_serie": 5880,
+      "fraccion_dias_con_quiebre": 0.4195578231292517,
+      "series_con_quiebre": 96,
+      "series": 105,
+      "inventario_promedio_unidades": 608.6071428571429,
+      "dias_de_inventario": 3.5107128141738775,
+      "perdidas_por_semana": [
+        212.0,
+        382.0,
+        807.0,
+        1069.0,
+        1125.0,
+        1192.0,
+        1181.0,
+        1205.0
+      ],
+      "compras": 0,
+      "unidades_compradas": 0,
+      "traslados": 0,
+      "unidades_trasladadas": 0,
+      "recomendaciones": 0,
+      "aceptadas": 0
+    },
+    "B": {
+      "nombre": "Mínimos y máximos fijos",
+      "demanda_total": 9708,
+      "ventas_atendidas": 8601,
+      "ventas_perdidas": 1107,
+      "nivel_de_servicio": 0.8859703337453646,
+      "dias_con_quiebre": 428,
+      "dias_serie": 5880,
+      "fraccion_dias_con_quiebre": 0.0727891156462585,
+      "series_con_quiebre": 82,
+      "series": 105,
+      "inventario_promedio_unidades": 3715.910714285714,
+      "dias_de_inventario": 21.43500206015657,
+      "perdidas_por_semana": [
+        212.0,
+        116.0,
+        370.0,
+        212.0,
+        49.0,
+        0.0,
+        42.0,
+        106.0
+      ],
+      "compras": 118,
+      "unidades_compradas": 8580,
+      "traslados": 0,
+      "unidades_trasladadas": 0,
+      "recomendaciones": 118,
+      "aceptadas": 118
+    },
+    "C": {
+      "nombre": "Reglas de Inventia con promedio de 28 días",
+      "demanda_total": 9708,
+      "ventas_atendidas": 9102,
+      "ventas_perdidas": 606,
+      "nivel_de_servicio": 0.9375772558714462,
+      "dias_con_quiebre": 215,
+      "dias_serie": 5880,
+      "fraccion_dias_con_quiebre": 0.036564625850340135,
+      "series_con_quiebre": 68,
+      "series": 105,
+      "inventario_promedio_unidades": 2557.1428571428573,
+      "dias_de_inventario": 14.750721054800165,
+      "perdidas_por_semana": [
+        158.0,
+        72.0,
+        108.0,
+        19.0,
+        33.0,
+        85.0,
+        84.0,
+        47.0
+      ],
+      "compras": 220,
+      "unidades_compradas": 9579,
+      "traslados": 29,
+      "unidades_trasladadas": 319,
+      "recomendaciones": 249,
+      "aceptadas": 249
+    },
+    "D": {
+      "nombre": "Inventia completo (pronóstico del sistema)",
+      "demanda_total": 9708,
+      "ventas_atendidas": 9106,
+      "ventas_perdidas": 602,
+      "nivel_de_servicio": 0.9379892871858261,
+      "dias_con_quiebre": 214,
+      "dias_serie": 5880,
+      "fraccion_dias_con_quiebre": 0.03639455782312925,
+      "series_con_quiebre": 67,
+      "series": 105,
+      "inventario_promedio_unidades": 2599.3214285714284,
+      "dias_de_inventario": 14.99402554594149,
+      "perdidas_por_semana": [
+        161.0,
+        70.0,
+        102.0,
+        17.0,
+        41.0,
+        105.0,
+        90.0,
+        16.0
+      ],
+      "compras": 212,
+      "unidades_compradas": 9577,
+      "traslados": 9,
+      "unidades_trasladadas": 308,
+      "recomendaciones": 221,
+      "aceptadas": 221
+    }
+  },
+  "reduccion_de_ventas_perdidas_vs": {
+    "A": {
+      "estimado": 0.676864441697569,
+      "ic95": [
+        0.6188616225388429,
+        0.7260441056850645
+      ]
+    },
+    "B": {
+      "estimado": 0.05201895344046147,
+      "ic95": [
+        0.03358378181119826,
+        0.06985367459297143
+      ]
+    },
+    "C": {
+      "estimado": 0.00041203131437989287,
+      "ic95": [
+        -0.008779181771673233,
+        0.009887126084260447
+      ]
+    }
+  },
+  "sensibilidad_a_la_aceptacion": [
+    {
+      "politica": "B",
+      "aceptacion": 1.0,
+      "corridas": 1,
+      "nivel_de_servicio_medio": 0.8859703337453646,
+      "nivel_de_servicio_min": 0.8859703337453646,
+      "nivel_de_servicio_max": 0.8859703337453646,
+      "ventas_perdidas_medias": 1107.0,
+      "fraccion_dias_con_quiebre_media": 0.0727891156462585
+    },
+    {
+      "politica": "C",
+      "aceptacion": 1.0,
+      "corridas": 1,
+      "nivel_de_servicio_medio": 0.9375772558714462,
+      "nivel_de_servicio_min": 0.9375772558714462,
+      "nivel_de_servicio_max": 0.9375772558714462,
+      "ventas_perdidas_medias": 606.0,
+      "fraccion_dias_con_quiebre_media": 0.036564625850340135
+    },
+    {
+      "politica": "D",
+      "aceptacion": 1.0,
+      "corridas": 1,
+      "nivel_de_servicio_medio": 0.9379892871858261,
+      "nivel_de_servicio_min": 0.9379892871858261,
+      "nivel_de_servicio_max": 0.9379892871858261,
+      "ventas_perdidas_medias": 602.0,
+      "fraccion_dias_con_quiebre_media": 0.03639455782312925
+    },
+    {
+      "politica": "B",
+      "aceptacion": 0.7,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.8388270841917319,
+      "nivel_de_servicio_min": 0.814997939843428,
+      "nivel_de_servicio_max": 0.8604243922538113,
+      "ventas_perdidas_medias": 1564.6666666666667,
+      "fraccion_dias_con_quiebre_media": 0.10089002267573696
+    },
+    {
+      "politica": "C",
+      "aceptacion": 0.7,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.86509408048345,
+      "nivel_de_servicio_min": 0.8294190358467244,
+      "nivel_de_servicio_max": 0.9016275236918005,
+      "ventas_perdidas_medias": 1309.6666666666667,
+      "fraccion_dias_con_quiebre_media": 0.0782312925170068
+    },
+    {
+      "politica": "D",
+      "aceptacion": 0.7,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.8667799752781211,
+      "nivel_de_servicio_min": 0.8372476308199424,
+      "nivel_de_servicio_max": 0.8929748660898228,
+      "ventas_perdidas_medias": 1293.3,
+      "fraccion_dias_con_quiebre_media": 0.0791609977324263
+    },
+    {
+      "politica": "B",
+      "aceptacion": 0.4,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.7299100398296937,
+      "nivel_de_servicio_min": 0.6677997527812114,
+      "nivel_de_servicio_max": 0.7875978574371653,
+      "ventas_perdidas_medias": 2622.0333333333333,
+      "fraccion_dias_con_quiebre_media": 0.1657596371882086
+    },
+    {
+      "politica": "C",
+      "aceptacion": 0.4,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.7351600054937509,
+      "nivel_de_servicio_min": 0.6837659662134322,
+      "nivel_de_servicio_max": 0.7863617634940255,
+      "ventas_perdidas_medias": 2571.0666666666666,
+      "fraccion_dias_con_quiebre_media": 0.1521938775510204
+    },
+    {
+      "politica": "D",
+      "aceptacion": 0.4,
+      "corridas": 30,
+      "nivel_de_servicio_medio": 0.742398022249691,
+      "nivel_de_servicio_min": 0.6843840131850021,
+      "nivel_de_servicio_max": 0.7875978574371653,
+      "ventas_perdidas_medias": 2500.8,
+      "fraccion_dias_con_quiebre_media": 0.15327664399092975
+    }
+  ]
+}

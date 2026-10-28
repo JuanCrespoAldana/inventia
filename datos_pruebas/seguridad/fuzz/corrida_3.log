@@ -1,0 +1,164 @@
+Schemathesis v4.32.5
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8002/api/openapi.json (in
+ 0.81s)
+
+     Base URL:         http://127.0.0.1:8002/
+     Specification:    Open API 3.1.0
+     Operations:       116 selected / 131 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.10s)
+
+     ⏭  116 skipped
+
+ ✅  Coverage (in 38.38s)
+
+     ✅ 116 passed
+
+ ✅  Fuzzing (in 783.64s)
+
+     ✅ 116 passed
+
+ ✅  Stateful (in 77.71s)
+
+     Scenarios:    1099
+     API Links:    12 covered / 407 selected / 407 total
+
+     ✅ 1099 passed
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 21 operations returned only 401/403 responses
+
+401 Unauthorized (21 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/adjuntos
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/sig/pqrs/{pqrs_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/pqrs
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - PUT /api/sig/ambiental/factor-red
+
+💡 Ensure valid authentication credentials are set via `--auth` or `-H`
+
+Missing test data: 16 operations repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+No links point to these operations - nothing in the schema appears to supply the data they need (2 operations):
+  - GET /api/sig/adjuntos
+  - POST /api/sig/adjuntos
+
+💡 Schemathesis found no operation that creates this data - create it outside the test run and supply the identifiers in your config file
+
+Reachable via links, but stateful testing never reached them (8 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/sig/pqrs/{pqrs_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+
+💡 Raise `phases.stateful.max-steps` or run longer so stateful testing reaches these operations
+
+Reached via links, but the linked data was not usable (6 operations):
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+
+💡 Check the operations that create this data - their responses do not yield usable identifiers
+
+Schema validation mismatch: 39 operations mostly rejected generated data due to validation errors, indicating schema constraints don't match API validation
+
+  - DELETE /api/roles/{rol_id}
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/inventario
+  - GET /api/sig/adjuntos
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/no-conformidades/{nc_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/categorias
+  - POST /api/integraciones/llaves
+  - POST /api/inventario/ajustes
+  - POST /api/inventario/entradas
+  - POST /api/inventario/entradas/{entrada_id}/observaciones
+  - POST /api/inventario/salidas
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/roles
+  - POST /api/sedes
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/calidad/no-conformidades
+  - POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones
+  - POST /api/sig/pqrs
+  - POST /api/sig/sst/actividades
+  - POST /api/traslados
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - POST /api/usuarios/{usuario_id}/restablecer-password
+  - POST /api/ventas
+  - POST /api/ventas/{venta_id}/anular
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}
+  - PUT /api/roles/{rol_id}/permisos
+  - PUT /api/sig/ambiental/factor-red
+  - PUT /api/usuarios/{usuario_id}
+
+💡 Check your schema constraints - API validation may be stricter than documented
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 116/131
+  Tested: 116
+
+Test Phases:
+  ⏭  Examples
+  ✅ Coverage
+  ✅ Fuzzing
+  ✅ Stateful
+
+Warnings:
+  ⚠️ Authentication failed: 21 operations returned only 401/403 responses
+  ⚠️ Missing test data: 16 operations repeatedly returned 404 responses
+  ⚠️ Schema validation mismatch: 39 operations mostly rejected generated data
+
+Test cases:
+  80135 generated, 80135 passed
+
+Reports:
+  - JUnit: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/junit-20261026T204326Z.xml
+  - NDJSON: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/ndjson-20261026T204326Z.ndjson
+
+Seed: 20261026
+
+============================ 3 warnings in 900.02s =============================

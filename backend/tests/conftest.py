@@ -34,11 +34,11 @@ from httpx import ASGITransport, AsyncClient  # noqa: E402
 from sqlalchemy import event, text  # noqa: E402
 from sqlalchemy.ext.asyncio import async_sessionmaker  # noqa: E402
 
-import app.core.database as bd  # noqa: E402
-import app.models  # noqa: E402,F401  (registra todas las tablas)
-from app.core.limiter import limiter  # noqa: E402
+import app.config.database as bd  # noqa: E402
+import app.model  # noqa: E402,F401  (registra todas las tablas)
 from app.main import app  # noqa: E402
-from app.models.base import Base  # noqa: E402
+from app.model.base import Base  # noqa: E402
+from app.security.limiter import limiter  # noqa: E402
 
 
 def pytest_collection_modifyitems(config, items):

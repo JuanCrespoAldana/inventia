@@ -1,5 +1,6 @@
 """Modelos de pronóstico, validación temporal y reglas de calidad (sin base de datos)."""
 
+import math
 from datetime import date, timedelta
 
 import numpy as np
@@ -94,6 +95,32 @@ def test_sin_ventas_en_la_validacion_el_wape_no_existe_pero_si_el_mae():
     assert m.wape is None and m.sesgo is None and m.mae > 0
 
 
+def test_rmse_y_mape_se_calculan_con_la_validacion_temporal():
+    y = np.array([10.0] * 35 + [20.0] * 7)  # mismo caso: solo el 3.er pliegue falla (predice 10, ocurre 20)
+    m = evaluacion.validar(modelos.POR_NOMBRE["media_7"], y, 7, 0)
+    assert m.suma_error_cuad == pytest.approx(700.0)  # 7 días con error de 10 unidades
+    assert m.rmse == pytest.approx(math.sqrt(700 / 21))
+    assert m.rmse > m.mae  # el RMSE castiga más los errores concentrados que el MAE
+    assert m.n_dias_con_ventas == 21 and m.suma_error_pct == pytest.approx(3.5)  # 7 días × |10-20|/20
+    assert m.mape == pytest.approx(3.5 / 21)
+
+
+def test_el_mape_ignora_los_dias_sin_ventas_y_el_wape_los_incluye():
+    y = np.array([10.0] * 28 + [10, 0, 10, 0, 10, 0, 10])  # en el último pliegue hay 3 días sin ventas
+    m = evaluacion.validar(modelos.POR_NOMBRE["media_7"], y, 7, 0)
+    assert m.n_pliegues == 2 and m.n_dias_validados == 14
+    assert m.n_dias_con_ventas == 11  # 7 del primer pliegue + 4 del segundo
+    assert m.mape == pytest.approx(0.0)  # en los días con ventas el modelo acertó
+    assert m.wape == pytest.approx(30 / 110)  # pero falló en los 3 días vacíos (3 × 10 unidades)
+    assert m.rmse == pytest.approx(math.sqrt(300 / 14))
+
+
+def test_sin_ventas_en_la_validacion_el_mape_no_existe_pero_el_rmse_si():
+    y = np.array([10.0] * 21 + [0.0] * 14)
+    m = evaluacion.validar(modelos.POR_NOMBRE["media_28"], y, 7, 0)
+    assert m.mape is None and m.n_dias_con_ventas == 0 and m.rmse > 0
+
+
 # ------------------------------------------------------------------------------ calidad de datos
 def test_historia_insuficiente_se_omite_con_motivo():
     r = pronosticar_serie(serie(semanal(n=20)), 14)
@@ -138,10 +165,30 @@ def test_con_estacionalidad_gana_un_modelo_mejor_que_la_linea_base():
     assert r.modelo != modelos.LINEA_BASE and not r.es_linea_base
     m = r.metricas
     assert m["wape"] < m["wape_linea_base"] and m["mejora_vs_linea_base_pct"] > 5
+    assert m["rmse"] is not None and m["rmse_linea_base"] is not None and m["mape"] is not None
+    assert all({"wape", "mae", "rmse", "mape"} <= set(c) for c in m["candidatos"])
     assert m["n_pliegues"] >= 2 and r.confianza in ("media", "alta")
     # El intervalo de 80 % rodea el pronóstico y nunca es negativo
     assert 0 <= r.limite_inferior <= r.demanda_total <= r.limite_superior
     assert len(r.pronostico) == 14 and r.fecha_inicio == LUNES + timedelta(days=120)  # al día siguiente del último dato
+
+
+def test_el_margen_del_intervalo_sigue_la_formula_calibrada(monkeypatch):
+    """Margen = z · escala · σ · h^exponente (constantes de las pruebas fuera de muestra, docs/PREDICCION.md §11)."""
+    y = semanal(n=140)
+    monkeypatch.setattr(pipeline, "ESCALA_INTERVALO", 0.4)
+    mitad = pronosticar_serie(serie(y), 14)
+    monkeypatch.setattr(pipeline, "ESCALA_INTERVALO", 0.8)
+    entero = pronosticar_serie(serie(y), 14)
+    margen_mitad = mitad.limite_superior - mitad.demanda_total
+    margen_entero = entero.limite_superior - entero.demanda_total
+    assert mitad.modelo == entero.modelo and mitad.demanda_total == entero.demanda_total  # no cambia el pronóstico
+    assert margen_mitad > 0
+    assert margen_entero == pytest.approx(2 * margen_mitad, rel=0.01)
+    # Con el exponente por defecto el margen crece más rápido que √h
+    monkeypatch.setattr(pipeline, "EXPONENTE_HORIZONTE_INTERVALO", 0.5)
+    raiz = pronosticar_serie(serie(y), 14)
+    assert (raiz.limite_superior - raiz.demanda_total) < margen_entero
 
 
 def test_el_modelo_avanzado_solo_gana_si_supera_a_los_simples_por_el_margen(monkeypatch):
@@ -174,6 +221,15 @@ def test_resumen_global_pondera_por_volumen_y_cuenta_omitidas():
     real = sum(r.metricas["suma_real"] for r in buenas)
     assert resumen["wape_global"] == pytest.approx(err / real, abs=1e-4)
     assert resumen["wape_global"] < resumen["wape_linea_base_global"]
+    # RMSE y MAPE globales se acumulan desde las sumas de cada serie (no es el promedio de los promedios)
+    dias = sum(r.metricas["dias_validados"] for r in buenas)
+    cuad = sum(r.metricas["suma_error_cuad"] for r in buenas)
+    dias_pct = sum(r.metricas["dias_validados_con_ventas"] for r in buenas)
+    pct = sum(r.metricas["suma_error_pct"] for r in buenas)
+    assert resumen["rmse_global"] == pytest.approx(math.sqrt(cuad / dias), abs=1e-3)
+    assert resumen["mape_global"] == pytest.approx(pct / dias_pct, abs=1e-3)
+    assert resumen["rmse_global"] < resumen["rmse_linea_base_global"]
+    assert set(resumen) >= {"rmse_linea_base_global", "mape_linea_base_global"}
 
 
 def test_sin_tiempo_solo_se_comparan_modelos_simples_y_se_advierte(monkeypatch):

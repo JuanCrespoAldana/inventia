@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant U as Analista<br/>de compras
+    participant W as Aplicación<br/>web
+    participant A as API
+    participant T as Tarea en<br/>segundo plano
+    participant ML as Módulo de<br/>predicción
+    participant B as PostgreSQL
+    U->>W: Solicita una predicción
+    W->>A: POST /api/predicciones/ejecutar
+    A->>B: Crea la ejecución «en_cola»<br/>(una sola activa por empresa)
+    A-->>W: 202 con el id de la ejecución
+    A--)T: Programa la ejecución
+    T->>B: Lee las series diarias de venta<br/>de cada sede y producto
+    T->>ML: Series, existencias y horizonte
+    ML->>ML: Depura, valida y elige el modelo
+    ML-->>T: Demanda, intervalo del 80 %,<br/>confianza y métricas por serie
+    T->>B: Guarda las predicciones y marca<br/>la ejecución «completada»
+    loop mientras no termine
+        W->>A: GET /api/predicciones/ejecuciones/{id}
+        A-->>W: estado
+    end
+    Note over W,B: El módulo de predicción no toca la base de datos: recibe las series y devuelve resultados

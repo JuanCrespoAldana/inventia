@@ -1,0 +1,60 @@
+// Figura: Modelo entidad-relación conceptual del núcleo de Inventia (notación de pata de gallo).
+digraph mer {
+  graph [rankdir=LR, fontname="Inter", nodesep=0.3, ranksep=0.55, pad=0.3, bgcolor="white", splines=true];
+  node  [shape=plain, fontname="Inter"];
+  edge  [color="#52514e", fontname="Inter", fontsize=9, fontcolor="#184f95", arrowtail=crowodot, arrowhead=tee, dir=both, arrowsize=0.75, penwidth=1.0, labeldistance=0, labelfloat=false];
+
+  // Entidades: nombre y atributos principales
+  empresa    [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>EMPRESA</b></font></td></tr><tr><td align="left"><font point-size="9">nombre · identificación · ciudad<br/>parámetros de inventario</font></td></tr></table>>];
+  sede       [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>SEDE</b></font></td></tr><tr><td align="left"><font point-size="9">nombre · ciudad · dirección<br/>activa</font></td></tr></table>>];
+  usuario    [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>USUARIO</b></font></td></tr><tr><td align="left"><font point-size="9">nombre · correo · contraseña (hash)<br/>activo · bloqueo por intentos</font></td></tr></table>>];
+  rol        [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>ROL</b></font></td></tr><tr><td align="left"><font point-size="9">nombre · alcance (empresa o sede)</font></td></tr></table>>];
+  permiso    [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>PERMISO</b></font></td></tr><tr><td align="left"><font point-size="9">código · módulo · descripción</font></td></tr></table>>];
+  categoria  [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>CATEGORÍA</b></font></td></tr><tr><td align="left"><font point-size="9">nombre · activa</font></td></tr></table>>];
+  producto   [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>PRODUCTO</b></font></td></tr><tr><td align="left"><font point-size="9">código · nombre · unidad<br/>costo · precio de venta</font></td></tr></table>>];
+  existencia [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>EXISTENCIA POR SEDE</b></font></td></tr><tr><td align="left"><font point-size="9">cantidad · stock mínimo · stock máximo</font></td></tr></table>>];
+  movimiento [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>MOVIMIENTO</b></font></td></tr><tr><td align="left"><font point-size="9">tipo · variación · saldo anterior y posterior<br/>fecha (solo inserción)</font></td></tr></table>>];
+  alerta     [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>ALERTA</b></font></td></tr><tr><td align="left"><font point-size="9">tipo · prioridad · estado</font></td></tr></table>>];
+  venta      [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>VENTA</b></font></td></tr><tr><td align="left"><font point-size="9">número · fecha · total · estado</font></td></tr></table>>];
+  linea_v    [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>LÍNEA DE VENTA</b></font></td></tr><tr><td align="left"><font point-size="9">cantidad · precio unitario</font></td></tr></table>>];
+  traslado   [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>TRASLADO</b></font></td></tr><tr><td align="left"><font point-size="9">número · estado · solicitud, aprobación<br/>y confirmación (quién y cuándo)</font></td></tr></table>>];
+  linea_t    [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#3b5bf0"><tr><td bgcolor="#3b5bf0"><font color="white"><b>LÍNEA DE TRASLADO</b></font></td></tr><tr><td align="left"><font point-size="9">cantidad</font></td></tr></table>>];
+  ejecucion  [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#eb6834"><tr><td bgcolor="#eb6834"><font color="white"><b>EJECUCIÓN DE PREDICCIÓN</b></font></td></tr><tr><td align="left"><font point-size="9">estado · horizonte · fecha de corte<br/>resumen de calidad</font></td></tr></table>>];
+  prediccion [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#eb6834"><tr><td bgcolor="#eb6834"><font color="white"><b>PREDICCIÓN</b></font></td></tr><tr><td align="left"><font point-size="9">demanda estimada · intervalo<br/>modelo · confianza · métricas</font></td></tr></table>>];
+  recomend   [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#eb6834"><tr><td bgcolor="#eb6834"><font color="white"><b>RECOMENDACIÓN</b></font></td></tr><tr><td align="left"><font point-size="9">tipo (compra o traslado) · cantidad<br/>prioridad · estado · justificación</font></td></tr></table>>];
+  auditoria  [label=<<table border="1" cellborder="0" cellspacing="0" cellpadding="3" color="#52514e"><tr><td bgcolor="#52514e"><font color="white"><b>AUDITORÍA</b></font></td></tr><tr><td align="left"><font point-size="9">módulo · acción · resultado · IP</font></td></tr></table>>];
+
+  // Relaciones (padre -> hijo; pata de gallo en el lado «muchos»)
+  edge [dir=both, arrowhead=crowodot, arrowtail=teetee];
+  empresa -> sede [xlabel="tiene"];
+  empresa -> usuario [xlabel="emplea"];
+  empresa -> rol [xlabel="define"];
+  empresa -> categoria [xlabel="organiza"];
+  empresa -> producto [xlabel="cataloga"];
+  empresa -> ejecucion [xlabel="lanza"];
+  empresa -> auditoria [xlabel="registra"];
+  rol -> usuario [xlabel="se asigna a"];
+  sede -> usuario [xlabel="opera en", arrowtail=teeodot, style=dashed];
+  categoria -> producto [xlabel="agrupa"];
+  sede -> existencia [xlabel="guarda"];
+  producto -> existencia [xlabel="existe en"];
+  existencia -> alerta [xlabel="genera"];
+  sede -> movimiento [xlabel="registra"];
+  producto -> movimiento [xlabel="afecta"];
+  usuario -> movimiento [xlabel="realiza"];
+  sede -> venta [xlabel="realiza"];
+  venta -> linea_v [xlabel="contiene", arrowhead=crow, arrowtail=teetee];
+  producto -> linea_v [xlabel="se vende en"];
+  venta -> movimiento [xlabel="origina", arrowtail=teeodot];
+  traslado -> linea_t [xlabel="contiene", arrowhead=crow, arrowtail=teetee];
+  producto -> linea_t [xlabel="se traslada en"];
+  traslado -> movimiento [xlabel="origina", arrowtail=teeodot];
+  sede -> traslado [xlabel="origen y destino"];
+  recomend -> traslado [xlabel="da lugar a", arrowtail=teeodot];
+  ejecucion -> prediccion [xlabel="produce"];
+  ejecucion -> recomend [xlabel="origina"];
+  producto -> prediccion [xlabel="estima"];
+  usuario -> auditoria [xlabel="actor de", arrowtail=teeodot];
+  edge [dir=both, arrowhead=crowodot, arrowtail=crowodot];
+  rol -> permiso [xlabel="otorga (N:M)", arrowhead=crowodot, arrowtail=crowodot];
+}

@@ -60,6 +60,7 @@ export default function VentaDetallePage() {
             descripcion={`Productos de la venta ${v.numero}`}
             idDe={(i) => i.producto.id}
             filas={v.items}
+            paginar={10}
             columnas={[
               { clave: "producto", encabezado: "Producto", celda: (i) => <div><span className="font-medium">{i.producto.nombre}</span><span className="block font-mono text-xs text-ink-faint">{i.producto.codigo}</span></div> },
               { clave: "cantidad", encabezado: "Cantidad", alinear: "derecha", celda: (i) => <span className="tabular">{entero(i.cantidad)}</span> },

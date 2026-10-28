@@ -124,6 +124,7 @@ export default function TrasladoDetallePage() {
               descripcion={`Productos del traslado ${t.numero}`}
               idDe={(i) => i.producto.id}
               filas={t.items}
+              paginar={10}
               columnas={[
                 { clave: "producto", encabezado: "Producto", celda: (i) => <div><span className="font-medium">{i.producto.nombre}</span><span className="block font-mono text-xs text-ink-faint">{i.producto.codigo}</span></div> },
                 { clave: "cantidad", encabezado: "Cantidad", alinear: "derecha", celda: (i) => <span className="tabular font-semibold">{entero(i.cantidad)}</span> },

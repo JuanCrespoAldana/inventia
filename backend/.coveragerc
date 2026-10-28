@@ -1,0 +1,5 @@
+# Cobertura de líneas del backend. `concurrency` es necesario para contar el código asíncrono (SQLAlchemy usa greenlets);
+# sin él la medición subestima lo ejecutado (77 % frente a 93 % medido con esta configuración, ver docs/SEGURIDAD.md).
+[run]
+source = app
+concurrency = greenlet,thread

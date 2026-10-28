@@ -85,7 +85,7 @@ erDiagram
 |---|---|---|
 | `empresas` | Empresa cliente. `configuracion` (JSON) guarda los parámetros de inventario y predicción | `identificacion` única; inhabilitar la empresa bloquea el ingreso de todos sus usuarios |
 | `sedes` | Ubicaciones de la empresa | Nombre único por empresa **sin distinguir mayúsculas** (`uq_sedes_empresa_nombre` sobre `lower(nombre)`) |
-| `permisos` | Catálogo global de permisos (código, módulo, descripción) | Se define en `app/core/permisos.py` y se sincroniza al iniciar la API |
+| `permisos` | Catálogo global de permisos (código, módulo, descripción) | Se define en `app/security/permisos.py` y se sincroniza al iniciar la API |
 | `roles` | Roles por empresa. `clave` identifica los 5 del sistema; `alcance` es `empresa` o `sede` | Nombre único por empresa sin distinguir mayúsculas; clave única por empresa; los roles del sistema no se eliminan ni cambian de permisos |
 | `rol_permisos` | Relación rol ↔ permiso | Clave compuesta; se borra en cascada con el rol |
 | `usuarios` | Cuentas de acceso | `email` único global; `password_hash` (Argon2id); `password_version` invalida tokens; `intentos_fallidos` y `bloqueado_hasta` para el bloqueo temporal; `debe_cambiar_password` para contraseñas temporales |

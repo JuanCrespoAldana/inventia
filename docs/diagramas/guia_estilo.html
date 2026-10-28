@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Guía de estilo de Inventia</title>
+<style>
+@font-face{font-family:"Space Grotesk";src:url("../../frontend/node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2") format("woff2");font-weight:300 700}
+@font-face{font-family:"Plus Jakarta Sans";src:url("../../frontend/node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");font-weight:200 800}
+:root{--bg:#0a0a0f;--surface:#131319;--surface-2:#1a1a22;--surface-3:#23232d;--line:rgb(255 255 255/.08);--line-strong:rgb(255 255 255/.16);
+--accent:#4c6fff;--accent-strong:#3b5bf0;--accent-light:#8aa3ff;--accent-dim:rgb(76 111 255/.14);--ink:#f5f6fa;--ink-dim:#a4a7b5;--ink-faint:#7b7e8c;
+--success:#34d399;--success-dim:rgb(52 211 153/.14);--warning:#fbbf24;--warning-dim:rgb(251 191 36/.14);--danger:#f87171;--danger-dim:rgb(248 113 113/.14)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",sans-serif;width:100%;padding:40px 44px 44px;-webkit-font-smoothing:antialiased}
+h1,h2,.d{font-family:"Space Grotesk",sans-serif;letter-spacing:-.015em}
+h1{font-size:34px;font-weight:600}
+.sub{color:var(--ink-dim);font-size:14px;margin-top:6px}
+h2{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-faint);margin:34px 0 14px;font-family:"Plus Jakarta Sans"}
+.fila{display:grid;gap:14px}
+.sw{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.sw .m{height:74px;border-bottom:1px solid var(--line)}
+.sw .t{padding:10px 12px 12px}.sw b{font-size:13px;display:block}.sw span{font-size:11.5px;color:var(--ink-dim);font-variant-numeric:tabular-nums;display:block;margin-top:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:0 1px 0 rgb(255 255 255/.04) inset,0 12px 32px -16px rgb(0 0 8/.6)}
+.panel p.k{font-size:11.5px;color:var(--ink-faint);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 16px;border-radius:12px;font-weight:600;font-size:14px;margin-right:10px}
+.p{background:var(--accent);color:#fff;box-shadow:0 8px 24px -10px rgb(76 111 255/.7)}
+.s{background:var(--surface-2);border:1px solid var(--line-strong)}
+.g{color:var(--ink-dim)}
+.dg{background:var(--danger-dim);color:var(--danger);border:1px solid rgb(248 113 113/.3)}
+.bd{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;box-shadow:inset 0 0 0 1px var(--line-strong);margin:0 8px 8px 0}
+.n{background:rgb(255 255 255/.06);color:var(--ink-dim)}.ac{background:var(--accent-dim);color:var(--accent-light);box-shadow:inset 0 0 0 1px rgb(76 111 255/.3)}
+.ok{background:var(--success-dim);color:var(--success);box-shadow:inset 0 0 0 1px rgb(52 211 153/.3)}.wa{background:var(--warning-dim);color:var(--warning);box-shadow:inset 0 0 0 1px rgb(251 191 36/.3)}.er{background:var(--danger-dim);color:var(--danger);box-shadow:inset 0 0 0 1px rgb(248 113 113/.3)}
+.campo{background:var(--surface-2);border:1px solid var(--line-strong);border-radius:12px;height:40px;padding:0 14px;display:flex;align-items:center;color:var(--ink-faint);font-size:14px}
+label{font-size:12.5px;font-weight:600;color:var(--ink-dim);display:block;margin-bottom:6px}
+.regla{display:flex;gap:10px;font-size:13px;color:var(--ink-dim);line-height:1.5;margin-bottom:8px}.regla i{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+.tabla{width:100%;border-collapse:collapse;font-size:13px}.tabla th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);padding:8px 10px;border-bottom:1px solid var(--line-strong)}.tabla td{padding:10px;border-bottom:1px solid var(--line)}
+.tab{font-variant-numeric:tabular-nums}
+</style></head><body>
+<div style="display:flex;align-items:center;gap:16px">
+  <svg viewBox="0 0 64 64" width="56" height="56" role="img" aria-label="Inventia"><rect width="64" height="64" rx="16" fill="#4C6FFF"/><rect x="16" y="14" width="32" height="8" rx="4" fill="#fff"/><rect x="16" y="28" width="22" height="8" rx="4" fill="#fff" fill-opacity=".85"/><rect x="16" y="42" width="12" height="8" rx="4" fill="#fff" fill-opacity=".65"/></svg>
+  <div><h1>Guía de estilo de Inventia</h1><div class="sub">Tema oscuro con un único acento azul. Valores tomados de <span style="color:var(--ink)">frontend/src/index.css</span>.</div></div>
+</div>
+
+<h2>Color</h2>
+<div class="fila" style="grid-template-columns:repeat(7,1fr)">
+  <div class="sw"><div class="m" style="background:#0a0a0f"></div><div class="t"><b>Fondo</b><span>--color-bg · #0A0A0F</span></div></div>
+  <div class="sw"><div class="m" style="background:#131319"></div><div class="t"><b>Superficie</b><span>--color-surface · #131319</span></div></div>
+  <div class="sw"><div class="m" style="background:#1a1a22"></div><div class="t"><b>Superficie 2</b><span>--color-surface-2 · #1A1A22</span></div></div>
+  <div class="sw"><div class="m" style="background:#23232d"></div><div class="t"><b>Superficie 3</b><span>--color-surface-3 · #23232D</span></div></div>
+  <div class="sw"><div class="m" style="background:#4c6fff"></div><div class="t"><b>Acento</b><span>--color-accent · #4C6FFF</span></div></div>
+  <div class="sw"><div class="m" style="background:#3b5bf0"></div><div class="t"><b>Acento fuerte</b><span>--color-accent-strong · #3B5BF0</span></div></div>
+  <div class="sw"><div class="m" style="background:#8aa3ff"></div><div class="t"><b>Acento claro</b><span>--color-accent-light · #8AA3FF</span></div></div>
+</div>
+<div class="fila" style="grid-template-columns:repeat(7,1fr);margin-top:14px">
+  <div class="sw"><div class="m" style="background:#f5f6fa"></div><div class="t"><b>Texto</b><span>--color-ink · #F5F6FA</span></div></div>
+  <div class="sw"><div class="m" style="background:#a4a7b5"></div><div class="t"><b>Texto secundario</b><span>--color-ink-dim · #A4A7B5</span></div></div>
+  <div class="sw"><div class="m" style="background:#7b7e8c"></div><div class="t"><b>Texto tenue</b><span>--color-ink-faint · #7B7E8C</span></div></div>
+  <div class="sw"><div class="m" style="background:#34d399"></div><div class="t"><b>Éxito</b><span>--color-success · #34D399</span></div></div>
+  <div class="sw"><div class="m" style="background:#fbbf24"></div><div class="t"><b>Advertencia</b><span>--color-warning · #FBBF24</span></div></div>
+  <div class="sw"><div class="m" style="background:#f87171"></div><div class="t"><b>Peligro</b><span>--color-danger · #F87171</span></div></div>
+  <div class="sw"><div class="m" style="background:linear-gradient(90deg,rgb(255 255 255/.08) 50%,rgb(255 255 255/.16) 50%)"></div><div class="t"><b>Líneas</b><span>8 % y 16 % de blanco</span></div></div>
+</div>
+
+<h2>Tipografía</h2>
+<div class="fila" style="grid-template-columns:1fr 1fr">
+  <div class="panel"><p class="k">Títulos y cifras · Space Grotesk (variable)</p>
+    <div class="d" style="font-size:40px;font-weight:600;line-height:1.1">Inventario consolidado</div>
+    <div class="d" style="font-size:22px;font-weight:500;margin-top:10px;color:var(--ink-dim)">Aa Bb Cc 0123456789</div>
+    <div class="d tab" style="font-size:30px;font-weight:600;margin-top:12px">1.284 <span style="font-size:14px;color:var(--ink-dim);font-weight:500">unidades</span></div></div>
+  <div class="panel"><p class="k">Texto de interfaz · Plus Jakarta Sans (variable)</p>
+    <div style="font-size:18px;font-weight:600">Traslados entre sedes</div>
+    <div style="font-size:14px;color:var(--ink-dim);margin-top:8px;line-height:1.6">La recomendación se genera con el historial de ventas y las existencias de cada sede. Revísela y apruébela o recházela con un comentario.</div>
+    <div style="font-size:12px;color:var(--ink-faint);margin-top:10px">Etiquetas, ayudas y pie de tabla · 12 px</div></div>
+</div>
+
+<h2>Componentes</h2>
+<div class="fila" style="grid-template-columns:1.1fr 1fr 1fr">
+  <div class="panel"><p class="k">Botones · radio de 12 px, alto 40 px (32 px en tamaño pequeño)</p>
+    <div style="margin-bottom:14px"><span class="btn p">Registrar venta</span><span class="btn s">Cancelar</span><span class="btn g">Ver detalle</span><span class="btn dg">Rechazar</span></div>
+    <p class="k" style="margin-top:18px">Estados · cápsula con color y texto (nunca solo color)</p>
+    <span class="bd n">Pendiente</span><span class="bd ac">Aprobada</span><span class="bd ok">Confirmado</span><span class="bd wa">Stock bajo</span><span class="bd er">Rechazada</span></div>
+  <div class="panel"><p class="k">Campos de formulario</p>
+    <label>Producto</label><div class="campo" style="margin-bottom:14px">Buscar por nombre o código</div>
+    <label>Cantidad</label><div class="campo tab" style="color:var(--ink)">24</div></div>
+  <div class="panel"><p class="k">Radios y elevación</p>
+    <div style="display:flex;gap:12px;align-items:flex-end">
+      <div style="width:84px;height:44px;border-radius:12px;background:var(--surface-3);border:1px solid var(--line-strong)"></div>
+      <div style="width:120px;height:84px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line-strong)"></div>
+      <div style="width:84px;height:30px;border-radius:999px;background:var(--accent-dim);box-shadow:inset 0 0 0 1px rgb(76 111 255/.3)"></div></div>
+    <div style="font-size:12px;color:var(--ink-dim);margin-top:10px;line-height:1.5">Controles 12 px · tarjetas y paneles 16 px · etiquetas y chips en cápsula.</div></div>
+</div>
+
+<h2>Tabla y reglas de uso</h2>
+<div class="fila" style="grid-template-columns:1.4fr 1fr">
+  <div class="panel"><table class="tabla"><tr><th>Producto</th><th>Sede</th><th style="text-align:right">Existencias</th><th>Estado</th></tr>
+    <tr><td>Casco integral M</td><td>Sede Norte</td><td class="tab" style="text-align:right">42</td><td><span class="bd ok" style="margin:0">Normal</span></td></tr>
+    <tr><td>Batería 48 V 20 Ah</td><td>Sede Centro</td><td class="tab" style="text-align:right">6</td><td><span class="bd wa" style="margin:0">Stock bajo</span></td></tr>
+    <tr><td>Cargador rápido 5 A</td><td>Sede Sur</td><td class="tab" style="text-align:right">0</td><td><span class="bd er" style="margin:0">Sin existencias</span></td></tr></table></div>
+  <div class="panel">
+    <div class="regla"><i></i>Un único acento (azul #4C6FFF); el éxito, la advertencia y el peligro solo comunican estado.</div>
+    <div class="regla"><i></i>Las cifras usan números tabulares para que las columnas se alineen.</div>
+    <div class="regla"><i></i>El estado siempre lleva texto además del color.</div>
+    <div class="regla"><i></i>Foco visible de 2 px en azul claro y respeto de «reducir movimiento».</div>
+    <div class="regla" style="margin-bottom:0"><i></i>Interfaz responsiva: desde 320 px hasta pantallas de escritorio.</div></div>
+</div>
+</body></html>

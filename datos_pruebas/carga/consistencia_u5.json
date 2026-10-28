@@ -1,0 +1,36 @@
+{
+  "totales": {
+    "existencias": 108,
+    "movimientos": 13799,
+    "ventas": 5228,
+    "entradas": 19
+  },
+  "resultados": [
+    {
+      "verificacion": "existencias_negativas",
+      "descripcion": "Existencias con cantidad negativa",
+      "violaciones": 0
+    },
+    {
+      "verificacion": "movimientos_aritmetica",
+      "descripcion": "Movimientos donde saldo_posterior ≠ saldo_anterior + delta",
+      "violaciones": 0
+    },
+    {
+      "verificacion": "cadenas_rotas",
+      "descripcion": "Movimientos cuyo saldo anterior no es el saldo posterior del movimiento previo (actualización perdida)",
+      "violaciones": 0
+    },
+    {
+      "verificacion": "saldo_final_distinto_de_existencia",
+      "descripcion": "Productos cuya existencia actual no coincide con el último saldo registrado",
+      "violaciones": 0
+    },
+    {
+      "verificacion": "consecutivos_repetidos",
+      "descripcion": "Consecutivos de venta repetidos dentro de una empresa",
+      "violaciones": 0
+    }
+  ],
+  "consistente": true
+}

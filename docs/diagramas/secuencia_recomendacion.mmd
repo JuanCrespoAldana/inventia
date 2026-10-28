@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant U as Analista<br/>de compras
+    participant W as Aplicación<br/>web
+    participant A as API
+    participant B as PostgreSQL
+    U->>W: Genera recomendaciones
+    W->>A: POST /api/recomendaciones/generar
+    A->>B: Lee predicciones, existencias<br/>y traslados en camino
+    A->>A: Aplica las reglas
+    A->>B: Guarda las recomendaciones «pendientes»<br/>con su justificación
+    A-->>W: Lista de recomendaciones
+    U->>W: Aprueba una recomendación
+    W->>A: POST /api/recomendaciones/{id}/aprobar
+    alt es un traslado
+        A->>B: Crea la solicitud de traslado y pasa<br/>la recomendación a «ejecutada»
+    else es un reabastecimiento
+        A->>B: Pasa la recomendación a «aprobada»<br/>(la compra se registra fuera del sistema)
+    end
+    A-->>W: 200

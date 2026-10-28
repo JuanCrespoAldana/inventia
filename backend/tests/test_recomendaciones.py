@@ -6,9 +6,9 @@ from datetime import timedelta
 import pytest
 from sqlalchemy import func, select, update
 
-from app.core.tiempo import hoy_local
-from app.models.operaciones import Traslado
-from app.models.prediccion import EjecucionPrediccion, Recomendacion
+from app.model.operaciones import Traslado
+from app.model.prediccion import EjecucionPrediccion
+from app.util.tiempo import hoy_local
 from tests.ayuda import (
     crear_categoria,
     crear_empresa,
@@ -201,7 +201,7 @@ async def test_las_recomendaciones_no_cruzan_empresas(cliente, db):
 
 
 async def test_reglas_de_calculo_con_valores_conocidos():
-    from app.services.recomendaciones_service import _calcular, _Serie
+    from app.service.recomendaciones_service import _calcular, _Serie
 
     # d = 10/día, plazo 7 + seguridad 3 -> punto de reposición 100; objetivo = 10·(7+3+21) = 310
     s = _Serie(1, 1, cantidad=80, minimo=20, maximo=None, demanda=10.0, confianza="alta", modelo="m", demanda_horizonte=140, horizonte=14)

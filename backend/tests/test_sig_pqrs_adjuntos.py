@@ -3,7 +3,7 @@
 import struct
 import zlib
 
-from tests.ayuda import crear_categoria, crear_empresa, crear_producto, crear_sede, crear_usuario
+from tests.ayuda import crear_empresa, crear_sede, crear_usuario
 
 
 def png_minimo() -> bytes:

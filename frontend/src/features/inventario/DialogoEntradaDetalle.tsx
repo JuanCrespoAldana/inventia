@@ -129,6 +129,7 @@ export function DialogoEntradaDetalle({ entradaId, onCerrar }: { entradaId: numb
                   descripcion={`Productos de la entrada ${e!.numero}`}
                   idDe={(l) => l.producto.id}
                   filas={e!.detalle_lineas}
+                  paginar={10}
                   columnas={[
                     {
                       clave: "p",

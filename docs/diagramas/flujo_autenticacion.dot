@@ -1,0 +1,51 @@
+// Figura: Flujo de autenticación y control de intentos (Graphviz; sustituye a la versión de Mermaid, ilegible al reducirla).
+digraph autenticacion {
+  graph [rankdir=TB, fontname="Inter", nodesep=0.35, ranksep=0.32, pad=0.25, bgcolor="white", splines=polyline];
+  node  [fontname="Inter", fontsize=13, shape=box, style="rounded,filled", fillcolor="#eef1ff", color="#3b5bf0", penwidth=1.3, margin="0.18,0.10"];
+  edge  [fontname="Inter", fontsize=12, color="#52514e", fontcolor="#184f95", arrowsize=0.8];
+
+  ini   [label=<<b>La persona escribe su correo<br/>y su contraseña</b>>, fillcolor="#f3f2ee", color="#52514e"];
+  d1    [label="¿Existe el usuario?", fillcolor="#fff6e0", color="#eda100"];
+  d2    [label="¿Hay un bloqueo vigente?", fillcolor="#fff6e0", color="#eda100"];
+  d3    [label="¿La contraseña es válida?\n(Argon2id)", fillcolor="#fff6e0", color="#eda100"];
+  d5    [label="¿El usuario y la empresa\nestán activos?", fillcolor="#fff6e0", color="#eda100"];
+  ok    [label="Reinicia los intentos y registra el acceso\n(auditoría: exitoso)", fillcolor="#e8f7f0", color="#1baf7a"];
+  jwt   [label=<<b>Emite el token JWT</b> (HS256)<br/>con password_version · vence en 60 min>, fillcolor="#e8f7f0", color="#1baf7a"];
+  d6    [label="¿Debe cambiar\nla contraseña?", fillcolor="#fff6e0", color="#eda100"];
+  cambio[label="Pantalla de cambio\nobligatorio"];
+  fin   [label=<<b>En cada petición</b> se valida: firma, vencimiento,<br/>password_version, usuario activo y permiso>, fillcolor="#f3f2ee", color="#52514e"];
+
+  relleno [label="Calcula un hash de relleno\n(mismo tiempo de respuesta)"];
+  suma    [label="Suma un intento fallido"];
+  d4      [label="¿Van 5 intentos?", fillcolor="#fff6e0", color="#eda100"];
+  bloquea [label="Bloquea la cuenta 15 minutos"];
+
+  e401 [label=<<b>401</b> «Correo o contraseña incorrectos»<br/>(auditoría: fallido)>, fillcolor="#fdeaea", color="#d64545"];
+  e423 [label=<<b>423</b> cuenta bloqueada<br/>(no se evalúa la contraseña)>, fillcolor="#fdeaea", color="#d64545"];
+  e403 [label=<<b>403</b> cuenta inhabilitada>, fillcolor="#fdeaea", color="#d64545"];
+
+  ini -> d1;
+  d1 -> d2 [label=" Sí"];
+  d1 -> relleno [label="No "];
+  relleno -> e401;
+  d2 -> d3 [label=" No"];
+  d2 -> e423 [label="Sí "];
+  d3 -> d5 [label=" Sí"];
+  d3 -> suma [label="No "];
+  suma -> d4;
+  d4 -> bloquea [label="Sí "];
+  d4 -> e401 [label=" No"];
+  bloquea -> e401;
+  d5 -> ok [label=" Sí"];
+  d5 -> e403 [label="No "];
+  ok -> jwt -> d6;
+  d6 -> cambio [label="Sí "];
+  d6 -> fin [label=" No"];
+  cambio -> fin;
+
+  {rank=same; d1; relleno;}
+  {rank=same; d2; e423;}
+  {rank=same; d3; suma;}
+  {rank=same; d5; d4; e403;}
+  {rank=same; d6; cambio;}
+}

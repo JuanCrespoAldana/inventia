@@ -7,9 +7,9 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 
 from alembic import context
-from app.core.config import settings
-from app.core.database import crear_engine
-from app.models import Base  # noqa: F401  (importar app.models registra todas las tablas)
+from app.config.database import crear_engine
+from app.config.settings import settings
+from app.model import Base  # noqa: F401  (importar app.model registra todas las tablas)
 
 config = context.config
 # configparser interpreta «%»: se escapa para que contraseñas con ese carácter funcionen.

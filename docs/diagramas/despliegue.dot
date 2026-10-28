@@ -1,0 +1,26 @@
+// Figura: Diagrama de despliegue con Docker Compose.
+digraph despliegue {
+  graph [rankdir=TB, fontname="Inter", fontsize=12, nodesep=0.6, ranksep=0.6, pad=0.3, bgcolor="white", compound=true];
+  node  [fontname="Inter", fontsize=11, shape=box3d, style="filled", fillcolor="#eef1ff", color="#3b5bf0", penwidth=1.2, margin="0.2,0.12"];
+  edge  [fontname="Inter", fontsize=9, color="#52514e", fontcolor="#52514e", arrowsize=0.7];
+
+  usuario [label=<<b>Equipo del usuario</b><br/>navegador web>, shape=component, fillcolor="#f3f2ee", color="#52514e"];
+  proxy   [label=<<b>Proxy HTTPS</b><br/>lo provee la empresa<br/>(TLS 1.2 o superior)>, shape=component, fillcolor="#fff6e0", color="#eda100"];
+
+  subgraph cluster_host {
+    label=<<b>Servidor (Docker Compose)</b>>; labeljust=l; style="rounded,dashed"; color="#3b5bf0"; fontcolor="#184f95";
+    frontend [label=<<b>frontend</b><br/>nginx sin privilegios<br/>puerto 8080<br/>aplicación compilada + proxy /api>];
+    backend  [label=<<b>backend</b><br/>uvicorn · FastAPI<br/>puerto 8000<br/>aplica migraciones al iniciar>];
+    db       [label=<<b>db</b><br/>postgres:16<br/>puerto 5432 (red interna)>, shape=cylinder, fillcolor="#e8f7f0", color="#1baf7a"];
+    {rank=same; db; volumen;}
+    volumen  [label=<<b>volumen</b><br/>datos de PostgreSQL>, shape=folder, fillcolor="#f3f2ee", color="#52514e"];
+  }
+  smtp [label=<<b>Servidor SMTP</b><br/>de la empresa>, shape=component, fillcolor="#fff6e0", color="#eda100"];
+
+  usuario -> proxy [label="HTTPS"];
+  proxy -> frontend [label="HTTP"];
+  frontend -> backend [label="/api"];
+  backend -> db [label="SQL"];
+  db -> volumen [style=dashed, arrowhead=none];
+  backend -> smtp [label="SMTP"];
+}

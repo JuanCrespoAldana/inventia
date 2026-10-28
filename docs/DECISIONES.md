@@ -3,7 +3,7 @@
 Registro de las decisiones técnicas y funcionales que no estaban resueltas por el documento de grado, o en las que
 la implementación se aparta de él por una razón concreta. Cada una indica el motivo, la alternativa descartada y
 dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D-28` coinciden con los citados en
-`backend/app/core/permisos.py`.
+`backend/app/security/permisos.py`.
 
 ## Índice
 
@@ -42,6 +42,12 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D
 | [D-31](#d-31) | Evidencias adjuntas guardadas en la base de datos, con límites estrictos |
 | [D-32](#d-32) | Pausas activas: el servidor decide, el navegador solo muestra |
 | [D-33](#d-33) | Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados |
+| [D-34](#d-34) | Métricas de error: el WAPE decide; RMSE y MAPE acompañan |
+| [D-35](#d-35) | Reportes en PDF con ReportLab, para leer e imprimir |
+| [D-36](#d-36) | Intervalo de predicción calibrado con datos reales de la demostración |
+| [D-37](#d-37) | Errores de entrada documentados y manejados de forma uniforme |
+| [D-38](#d-38) | Las recomendaciones se validan por simulación, no solo con pruebas unitarias |
+| [D-39](#d-39) | Estructura por capas con los nombres de carpeta de Spring y sin capa `repository` |
 
 ---
 
@@ -58,7 +64,7 @@ administrador.
 
 **Descartado.** Registro abierto con aprobación posterior (deja una superficie de ataque permanente).
 
-**Código.** `setup_service.py`, `api/setup.py`, `core/config.py`. **Pruebas.** `test_no_existe_registro_publico`,
+**Código.** `setup_service.py`, `controller/setup_controller.py`, `config/settings.py`. **Pruebas.** `test_no_existe_registro_publico`,
 `test_setup_exige_token_si_esta_definido`, `test_setup_solo_una_vez`.
 
 <a id="d-02"></a>
@@ -326,7 +332,7 @@ Las PQRS propias son visibles para quien las envió aunque no tenga `pqrs.gestio
 **Descartado.** Atar el SIG a un rol «Calidad» nuevo: añade un rol que cada empresa tendría que poblar y no resuelve
 nada que los permisos por separado no resuelvan.
 
-**Código.** `core/permisos.py`, `api/pqrs.py`, `api/calidad.py`, `api/sst.py`, `api/ambiental.py`, `bootstrap.py`.
+**Código.** `security/permisos.py`, `controller/pqrs_controller.py`, `controller/calidad_controller.py`, `controller/sst_controller.py`, `controller/ambiental_controller.py`, `bootstrap.py`.
 **Pruebas.** `test_sig_*.py` (permisos, aislamiento por empresa y por sede) y `test_sig_permisos.py` (reparto de los permisos
 nuevos en una instalación que ya existía).
 
@@ -345,7 +351,7 @@ se exige una respuesta, y la persona que la envió ya no puede añadirle adjunto
 **Descartado.** Enviar un correo por cada PQRS: exigiría un servicio SMTP siempre configurado y un manejo de reintentos
 que el resto del sistema no necesita. Queda como mejora (ver `LIMITACIONES.md`).
 
-**Código.** `models/pqrs.py`, `services/pqrs_service.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
+**Código.** `model/pqrs.py`, `service/pqrs_service.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
 
 <a id="d-30"></a>
 ## D-30 · Entradas de inventario con observaciones; las no conformidades no mueven existencias
@@ -365,7 +371,7 @@ sin que la persona vuelva a escribir los datos.
   mercancía, se hace con una salida (`deterioro`, `devolucion_proveedor`), que es una operación aparte, con sus
   propios permisos y su movimiento. Así no hay descuentos por duplicado ni existencias que cambien por un reporte.
 
-**Código.** `models/inventario.py`, `services/entradas_service.py`, `services/calidad_service.py`.
+**Código.** `model/inventario.py`, `service/entradas_service.py`, `service/calidad_service.py`.
 **Pruebas.** `test_sig_calidad_entradas.py` (la no conformidad no cambia existencias ni movimientos).
 
 <a id="d-31"></a>
@@ -385,7 +391,7 @@ en la base de datos) y solo lo ve quien puede ver ese registro.
 credenciales, costos y una dependencia nueva para un volumen pequeño de archivos). Si el volumen creciera, el servicio
 `adjuntos_service` es el único lugar que habría que cambiar.
 
-**Código.** `models/adjunto.py`, `services/adjuntos_service.py`, `api/adjuntos.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
+**Código.** `model/adjunto.py`, `service/adjuntos_service.py`, `controller/adjuntos_controller.py`. **Pruebas.** `test_sig_pqrs_adjuntos.py`.
 
 <a id="d-32"></a>
 ## D-32 · Pausas activas: el servidor decide, el navegador solo muestra
@@ -417,7 +423,7 @@ repetirse ni solaparse y sin interrumpir una operación crítica.
 **Descartado.** Decidir solo en el navegador (con `setInterval`): se duplicaría entre pestañas, se perdería al recargar
 y no habría registro confiable.
 
-**Código.** `services/sst_service.py`, `models/sst.py`, `features/sig/sst/*`, `lib/bloqueoPausas.ts`.
+**Código.** `service/sst_service.py`, `model/sst.py`, `features/sig/sst/*`, `lib/bloqueoPausas.ts`.
 **Pruebas.** `test_sig_sst.py`, `programacion.test.ts`, `PausasActivas.test.tsx`, `bloqueoPausas.test.tsx`.
 
 <a id="d-33"></a>
@@ -449,5 +455,146 @@ ventas anuladas ni contar dos veces, y contar solo las categorías configuradas 
 **Descartado.** Valores por defecto para el recorrido y el consumo (serían cifras inventadas con apariencia de dato) y
 recalcular el historial al cambiar la configuración (cambiaría cifras ya reportadas).
 
-**Código.** `models/ambiental.py`, `services/ambiental_service.py`, `services/ventas_service.py` (ganchos al registrar y
+**Código.** `model/ambiental.py`, `service/ambiental_service.py`, `service/ventas_service.py` (ganchos al registrar y
 anular), `features/sig/ambiental/*`. **Pruebas.** `test_sig_ambiental.py`, `calculos.test.ts`, `AmbientalPage.test.tsx`.
+
+<a id="d-34"></a>
+## D-34 · Métricas de error: el WAPE decide; RMSE y MAPE acompañan
+
+**Contexto.** La evaluación de modelos pedía las métricas habituales de la literatura de pronóstico (MAE, RMSE, MAPE) y
+el sistema solo informaba WAPE, MAE y sesgo.
+
+**Decisión.** Cada serie y cada ejecución guardan ahora WAPE, MAE, RMSE, MAPE y sesgo, del modelo elegido y de la
+línea base. La **elección del modelo sigue haciéndose con WAPE** (sin cambios).
+
+- **MAPE solo sobre los días con ventas.** Con venta cero el cociente |error| / real no existe, y en una sede con
+  productos de baja rotación eso ocurre casi todos los días. Calcularlo sobre todos los días lo dejaría indefinido o
+  lo inflaría con divisiones por cifras muy pequeñas. Si en la validación no hubo ningún día con ventas, el MAPE es
+  `null` y la pantalla muestra «—», nunca un 0 %.
+- **RMSE en unidades por día**, para ver si el error se concentra en pocos días grandes (RMSE mucho mayor que MAE).
+- **Globales por acumulación de sumas**, igual que el WAPE global: Σ error² / Σ días y Σ error porcentual / Σ días con
+  ventas, no el promedio de los promedios por serie.
+- **Sin migración.** Las métricas viven en columnas JSON (`predicciones.metricas`, `ejecuciones_prediccion.resumen`).
+  Las ejecuciones anteriores no tienen RMSE ni MAPE y la interfaz las muestra como «—».
+
+**Descartado.** Elegir con MAPE (sesgado por los días de venta baja y no definido con ceros) y recalcular el historial
+de ejecuciones anteriores (no se conservan las series de validación).
+
+**Código.** `ml/evaluacion.py`, `ml/pipeline.py`, `service/reportes_service.py`, `features/prediccion/*`.
+**Pruebas.** `test_ml.py`, `test_prediccion.py`, `DetalleSerieModal.test.tsx`.
+
+<a id="d-35"></a>
+## D-35 · Reportes en PDF con ReportLab, para leer e imprimir
+
+**Decisión.** `GET /api/reportes/{tipo}?formato=pdf` genera el PDF en el servidor con ReportLab (Python puro, con las
+fuentes estándar del formato, que cubren el español). Tiene encabezado con empresa, usuario, fecha y filtros, el resumen
+del reporte, la tabla con el encabezado repetido en cada página y el pie «Página X de Y». Se pone en horizontal cuando
+el reporte tiene más de seis columnas.
+
+- **Es para leer e imprimir, no para analizar:** se limita a 1.000 filas y lo dice dentro del documento. Excel y CSV
+  siguen entregando hasta 50.000 filas. El límite sale de una medición: armar el PDF cuesta unos 0,2 ms de CPU por cada
+  fila de 11 columnas (≈ 2 s para 1.000 filas, ≈ 4 s para 2.000).
+- **Se arman en un hilo aparte:** el PDF, el Excel y el CSV se generan con `asyncio.to_thread`; si se armaran dentro de
+  la corrutina, el servidor dejaría de atender al resto durante todo ese tiempo (RNF-011). *Matiz medido después:* con
+  20 usuarios consultando, una exportación de Excel de 50.000 filas (≈ 16 s) igualmente retrasó a los demás (p95 de 160 ms
+  a 2,5 s; ver [RENDIMIENTO.md](RENDIMIENTO.md#6-hallazgo-las-exportaciones-grandes-frenan-a-los-demás-usuarios)), porque
+  generar el archivo es código de Python puro que compite por el procesador. El hilo evita el bloqueo total, no el
+  retraso.
+- **Mismo permiso, mismo alcance por sede y misma auditoría** que las otras exportaciones (`formato: pdf` queda en el
+  registro).
+- **El texto de la base de datos nunca se interpreta como marcado** (se escapa), y los caracteres que la fuente
+  estándar no puede dibujar se reemplazan por «?» en lugar de aparecer como recuadros.
+- **Dependencias nuevas:** `reportlab` y `pillow` (que reportlab exige), ambas con versión fijada.
+
+**Descartado.** Convertir HTML a PDF con un navegador sin cabeza (agrega cientos de MB y un proceso externo al
+contenedor) y generar el PDF en el navegador (el reporte quedaría sin auditoría del lado del servidor).
+
+**Código.** `service/reportes_pdf.py`, `controller/reportes_controller.py`, `features/reportes/ReportesPage.tsx`.
+**Pruebas.** `test_dashboard_reportes.py` (7 pruebas de PDF), `ReportesPage.test.tsx`.
+
+<a id="d-36"></a>
+## D-36 · Intervalo de predicción calibrado con datos reales de la demostración
+
+**Decisión.** El intervalo de 80 % que muestra la interfaz se calcula como `Z₈₀ · 0,8 · σ · h^0,75` (antes
+`Z₈₀ · σ · √h`), donde σ es la desviación del error de validación diario y *h* los días del horizonte
+(`ESCALA_INTERVALO` y `EXPONENTE_HORIZONTE_INTERVALO` en `ml/pipeline.py`).
+
+**Por qué.** Al contar cuántas veces la demanda real cayó dentro del intervalo en la prueba fuera de muestra
+(`ml/evaluar_fuera_de_muestra.py`) la cobertura fue de **62 %** y no de 80 %: la fórmula con √h suponía errores
+independientes entre días y subestimaba la incertidumbre acumulada. Con los parámetros nuevos la cobertura quedó entre
+**78 % y 83 %** según el horizonte (7, 14 y 28 días).
+
+**Límites que se declaran.** Los parámetros se ajustaron con los mismos datos sintéticos con los que se verificó, de modo
+que la cobertura medida es optimista como estimación de lo que ocurriría con datos reales; deben revisarse con cada
+empresa cuando acumule historial propio. Fuera de muestra, el sistema redujo el error absoluto total frente a la línea base en solo 2 % a 4 % (relativo);
+se documenta tal cual en [`docs/PREDICCION.md`](PREDICCION.md#11-resultados-con-datos-de-demostración-rnf-030).
+
+**Código.** `ml/pipeline.py`. **Pruebas.** `test_ml.py::test_el_margen_del_intervalo_sigue_la_formula_calibrada`.
+
+<a id="d-37"></a>
+## D-37 · Errores de entrada documentados y manejados de forma uniforme
+
+**Decisión.** (1) Un número que no cabe en la base de datos (un identificador o filtro de 30 dígitos) se responde con
+**422** y el formato de error habitual, no con 500; se resuelve en un solo manejador (`exception/manejadores.py`) en lugar de
+acotar cada parámetro de las ~30 rutas afectadas. (2) El contrato OpenAPI declara el formato real de los errores 422
+(`detail` en texto, `codigo`, `errores` por campo, `request_id`), no el que FastAPI documenta por defecto.
+
+**Por qué.** Ambos hallazgos salieron de la prueba de contrato y fuzzing con Schemathesis (sección «Verificación frente a
+OWASP» de [SEGURIDAD.md](SEGURIDAD.md)): 31 operaciones respondían 500 ante enteros fuera de rango y 97 operaciones
+declaraban un cuerpo 422 distinto del real. El 500 no filtraba información (el mensaje era genérico), pero un fallo del
+servidor ante una entrada inválida es un mal manejo de condiciones excepcionales (OWASP A10:2025).
+
+**Descartado.** Limitar cada parámetro con `le=2147483647`: es fácil olvidar uno y no cubre los cuerpos JSON.
+
+**Código.** `exception/excepciones.py`; tipos del frontend regenerados (`api.gen.ts`).
+**Pruebas.** `test_setup_auth.py::test_valores_que_la_base_no_admite_responden_422_y_no_500` (PostgreSQL),
+`test_un_valor_que_no_cabe_en_la_base_se_reconoce_como_entrada_invalida`,
+`test_el_contrato_describe_el_formato_real_de_los_errores_de_validacion`.
+
+<a id="d-38"></a>
+## D-38 · Las recomendaciones se validan por simulación, no solo con pruebas unitarias
+
+**Decisión.** Además de las pruebas que comprueban que cada regla calcula lo que dice, el efecto de las recomendaciones sobre los
+quiebres de stock se evalúa repitiendo un período reciente con la demanda real de la base (`ml/simular_recomendaciones.py`) y
+comparando cuatro políticas: sin reposición, mínimos y máximos fijos, las reglas de Inventia con promedio simple y Inventia
+completo. Se reporta también qué pasa si solo se acepta una parte de las sugerencias.
+
+**Por qué.** Una prueba unitaria demuestra que la regla se aplica, no que sirva. La simulación permite medir, con un intervalo, si
+las reglas pierden menos ventas que lo que haría una pyme con niveles fijos, y separar qué parte del beneficio viene de las
+reglas y qué parte del modelo de pronóstico. Resultado con datos sintéticos (§12 de [PREDICCION.md](PREDICCION.md)): las reglas
+superan a los mínimos y máximos fijos por 5,2 puntos de la demanda (IC 95 % 3,4 a 7,0) con 30 % menos inventario; el pronóstico del
+sistema no mejora las decisiones frente al promedio de 28 días (0,0 puntos, IC −0,9 a 1,0); y con 40 % de aceptación las políticas
+son indistinguibles.
+
+**Consecuencias.** La memoria atribuye el beneficio a las reglas parametrizables y no al modelo de IA, y presenta la aceptación
+de las recomendaciones como condición del beneficio. La simulación no sustituye la evaluación con una empresa real: usa datos
+sintéticos y supuestos (plazo exacto, sin mínimos de compra ni límite de capital) declarados en el documento.
+
+**Descartado.** Presentar solo el escenario con 100 % de aceptación, que es el más favorable.
+
+**Código.** `ml/simular_recomendaciones.py`. **Resultados.** `ml/resultados/simulacion_resumen.json`.
+
+<a id="d-39"></a>
+## D-39 · Estructura por capas con los nombres de carpeta de Spring y sin capa `repository`
+
+**Decisión.** El backend sigue siendo un monolito por capas (`controller` → `service` → `model`). Las carpetas se nombran como en un
+proyecto Spring para que cualquiera que conozca ese esquema se oriente: `controller`, `dto`, `service`, `model`, `security`,
+`exception`, `specification` y `mapper`, más `config` y `util`. Los filtros dinámicos de consulta se separaron de los servicios
+(`specification/`) y las conversiones de entidad a DTO que no consultan la base se separaron también (`mapper/`). Las consultas a
+la base siguen dentro de cada servicio: no hay carpeta `repository`.
+
+**Por qué.** Los nombres anteriores (`api`, `schemas`, `models`, `services`, `core`) eran correctos pero propios del ecosistema
+FastAPI y dificultaban la lectura a quien viene de Spring. Un monolito por capas es la arquitectura adecuada para una pyme de
+pocas sedes y un equipo pequeño: una sola unidad de despliegue, transacciones simples y aislamiento por empresa en un solo lugar.
+Microservicios o una arquitectura hexagonal completa añadirían complejidad operativa sin un problema real que resolver.
+
+**Consecuencias.** El cambio fue solo de organización: no se modificó ninguna regla de negocio, ruta ni contrato (el contrato OpenAPI
+conserva las mismas rutas y operaciones) y las 214 pruebas pasan sin cambios de comportamiento. Los módulos del paquete `ml` no se
+movieron porque son cálculo puro sin base de datos.
+
+**Descartado.** Crear una capa `repository` con una clase por tabla: los servicios ejecutan cerca de 270 consultas, muchas de ellas
+uniones y agregaciones específicas de un caso de uso, y envolverlas en repositorios genéricos sería una indirección sin beneficio
+(con SQLAlchemy, la sesión ya cumple el papel de repositorio y unidad de trabajo). Se podrá extraer si el volumen de consultas
+repetidas lo justifica.
+
+**Código.** Todo `backend/app/`. **Guía.** [GUIA_ESTRUCTURA.md](GUIA_ESTRUCTURA.md).

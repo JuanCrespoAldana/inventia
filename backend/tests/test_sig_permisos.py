@@ -2,9 +2,9 @@
 
 from sqlalchemy import delete, select
 
-from app.core.permisos import PERMISOS, ROLES_POR_CLAVE
-from app.models.acceso import Permiso, Rol, RolPermiso
-from app.services.bootstrap import sincronizar_permisos
+from app.model.acceso import Permiso, Rol, RolPermiso
+from app.security.permisos import PERMISOS, ROLES_POR_CLAVE
+from app.service.bootstrap import sincronizar_permisos
 from tests.ayuda import crear_empresa
 
 CODIGOS_SIG = {p.codigo for p in PERMISOS if p.modulo.startswith("SIG")}

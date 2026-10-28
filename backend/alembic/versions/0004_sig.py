@@ -17,9 +17,10 @@ Los permisos nuevos (pqrs.*, sst.*, calidad.*, ambiental.*) los sincroniza la AP
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '0004_sig'

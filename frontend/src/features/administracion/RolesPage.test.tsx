@@ -107,3 +107,44 @@ describe("<RolesPage>", () => {
     expect(within(modulo).getByText(/1\/1/)).toBeInTheDocument();
   });
 });
+
+describe("<RolesPage> paginado", () => {
+  const MODULOS = ["Alertas", "Auditoría", "Ventas", "Productos", "Sedes", "Traslados", "Usuarios"];
+  const CATALOGO_LARGO = MODULOS.map((m, i) => ({ codigo: `m${i}.ver`, modulo: m, descripcion: `Consultar ${m.toLowerCase()}` }));
+
+  it("muestra los módulos de cinco en cinco y conserva lo marcado al cambiar de página", async () => {
+    const u = userEvent.setup();
+    vi.mocked(apiRoles.permisos).mockResolvedValue(CATALOGO_LARGO as never);
+    vi.mocked(apiRoles.listar).mockResolvedValue([rol({ id: 2, nombre: "Auxiliar", permisos: [] })] as never);
+    abrir(["roles.ver", "roles.asignar_permisos", ...CATALOGO_LARGO.map((p) => p.codigo)]);
+
+    expect(await screen.findByRole("group", { name: /Sedes/ })).toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: /Traslados/ })).not.toBeInTheDocument();
+    const nav = screen.getByRole("navigation", { name: "Paginación de módulos de permisos" });
+    expect(within(nav).getByText("1–5 de 7 módulos")).toBeInTheDocument();
+
+    await u.click(screen.getByLabelText(/Consultar alertas/));
+    await u.click(within(nav).getByRole("button", { name: "Página siguiente" }));
+    expect(await screen.findByRole("group", { name: /Traslados/ })).toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: /Sedes/ })).not.toBeInTheDocument();
+    expect(screen.getByText(/Hay cambios sin guardar/)).toBeInTheDocument();
+
+    await u.click(within(nav).getByRole("button", { name: "Página anterior" }));
+    expect(screen.getByLabelText(/Consultar alertas/)).toBeChecked();
+  });
+
+  it("pagina también la lista de roles", async () => {
+    const u = userEvent.setup();
+    const muchos = Array.from({ length: 12 }, (_, i) => rol({ id: i + 1, nombre: `Cargo ${String.fromCharCode(65 + i)}` }));
+    vi.mocked(apiRoles.listar).mockResolvedValue(muchos as never);
+    abrir(["roles.ver"]);
+
+    expect(await screen.findByRole("button", { name: /^Cargo J/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Cargo K/ })).not.toBeInTheDocument();
+    const nav = screen.getByRole("navigation", { name: "Paginación de roles" });
+    expect(within(nav).getByText("1–10 de 12 roles")).toBeInTheDocument();
+    await u.click(within(nav).getByRole("button", { name: "Página siguiente" }));
+    expect(await screen.findByRole("button", { name: /^Cargo K/ })).toBeInTheDocument();
+  });
+});
+

@@ -7,7 +7,7 @@ Los comandos funcionan igual en Windows (PowerShell), macOS y Linux salvo donde 
 
 | Herramienta | Versión | Para qué |
 |---|---|---|
-| Python | 3.13 (mínimo 3.12) | Backend |
+| Python | 3.13 (sirven 3.12 a 3.14; no sirve 3.11 ni anteriores; 3.15 sin probar) | Backend |
 | Node.js | 22 (mínimo 20) | Frontend y scripts |
 | PostgreSQL | 16 | Base de datos (local o en Docker) |
 | Docker Desktop | Opcional | Levantar PostgreSQL con un comando; despliegue completo |
@@ -20,6 +20,11 @@ Desde la raíz del repositorio:
 npm install            # instala la herramienta que lanza backend y frontend a la vez
 npm run setup          # crea backend/.venv, instala dependencias del backend y del frontend, crea backend/.env
 ```
+
+`npm run setup` busca por sí mismo un Python compatible (3.13, luego 3.12 y 3.14) aunque el que aparece por defecto en
+la terminal sea otro, y crea con él el entorno virtual. Si no encuentra ninguno, se detiene con un mensaje que explica
+cómo instalarlo (en Windows: `py install 3.13`). Las librerías de cálculo del backend fijan versiones que exigen
+Python 3.12 o superior, por eso 3.11 no sirve; 3.15 todavía no se ha probado.
 
 1. **Base de datos.** Con Docker: copie `infra/.env.example` como `infra/.env`, defina `POSTGRES_PASSWORD`, `SECRET_KEY`
    y `SETUP_TOKEN`, y ejecute
@@ -168,7 +173,7 @@ Las pruebas del backend (`backend/tests/`) se organizan por módulo:
 | `test_ml.py` | Modelos de pronóstico, validación temporal, calidad de datos |
 | `test_prediccion.py` | Ejecución de predicciones, permisos, aislamiento |
 | `test_recomendaciones.py` | Reglas de reposición y traslado, ciclo de vida |
-| `test_dashboard_reportes.py` | Panel, reportes JSON/CSV/Excel, visibilidad de auditoría |
+| `test_dashboard_reportes.py` | Panel, reportes JSON/CSV/Excel/PDF, visibilidad de auditoría |
 | `test_agentes.py` | Llaves de agentes, alcances, solo lectura |
 | `test_demo.py` | Carga de la demostración (y de los datos de ejemplo del SIG) en la empresa de la configuración inicial |
 | `test_sig_pqrs_adjuntos.py` | SIG: PQRS, historial, permisos y evidencias adjuntas |
@@ -184,7 +189,8 @@ Las pruebas del backend (`backend/tests/`) se organizan por módulo:
 
 **Backend**
 
-- Las rutas (`api/`) solo validan, exigen permisos y delegan. La lógica va en `services/`.
+- Los controladores (`controller/`) solo validan, exigen permisos y delegan. La lógica va en `service/`; los filtros dinámicos
+  de consulta en `specification/` y la conversión a DTO en `mapper/` (ver [GUIA_ESTRUCTURA.md](GUIA_ESTRUCTURA.md)).
 - Todo servicio recibe un `Contexto` y filtra por `ctx.empresa_id`. Nunca confíe en un `empresa_id` del cliente.
 - Toda operación que cambie datos registra auditoría (`auditoria_service.registrar`) en la misma transacción.
 - Los mensajes que ve el usuario van en español correcto (tildes, «ñ», signos de apertura).
@@ -213,7 +219,7 @@ Confirme `api.gen.ts` junto con el cambio. La integración continua falla si los
 
 ```bash
 cd backend
-# 1. Modifique los modelos en app/models/
+# 1. Modifique los modelos en app/model/
 # 2. Genere la migración (revísela siempre antes de aplicarla)
 python -m alembic revision --autogenerate -m "descripcion_corta"
 # 3. Aplique y pruebe
@@ -232,7 +238,7 @@ Reglas:
 
 ## Permisos nuevos
 
-1. Agréguelo en `backend/app/core/permisos.py` (`PERMISOS`) y, si corresponde, a los roles de fábrica.
+1. Agréguelo en `backend/app/security/permisos.py` (`PERMISOS`) y, si corresponde, a los roles de fábrica.
 2. Úselo en la ruta con `requiere("modulo.accion")`.
 3. Reinicie la API: el catálogo se sincroniza al arrancar (también con `python -m app.cli sincronizar-permisos`).
    Un permiso nuevo se agrega **una sola vez**, al aparecer en el catálogo, a los roles del sistema de cada empresa
@@ -266,6 +272,7 @@ SQLAlchemy, ejecute además las pruebas con PostgreSQL.
 
 | Síntoma | Causa probable | Qué hacer |
 |---|---|---|
+| `npm run setup` falla con «No matching distribution found for numpy==…» o dice que el entorno usa un Python no compatible | `backend/.venv` se creó con un Python anterior a 3.12 | Borre el entorno (`Remove-Item -Recurse -Force backend\.venv` en PowerShell, `rm -rf backend/.venv` en macOS/Linux), instale Python 3.13 y repita `npm run setup` |
 | El backend no arranca: «SECRET_KEY debe tener al menos 32 caracteres» | Clave corta o de ejemplo | Genere una nueva (ver arriba) |
 | «En producción SETUP_TOKEN es obligatorio» | `ENVIRONMENT=production` sin token | Defina `SETUP_TOKEN` (16+ caracteres) |
 | La API arranca pero responde errores de tabla inexistente | Migraciones sin aplicar | `npm run migrar` |

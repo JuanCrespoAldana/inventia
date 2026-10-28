@@ -26,20 +26,20 @@ import numpy as np
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import contexto_de_usuario
-from app.core.exceptions import Conflicto
-from app.core.security import hash_password
-from app.core.tiempo import ZONA, hoy_local
-from app.models.acceso import Rol
-from app.models.catalogo import Categoria, Producto
-from app.models.empresa import Empresa
-from app.models.enums import TipoMovimiento
-from app.models.inventario import InventarioSede
-from app.models.sede import Sede
-from app.models.usuario import Usuario
-from app.schemas.ventas import VentaCrear, VentaItemCrear
-from app.services import alertas_service, inventario_service, setup_service, ventas_service
-from app.services.inventario_service import Operacion
+from app.dto.ventas_dto import VentaCrear, VentaItemCrear
+from app.exception.excepciones import Conflicto
+from app.model.acceso import Rol
+from app.model.catalogo import Categoria, Producto
+from app.model.empresa import Empresa
+from app.model.enums import TipoMovimiento
+from app.model.inventario import InventarioSede
+from app.model.sede import Sede
+from app.model.usuario import Usuario
+from app.security.autenticacion import hash_password
+from app.security.dependencias import contexto_de_usuario
+from app.service import alertas_service, inventario_service, setup_service, ventas_service
+from app.service.inventario_service import Operacion
+from app.util.tiempo import ZONA, hoy_local
 
 DOMINIO = "demo.inventia.example"
 
@@ -221,7 +221,7 @@ async def cargar_demo(
         return u
 
     _usuario("gerente", "Gerencia Demo", "gerente", None)
-    analista = _usuario("analista_compras", "Compras Demo", "compras", None)
+    _usuario("analista_compras", "Compras Demo", "compras", None)
     encargados = {n: _usuario("encargado_sede", f"Encargado {n}", f"encargado.{i + 1}", s) for i, (n, s) in enumerate(sedes.items())}
     _usuario("usuario_inventario", "Inventario Demo", "inventario", sedes["Sede Principal"])
     await db.flush()
@@ -325,21 +325,20 @@ async def cargar_demo(
                 await db.commit()
 
                 # --- revisión diaria de compras: reposición con plazo de entrega de 6 días ---
-                if True:
-                    for (sn, codigo), st in estado.items():
-                        if sn != sede_nombre or st["demanda"] <= 0 or dia < st["desde"]:
-                            continue
-                        en_camino = sum(q for _d, q in st["pendiente"])
-                        reciente = st["vendido"][-21:]
-                        consumo = float(np.mean(reciente)) if len(reciente) >= 7 else st["demanda"]  # lo que compras se ajusta a lo que vendes
-                        cobertura_objetivo = 8 if codigo in PROPENSO_A_RUPTURA else 30
-                        umbral = 3 if codigo in PROPENSO_A_RUPTURA else 16
-                        if (codigo, sede_nombre) == EXCEDENTE:
-                            continue
-                        if st["stock"] + en_camino < consumo * umbral:
-                            pedir = int(math.ceil(consumo * cobertura_objetivo - st["stock"] - en_camino))
-                            if pedir > 0:
-                                st["pendiente"].append((dia + timedelta(days=6), pedir))
+                for (sn, codigo), st in estado.items():
+                    if sn != sede_nombre or st["demanda"] <= 0 or dia < st["desde"]:
+                        continue
+                    en_camino = sum(q for _d, q in st["pendiente"])
+                    reciente = st["vendido"][-21:]
+                    consumo = float(np.mean(reciente)) if len(reciente) >= 7 else st["demanda"]  # lo que compras se ajusta a lo que vendes
+                    cobertura_objetivo = 8 if codigo in PROPENSO_A_RUPTURA else 30
+                    umbral = 3 if codigo in PROPENSO_A_RUPTURA else 16
+                    if (codigo, sede_nombre) == EXCEDENTE:
+                        continue
+                    if st["stock"] + en_camino < consumo * umbral:
+                        pedir = int(math.ceil(consumo * cobertura_objetivo - st["stock"] - en_camino))
+                        if pedir > 0:
+                            st["pendiente"].append((dia + timedelta(days=6), pedir))
             if (k + 1) % 20 == 0:
                 informar(f"  {k + 1}/{dias} días simulados · {resultado.ventas} ventas")
 
@@ -369,7 +368,7 @@ async def cargar_demo(
 
 async def preparar_prediccion(db: AsyncSession, resultado: ResultadoDemo, avance: Callable[[str], None] | None = None) -> dict:
     """Ejecuta una predicción y genera recomendaciones con los datos de demostración (opcional)."""
-    from app.services import prediccion_service, recomendaciones_service
+    from app.service import prediccion_service, recomendaciones_service
 
     informar = avance or (lambda _m: None)
     analista = await db.scalar(

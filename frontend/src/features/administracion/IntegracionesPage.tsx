@@ -183,6 +183,7 @@ export default function IntegracionesPage() {
           descripcion="Llaves de acceso para agentes de IA"
           idDe={(l) => l.id}
           filas={llaves.data}
+          paginar={10}
           cargando={llaves.isFetching}
           error={llaves.error}
           onReintentar={() => llaves.refetch()}

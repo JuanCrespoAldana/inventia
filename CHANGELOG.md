@@ -3,6 +3,82 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa
 [versionado semántico](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Agregado
+
+- **RMSE y MAPE** en la evaluación de los modelos de predicción, además de WAPE, MAE y sesgo. Se guardan por serie, por
+  modelo candidato y por ejecución (también para la línea base), se muestran en *Predicción de demanda* y en el reporte
+  de predicciones. El MAPE se calcula solo sobre los días con ventas porque con venta cero no existe; la **elección del
+  modelo sigue haciéndose con WAPE** (decisión D-34). No hay migración: las métricas viven en columnas JSON, y las
+  ejecuciones anteriores muestran «—».
+- **Reportes en PDF** (`GET /api/reportes/{tipo}?formato=pdf` y botón *PDF* en la pantalla Reportes): encabezado con
+  empresa, usuario, fecha y filtros, resumen, tabla con encabezado repetido y «Página X de Y». Para leer e imprimir:
+  hasta 1.000 filas (Excel y CSV siguen hasta 50.000) (decisión D-35). Nuevas dependencias: `reportlab` y `pillow`.
+- `ml/evaluar_modelos.py` imprime WAPE, MAE, RMSE y MAPE por tipo de serie, acepta `--csv` y usa 180 días por defecto
+  (con menos de 132 el gradient boosting no puede validarse).
+- **Pruebas de carga y de volumen** (`infra/carga/`): escenario de Locust con usuarios virtuales que consultan, venden y
+  registran entradas; `verificar_consistencia.py` (comprueba en la base que no hubo actualizaciones perdidas),
+  `medir_latencias.py` (tiempo de cada consulta con un solo usuario) e `inflar_base.sh` (multiplica el historial de una
+  base de pruebas ×10 o ×50). Resultados y límites en [`docs/RENDIMIENTO.md`](docs/RENDIMIENTO.md).
+- **Verificación de seguridad** (`infra/seguridad/`): `sonda_seguridad.py` (16 comprobaciones contra una API en ejecución:
+  acceso sin token, token alterado o con algoritmo `none`, rol limitado, aislamiento por sede, cabeceras y CORS,
+  inyección y XSS, bloqueo por intentos, auditoría) y `fuzz_api.sh` (Schemathesis sobre el propio contrato OpenAPI).
+  Mapeo completo a OWASP Top 10:2025 en [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md).
+- `ml/evaluar_fuera_de_muestra.py`: prueba «holdout» del módulo de predicción (oculta los últimos días de cada serie,
+  pronostica y compara con lo que ocurrió; mide también la cobertura del intervalo de 80 %). Resultados en
+  [`docs/PREDICCION.md`](docs/PREDICCION.md#11-resultados-con-datos-de-demostración-rnf-030).
+- `ml/simular_recomendaciones.py`: simulación que compara, sobre las últimas 8 semanas de la base de demostración, no reponer,
+  mínimos y máximos fijos, las reglas de Inventia con promedio de 28 días y Inventia completo. Las reglas de Inventia perdieron
+  5,2 puntos menos de la demanda que los mínimos y máximos fijos (IC 95 % 3,4 a 7,0) con 30 % menos inventario; el pronóstico
+  avanzado no mejoró las decisiones frente al promedio simple, y la ventaja desaparece si se aceptan pocas sugerencias.
+  Datos sintéticos; supuestos y límites en [`docs/PREDICCION.md`](docs/PREDICCION.md) §12 (decisión D-38).
+- Variable `DOCS_API_ACTIVA` (por defecto `true`): con `false` se retiran `/api/docs` y `/api/openapi.json`.
+- CI: trabajo informativo de seguridad (`pip-audit`, `npm audit`, Bandit; no bloquea), cobertura de pruebas en la
+  salida del backend y configuración de Dependabot (`.github/dependabot.yml`).
+
+### Cambiado
+
+- **Estructura del backend con los nombres de carpeta de Spring** (D-39): `api` → `controller`, `schemas` → `dto`,
+  `models` → `model`, `services` → `service`, `core` repartido en `config`, `security`, `exception` y `util`. Se crearon
+  `specification/` (filtros dinámicos de consulta) y `mapper/` (conversión de entidad a DTO) con funciones que ya existían, y
+  `exception/` se dividió en `excepciones.py` y `manejadores.py`. Sin cambios de comportamiento: mismas rutas, mismo contrato
+  OpenAPI y las 214 pruebas del backend pasan. Guía nueva: [`docs/GUIA_ESTRUCTURA.md`](docs/GUIA_ESTRUCTURA.md).
+- Limpieza: eliminados importaciones y variables sin uso en el backend.
+- **Paginado en todas las pantallas con listas largas.** La vista previa de *Reportes* (hasta 200 filas) se muestra de 15 en
+  15; los módulos de permisos de *Roles y permisos* de 5 en 5 (son 19) y la lista de roles de 10 en 10; las llaves de
+  *Agentes de IA*, las actividades y el cumplimiento por persona de SST, las categorías ambientales y las líneas de venta,
+  traslado y entrada, de 10 en 10; las series omitidas de *Predicción de demanda* de 15 en 15 y los ejercicios de SST de 6 en 6.
+  Se usa el mismo paginador de los demás listados. Como esas listas ya llegan completas del servidor, se pagina en el
+  navegador con el hook `usePaginacionLocal` o con la propiedad `paginar` de `Tabla`; el contrato de la API no cambia.
+  Pruebas del frontend: de 133 a 145.
+- `npm run setup` ahora **busca solo un Python compatible** (3.13, luego 3.12 y 3.14) y crea con él `backend/.venv`,
+  aunque el `python` que aparece por defecto en la terminal sea otro. Si no hay ninguno, se detiene con un mensaje claro
+  (en Windows indica `py install 3.13`). Si `backend/.venv` ya existe con un Python no compatible, avisa cómo
+  borrarlo y repetir el setup, en lugar de fallar a mitad de la instalación de dependencias con un error de `numpy`.
+- Documentado el rango de Python admitido (3.12 a 3.14) en README, guía de desarrollo y despliegue.
+- **Intervalo de predicción recalibrado** (D-36): la cobertura medida fuera de muestra era de 62 % y no de 80 %; con la
+  fórmula `Z₈₀ · 0,8 · σ · h^0,75` queda entre 78 % y 83 %. Las predicciones ya guardadas conservan su intervalo anterior
+  hasta la siguiente ejecución.
+- El contrato OpenAPI declara el formato real de los errores 422 (D-37); los tipos del frontend se regeneraron.
+- Documentación: `docs/PREDICCION.md` incluye ahora el análisis de la demanda, la validación interna, la prueba fuera de
+  muestra y la cobertura del intervalo, con sus limitaciones; D-35 aclara el efecto de las exportaciones grandes.
+
+### Corregido
+
+- **Reportes recortados:** cuando la vista previa (200 filas) o el PDF (1.000 filas) se recortan, el resumen suma solo las filas mostradas. Ahora la vista previa, el PDF y la hoja de resumen del Excel lo dicen, y el aviso de la vista previa ya no afirma «primeros 200 de 200 registros».
+- **Un número enorme en la URL ya no produce error 500** (D-37): un identificador o filtro que no cabe en la base de
+  datos (p. ej. `?numero=99999999999`) se responde con 422 en unas 30 rutas. Lo encontró el fuzzing con Schemathesis; el
+  mensaje de error era genérico y no filtraba datos.
+
+### Seguridad
+
+- `PyJWT` 2.13.0 → 2.15.1 (15 avisos de seguridad de la versión anterior detectados por `pip-audit`) y actualización de
+  dependencias de Node: `npm audit` queda sin vulnerabilidades.
+- Bandit (análisis estático): se sustituyó un `assert` que no se ejecuta con `python -O` por una excepción explícita y se
+  documentaron dos usos justificados (generador pseudoaleatorio solo para datos de demostración; escape de texto, no
+  lectura de XML). Sin hallazgos pendientes.
+
 ## [1.1.0] · 2026-10-09
 
 Agrega el **Sistema Integrado de Gestión (SIG)** pedido después de la primera entrega: PQRS y sugerencias, Seguridad y

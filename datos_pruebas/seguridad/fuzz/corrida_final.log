@@ -1,0 +1,135 @@
+Schemathesis v4.32.5
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8002/api/openapi.json (in
+ 0.79s)
+
+     Base URL:         http://127.0.0.1:8002/
+     Specification:    Open API 3.1.0
+     Operations:       113 selected / 131 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.11s)
+
+     ⏭  113 skipped
+
+ ✅  Coverage (in 40.49s)
+
+     ✅ 113 passed
+
+ ✅  Fuzzing (in 796.17s)
+
+     ✅ 113 passed
+
+ ✅  Stateful (in 63.09s)
+
+     Scenarios:    586
+     API Links:    56 covered / 365 selected / 365 total
+
+     ✅ 586 passed
+
+=================================== WARNINGS ===================================
+
+Missing test data: 11 operations repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+No links point to these operations - nothing in the schema appears to supply the data they need (2 operations):
+  - POST /api/sig/adjuntos
+  - POST /api/usuarios
+
+💡 Schemathesis found no operation that creates this data - create it outside the test run and supply the identifiers in your config file
+
+Reachable via links, but stateful testing never reached them (3 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+
+💡 Raise `phases.stateful.max-steps` or run longer so stateful testing reaches these operations
+
+Reached via links, but the linked data was not usable (6 operations):
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+
+💡 Check the operations that create this data - their responses do not yield usable identifiers
+
+Schema validation mismatch: 43 operations mostly rejected generated data due to validation errors, indicating schema constraints don't match API validation
+
+  - DELETE /api/roles/{rol_id}
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/inventario
+  - GET /api/sig/adjuntos
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/sig/pqrs/{pqrs_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/no-conformidades/{nc_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/categorias
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/inventario/ajustes
+  - POST /api/inventario/entradas
+  - POST /api/inventario/entradas/{entrada_id}/observaciones
+  - POST /api/inventario/salidas
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/roles
+  - POST /api/sedes
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/calidad/no-conformidades
+  - POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones
+  - POST /api/sig/pqrs
+  - POST /api/sig/sst/actividades
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados
+  - POST /api/traslados/{traslado_id}/aprobar
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - POST /api/ventas
+  - POST /api/ventas/{venta_id}/anular
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}
+  - PUT /api/roles/{rol_id}/permisos
+  - PUT /api/sig/ambiental/factor-red
+
+💡 Check your schema constraints - API validation may be stricter than documented
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 113/131
+  Tested: 113
+
+Test Phases:
+  ⏭  Examples
+  ✅ Coverage
+  ✅ Fuzzing
+  ✅ Stateful
+
+Warnings:
+  ⚠️ Missing test data: 11 operations repeatedly returned 404 responses
+  ⚠️ Schema validation mismatch: 43 operations mostly rejected generated data
+
+Test cases:
+  47959 generated, 47959 passed
+
+Reports:
+  - JUnit: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/junit-20261026T211715Z.xml
+  - NDJSON: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/ndjson-20261026T211715Z.ndjson
+
+Seed: 20261026
+
+============================ 2 warnings in 900.03s =============================

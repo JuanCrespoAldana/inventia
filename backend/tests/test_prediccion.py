@@ -5,11 +5,11 @@ from datetime import timedelta
 import pytest
 from sqlalchemy import select, update
 
-from app.core.tiempo import ahora_utc
-from app.models.enums import EstadoEjecucion
-from app.models.inventario import Alerta
-from app.models.prediccion import EjecucionPrediccion
-from app.services import prediccion_service
+from app.model.enums import EstadoEjecucion
+from app.model.inventario import Alerta
+from app.model.prediccion import EjecucionPrediccion
+from app.service import prediccion_service
+from app.util.tiempo import ahora_utc
 from tests.ayuda import (
     crear_categoria,
     crear_empresa,
@@ -57,6 +57,7 @@ async def test_la_ejecucion_guarda_predicciones_metricas_y_explica_lo_omitido(cl
     r = detalle["resumen"]
     assert r["series_con_prediccion"] == 2 and r["series_omitidas"] == 2  # P1 en dos sedes; P2 y P3 sin datos suficientes
     assert r["wape_global"] is not None and r["wape_linea_base_global"] is not None
+    assert r["rmse_global"] is not None and r["rmse_linea_base_global"] is not None and r["mape_global"] is not None
     motivos = {(o["codigo"], o["sede"]): o["motivo"] for o in r["omitidas"]}
     assert "Pocas ventas" in motivos[("A-2", "Norte")]
     assert "Historial insuficiente" in motivos[("A-3", "Norte")]
@@ -68,6 +69,7 @@ async def test_la_ejecucion_guarda_predicciones_metricas_y_explica_lo_omitido(cl
         assert p["producto"]["codigo"] == "A-1" and p["ejecucion_id"] == ej["id"]
         assert p["fecha_fin"] > p["fecha_inicio"] and p["limite_inferior"] <= p["demanda_estimada"] <= p["limite_superior"]
         assert p["metricas"]["wape"] is not None and p["metricas"]["wape_linea_base"] is not None
+        assert p["metricas"]["rmse"] is not None and p["metricas"]["rmse"] >= p["metricas"]["mae"]  # RMSE ≥ MAE siempre
         assert p["modelo_descripcion"] and p["confianza"] in ("alta", "media", "baja")
     sur_pred = next(p for p in lista["items"] if p["sede"]["nombre"] == "Sur")
     assert sur_pred["existencias_actuales"] == 8 and sur_pred["cobertura_dias"] < 3  # casi sin stock

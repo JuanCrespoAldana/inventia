@@ -930,7 +930,13 @@ export interface components {
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
+            detail: string;
+            /** Codigo */
+            codigo: string;
+            /** Request Id */
+            request_id?: string;
+            /** Errores */
+            errores?: components["schemas"]["ErrorDeCampo"][];
         };
         /** InventarioFila */
         InventarioFila: {
@@ -2640,19 +2646,6 @@ export interface components {
             /** Debe Cambiar Password */
             debe_cambiar_password: boolean;
         };
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
-        };
         /** VentaAnular */
         VentaAnular: {
             /** Motivo */
@@ -2781,6 +2774,13 @@ export interface components {
         _Observacion: {
             /** Contenido */
             contenido: string;
+        };
+        /** ErrorDeCampo */
+        ErrorDeCampo: {
+            /** Campo */
+            campo: string;
+            /** Mensaje */
+            mensaje: string;
         };
     };
     responses: never;

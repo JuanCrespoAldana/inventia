@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Download, FileSpreadsheet } from "lucide-react";
+import { Download, FileSpreadsheet, FileText } from "lucide-react";
 import { apiReportes, type FiltroReporte } from "@/api/analitica";
 import { useAuth } from "@/auth/AuthContext";
 import { Aviso } from "@/components/ui/Aviso";
@@ -9,8 +9,10 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { EstadoError, EstadoVacio } from "@/components/ui/EstadoVacio";
 import { FiltroFecha, FiltroSelect } from "@/components/ui/Field";
 import { EncabezadoPagina } from "@/components/ui/PageHeader";
+import { Paginacion } from "@/components/ui/Pagination";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useCategorias, useSedes } from "@/hooks/useCatalogos";
+import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/cn";
 import { mensajeDeError } from "@/lib/errors";
@@ -61,6 +63,11 @@ const ESTADOS_POR_REPORTE: Record<string, Record<string, { etiqueta: string }>> 
   recomendaciones: ESTADO_RECOMENDACION,
 };
 
+type FormatoDescarga = "csv" | "xlsx" | "pdf";
+
+/** La vista previa trae hasta 200 filas; se muestran por páginas para que la pantalla no se alargue. */
+const FILAS_POR_PAGINA = 15;
+
 function celda(c: ColumnaReporte, valor: unknown, reporte: string): string {
   if (valor === null || valor === undefined || valor === "") return "—";
   switch (c.tipo) {
@@ -82,7 +89,7 @@ function celda(c: ColumnaReporte, valor: unknown, reporte: string): string {
 function resumenLegible(clave: string, valor: unknown): string {
   if (typeof valor === "number") {
     if (/^(valor|total vendido)/i.test(clave)) return moneda(valor);
-    if (/wape/i.test(clave)) return porcentaje(valor * 100);
+    if (/wape|mape/i.test(clave)) return porcentaje(valor * 100);
     return Number.isInteger(valor) ? entero(valor) : decimal(valor, 2);
   }
   return String(valor ?? "—");
@@ -96,7 +103,7 @@ export default function ReportesPage() {
   const catalogo = useQuery({ queryKey: ["reportes", "catalogo"], queryFn: apiReportes.catalogo, staleTime: 300_000 });
   const [elegido, setElegido] = useState<string | null>(null);
   const [filtros, setFiltros] = useState<Record<string, string>>({});
-  const [descargando, setDescargando] = useState<"csv" | "xlsx" | null>(null);
+  const [descargando, setDescargando] = useState<FormatoDescarga | null>(null);
   const tipo = elegido ?? catalogo.data?.[0]?.tipo ?? null;
   const config = tipo ? (CONFIG[tipo] ?? {}) : {};
   const verSedes = sesion?.rol.alcance === "empresa";
@@ -128,7 +135,7 @@ export default function ReportesPage() {
     setFiltros({});
   }
 
-  async function descargar(formato: "csv" | "xlsx") {
+  async function descargar(formato: FormatoDescarga) {
     if (!tipo) return;
     setDescargando(formato);
     try {
@@ -142,11 +149,12 @@ export default function ReportesPage() {
   }
 
   const r = vista.data;
+  const pg = usePaginacionLocal(r?.filas, FILAS_POR_PAGINA, `${tipo}|${JSON.stringify(parametros)}`);
   const hayFiltros = Object.values(filtros).some(Boolean);
 
   return (
     <>
-      <EncabezadoPagina titulo="Reportes" descripcion="Consulte una vista previa y descargue el informe en CSV o Excel. Cada descarga queda registrada en la auditoría." />
+      <EncabezadoPagina titulo="Reportes" descripcion="Consulte una vista previa y descargue el informe en PDF, Excel o CSV. Cada descarga queda registrada en la auditoría." />
       {catalogo.isPending && <Skeleton className="h-48" />}
       {catalogo.isError && <Card><EstadoError error={catalogo.error} onReintentar={() => catalogo.refetch()} /></Card>}
       {catalogo.data && catalogo.data.length === 0 && <Card><EstadoVacio titulo="Sin reportes disponibles" descripcion="Su rol no incluye permisos de reportes." /></Card>}
@@ -180,6 +188,9 @@ export default function ReportesPage() {
                 <div className="flex flex-wrap gap-2">
                   <Button variante="secondary" tamano="sm" icono={<Download className="size-4" aria-hidden />} cargando={descargando === "csv"} disabled={descargando !== null || !r?.total} onClick={() => descargar("csv")}>
                     CSV
+                  </Button>
+                  <Button variante="secondary" tamano="sm" icono={<FileText className="size-4" aria-hidden />} cargando={descargando === "pdf"} disabled={descargando !== null || !r?.total} onClick={() => descargar("pdf")}>
+                    PDF
                   </Button>
                   <Button tamano="sm" icono={<FileSpreadsheet className="size-4" aria-hidden />} cargando={descargando === "xlsx"} disabled={descargando !== null || !r?.total} onClick={() => descargar("xlsx")}>
                     Excel
@@ -245,35 +256,38 @@ export default function ReportesPage() {
                     ))}
                   </dl>
                 )}
-                {r.truncado && <div className="px-5 pt-4"><Aviso tipo="aviso">La vista previa muestra solo los primeros {r.filas.length} de {entero(r.total)} registros. La descarga incluye todos.</Aviso></div>}
+                {r.truncado && <div className="px-5 pt-4"><Aviso tipo="aviso">La vista previa muestra solo los primeros {entero(r.filas.length)} registros y hay más; el resumen suma solo esos registros. Excel y CSV incluyen todos; el PDF, hasta los primeros 1.000.</Aviso></div>}
                 {r.filas.length === 0 ? (
                   <EstadoVacio titulo="Sin datos para este reporte" descripcion="Pruebe con otros filtros o con un rango de fechas más amplio." />
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-max border-collapse text-sm">
-                      <caption className="sr-only">{r.titulo}</caption>
-                      <thead>
-                        <tr className="border-b border-line text-xs uppercase tracking-wide text-ink-faint">
-                          {r.columnas.map((c) => (
-                            <th key={c.clave} scope="col" className={cn("px-4 py-3 font-semibold", ["entero", "dinero", "decimal", "porcentaje"].includes(c.tipo) ? "text-right" : "text-left")}>
-                              {c.titulo}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-line">
-                        {r.filas.map((f, i) => (
-                          <tr key={i} className="hover:bg-white/3">
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-max border-collapse text-sm">
+                        <caption className="sr-only">{r.titulo}</caption>
+                        <thead>
+                          <tr className="border-b border-line text-xs uppercase tracking-wide text-ink-faint">
                             {r.columnas.map((c) => (
-                              <td key={c.clave} className={cn("px-4 py-2.5", ["entero", "dinero", "decimal", "porcentaje"].includes(c.tipo) ? "tabular text-right" : "text-left text-ink")}>
-                                {celda(c, f[c.clave], r.tipo)}
-                              </td>
+                              <th key={c.clave} scope="col" className={cn("px-4 py-3 font-semibold", ["entero", "dinero", "decimal", "porcentaje"].includes(c.tipo) ? "text-right" : "text-left")}>
+                                {c.titulo}
+                              </th>
                             ))}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-line">
+                          {pg.visibles.map((f, i) => (
+                            <tr key={(pg.pagina - 1) * FILAS_POR_PAGINA + i} className="hover:bg-white/3">
+                              {r.columnas.map((c) => (
+                                <td key={c.clave} className={cn("px-4 py-2.5", ["entero", "dinero", "decimal", "porcentaje"].includes(c.tipo) ? "tabular text-right" : "text-left text-ink")}>
+                                  {celda(c, f[c.clave], r.tipo)}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <Paginacion {...pg.paginacion} />
+                  </>
                 )}
               </div>
             )}

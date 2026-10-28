@@ -1,0 +1,98 @@
+{
+  "host": "http://127.0.0.1:8000",
+  "hallazgos": [],
+  "pruebas": {
+    "A01_rutas_sin_token": {
+      "ok": true,
+      "detalle": "123 de 131 rutas exigen token; públicas: 8; no esperadas: []"
+    },
+    "A07_token_firma_alterada": {
+      "ok": true,
+      "detalle": "código 401"
+    },
+    "A04_token_alg_none": {
+      "ok": true,
+      "detalle": "código 401"
+    },
+    "A01_rol_limitado_en_administracion": {
+      "ok": true,
+      "detalle": "{\"/api/usuarios\": 403, \"/api/empresa\": 403}"
+    },
+    "A01_auditoria_del_encargado_limitada_a_su_sede_sin_accesos": {
+      "ok": true,
+      "detalle": "100 eventos visibles; de módulo «auth» o de otra sede: 0"
+    },
+    "A01_rol_limitado_en_acciones": {
+      "ok": true,
+      "detalle": "{\"POST /api/usuarios\": 403, \"POST /api/roles\": 403, \"POST /api/predicciones/ejecutar\": 403}"
+    },
+    "A01_aislamiento_por_sede_en_inventario": {
+      "ok": true,
+      "detalle": "código 403 al pedir la sede 2 siendo de la sede 1"
+    },
+    "A02_cors_origen_no_autorizado": {
+      "ok": true,
+      "detalle": "Access-Control-Allow-Origin=None"
+    },
+    "A02_cabeceras_de_seguridad_en_api": {
+      "ok": true,
+      "detalle": "presentes"
+    },
+    "A05_parametros_maliciosos_sin_500": {
+      "ok": true,
+      "detalle": "errores 5xx: []; reflejados: []"
+    },
+    "A05_cuerpo_con_html_no_500": {
+      "ok": true,
+      "detalle": "código 422"
+    },
+    "A10_cuerpo_malformado_4xx_controlado": {
+      "ok": true,
+      "detalle": "incidencias: []"
+    },
+    "A10_ruta_inexistente_404": {
+      "ok": true,
+      "detalle": "código 404"
+    },
+    "A07_bloqueo_por_intentos": {
+      "ok": true,
+      "detalle": "códigos [401, 401, 401, 401, 401, 423]; con la clave correcta después: 423"
+    },
+    "A07_mensaje_generico_usuario_inexistente": {
+      "ok": true,
+      "detalle": "inexistente -> 401 'Correo o contraseña incorrectos'; existente -> ['Correo o contraseña incorrectos']"
+    },
+    "A09_auditoria_registra_intentos_fallidos": {
+      "ok": true,
+      "detalle": "30 eventos recientes consultados"
+    }
+  },
+  "rutas_sin_token_que_responden": [
+    "GET /api/setup/estado -> 200",
+    "POST /api/setup -> pública por diseño (no se invoca)",
+    "POST /api/auth/login -> pública por diseño (no se invoca)",
+    "POST /api/auth/forgot-password -> pública por diseño (no se invoca)",
+    "POST /api/auth/verify-reset-code -> pública por diseño (no se invoca)",
+    "POST /api/auth/reset-password -> pública por diseño (no se invoca)",
+    "GET /api/health -> 200",
+    "GET /api/health/ready -> 200"
+  ],
+  "cabeceras_respuesta_api": {
+    "date": "Tue, 27 Oct 2026 01:08:32 GMT",
+    "server": "uvicorn",
+    "content-length": "15",
+    "content-type": "application/json",
+    "access-control-expose-headers": "X-Request-ID, Content-Disposition",
+    "x-request-id": "f86f3ce6c2b249c8",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "referrer-policy": "no-referrer",
+    "cache-control": "no-store",
+    "permissions-policy": "geolocation=(), microphone=(), camera=()"
+  },
+  "docs_expuestas": 200,
+  "resumen": {
+    "ok": 16,
+    "falla": 0
+  }
+}

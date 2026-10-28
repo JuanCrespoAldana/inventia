@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 from sqlalchemy import func, select
 
-from app.models.inventario import InventarioSede, Movimiento
+from app.model.inventario import InventarioSede, Movimiento
 from tests.ayuda import crear_categoria, crear_empresa, crear_producto, crear_sede, crear_usuario, existencias
 
 

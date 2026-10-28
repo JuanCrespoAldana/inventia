@@ -4,8 +4,8 @@ from datetime import timedelta
 
 from sqlalchemy import select, update
 
-from app.core.tiempo import ahora_utc
-from app.models.auditoria import ApiKey, Auditoria
+from app.model.auditoria import ApiKey, Auditoria
+from app.util.tiempo import ahora_utc
 from tests.ayuda import (
     crear_categoria,
     crear_empresa,

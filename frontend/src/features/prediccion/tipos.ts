@@ -18,6 +18,10 @@ export interface ResumenEjecucion {
   motivos_omision?: Record<string, number>;
   wape_global?: number | null;
   wape_linea_base_global?: number | null;
+  rmse_global?: number | null;
+  rmse_linea_base_global?: number | null;
+  mape_global?: number | null;
+  mape_linea_base_global?: number | null;
   mejora_vs_linea_base_pct?: number | null;
   modelos_elegidos?: Record<string, number>;
   series_por_confianza?: Record<string, number>;
@@ -33,14 +37,20 @@ export interface CandidatoMetricas {
   avanzado: boolean;
   wape: number | null;
   mae: number | null;
+  rmse?: number | null;
+  mape?: number | null;
 }
 
 export interface MetricasPrediccion {
   wape?: number | null;
   mae?: number | null;
+  rmse?: number | null;
+  mape?: number | null;
   sesgo?: number | null;
   wape_linea_base?: number | null;
   mae_linea_base?: number | null;
+  rmse_linea_base?: number | null;
+  mape_linea_base?: number | null;
   mejora_vs_linea_base_pct?: number | null;
   n_pliegues?: number;
   dias_validados?: number;

@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> solicitado: Solicitar
+    solicitado --> aprobado: Aprueba la sede de origen
+    solicitado --> rechazado: Rechaza la sede de origen
+    solicitado --> cancelado: Cancelar
+    aprobado --> cancelado: Cancelar
+    aprobado --> confirmado: Confirma la sede de destino (mueve existencias)
+    confirmado --> [*]
+    rechazado --> [*]
+    cancelado --> [*]

@@ -22,6 +22,8 @@ dist/
 coverage/
 .vite/
 *.log
+# ...salvo las evidencias de la validación, que la memoria cita como archivos del repositorio
+!datos_pruebas/**/*.log
 
 # Respaldos de base de datos
 respaldos/
@@ -46,3 +48,4 @@ apuntes/
 ~$*
 *.docx
 *.pptx
+infra/carga/resultados/

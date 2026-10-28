@@ -1,0 +1,191 @@
+Schemathesis v4.32.5
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8002/api/openapi.json (in
+ 0.87s)
+
+     Base URL:         http://127.0.0.1:8002/
+     Specification:    Open API 3.1.0
+     Operations:       116 selected / 131 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.11s)
+
+     ⏭  116 skipped
+
+ ✅  Coverage (in 39.90s)
+
+     ✅ 116 passed
+
+ ❌  Fuzzing (in 784.05s)
+
+     ✅ 114 passed  ❌   2 failed
+
+ ✅  Stateful (in 75.76s)
+
+     Scenarios:    1055
+     API Links:    13 covered / 407 selected / 407 total
+
+     ✅ 1055 passed
+
+=================================== FAILURES ===================================
+____________________________ GET /api/predicciones _____________________________
+1. Test Case ID: Szd9D5
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno","request_id":"42e5225fee664140"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones?confianza=alta&tamano=10&q=%F0%B5%8F%AAf%C2%A4%00%C2%BA%C3%81%F3%80%A9%AB%06%C2%AE%C2%A2'
+
+    st replay Szd9D5
+
+________________________________ GET /api/sedes ________________________________
+1. Test Case ID: Ppwxst
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno","request_id":"23168ddf18ee40e7"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sedes?q=%F1%AA%BE%A6%09%13%F1%A8%B3%82%00'
+
+    st replay Ppwxst
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 17 operations returned only 401/403 responses
+
+401 Unauthorized (17 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+
+💡 Ensure valid authentication credentials are set via `--auth` or `-H`
+
+Missing test data: 12 operations repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+No links point to this operation - nothing in the schema appears to supply the data it needs:
+  - POST /api/sig/adjuntos
+
+💡 Schemathesis found no operation that creates this data - create it outside the test run and supply the identifiers in your config file
+
+Reachable via links, but stateful testing never reached them (6 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+
+💡 Raise `phases.stateful.max-steps` or run longer so stateful testing reaches these operations
+
+Reached via links, but the linked data was not usable (5 operations):
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+
+💡 Check the operations that create this data - their responses do not yield usable identifiers
+
+Schema validation mismatch: 38 operations mostly rejected generated data due to validation errors, indicating schema constraints don't match API validation
+
+  - DELETE /api/roles/{rol_id}
+  - GET /api/inventario
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/sig/pqrs/{pqrs_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/no-conformidades/{nc_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/categorias
+  - POST /api/integraciones/llaves
+  - POST /api/inventario/ajustes
+  - POST /api/inventario/entradas
+  - POST /api/inventario/entradas/{entrada_id}/observaciones
+  - POST /api/inventario/salidas
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/roles
+  - POST /api/sedes
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/calidad/no-conformidades
+  - POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones
+  - POST /api/sig/pqrs
+  - POST /api/sig/sst/actividades
+  - POST /api/traslados
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - POST /api/usuarios/{usuario_id}/restablecer-password
+  - POST /api/ventas
+  - POST /api/ventas/{venta_id}/anular
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}
+  - PUT /api/sig/ambiental/factor-red
+  - PUT /api/usuarios/{usuario_id}
+
+💡 Check your schema constraints - API validation may be stricter than documented
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 116/131
+  Tested: 116
+
+Test Phases:
+  ⏭  Examples
+  ✅ Coverage
+  ❌ Fuzzing
+  ✅ Stateful
+
+Failures:
+  ❌ ST101 Server error: 2
+
+For more information, run `st explain ST101`.
+
+Warnings:
+  ⚠️ Authentication failed: 17 operations returned only 401/403 responses
+  ⚠️ Missing test data: 12 operations repeatedly returned 404 responses
+  ⚠️ Schema validation mismatch: 38 operations mostly rejected generated data
+
+Test cases:
+  79003 generated, 2 found 2 unique failures
+
+Reports:
+  - JUnit: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/junit-20261026T202652Z.xml
+  - NDJSON: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/ndjson-20261026T202652Z.ndjson
+
+Seed: 20261026
+
+====================== 2 failures, 3 warnings in 900.01s =======================

@@ -6,15 +6,15 @@ usarlo con datos reales.
 
 ## Resultado de las pruebas
 
-Última ejecución completa: **9 de octubre de 2026**, sobre la versión 1.1.0.
+Última ejecución completa: **26 de octubre de 2026**, sobre la versión 1.1.0.
 
 Entorno: Linux, Python 3.13, Node.js 22, PostgreSQL 16.15 local, Chromium (Playwright).
 
 | Comprobación | Resultado |
 |---|---|
-| Backend, 182 pruebas, contra **PostgreSQL 16** (`TEST_DATABASE_URL`) | **182 pasaron**, 0 omitidas, 0 fallidas |
-| Backend, mismas pruebas contra **SQLite** (modo rápido, sin variable) | 168 pasaron, 14 omitidas (las que exigen PostgreSQL), 0 fallidas |
-| Frontend, pruebas (vitest) | **128 pasaron** en 19 archivos |
+| Backend, 214 pruebas, contra **PostgreSQL 16** (`TEST_DATABASE_URL`) | **214 pasaron**, 0 omitidas, 0 fallidas |
+| Backend, mismas pruebas contra **SQLite** (modo rápido, sin variable) | 190 pasaron, 24 omitidas (las que exigen PostgreSQL), 0 fallidas |
+| Frontend, pruebas (vitest) | **133 pasaron** en 21 archivos |
 | Frontend, tipos (`tsc -b`, modo estricto) | Sin errores |
 | Frontend, lint (`oxlint --deny-warnings`) | Sin advertencias |
 | Frontend, compilación de producción (`vite build`) | Correcta |
@@ -24,22 +24,23 @@ Entorno: Linux, Python 3.13, Node.js 22, PostgreSQL 16.15 local, Chromium (Playw
 | Flujos funcionales en navegador (9) | Todos correctos (ver más abajo) |
 | Recorrido del SIG en navegador (Chromium), administrador y usuario de inventario, a 1440 y 390 px | Pantallas, formularios, detalles y diálogos sin desbordamiento horizontal; permisos aplicados (ver más abajo) |
 
-Las 14 pruebas omitidas en SQLite son las marcadas `postgres`: 6 de concurrencia, 5 de migraciones y disparadores, 2
+Las 24 pruebas omitidas en SQLite son las marcadas `postgres`: 6 de concurrencia, 5 de migraciones y disparadores, 7
+de configuración inicial y autenticación (límites con bloqueos de fila), 3 de reportes, 2
 de simultaneidad en predicción y recomendaciones, y 1 de simultaneidad en las pausas activas del SIG. SQLite no puede reproducirlas fielmente (no tiene bloqueos de fila
 ni disparadores equivalentes), por eso **la ejecución que cuenta es la de PostgreSQL**.
 
-### Qué cubren las 182 pruebas del backend
+### Qué cubren las 214 pruebas del backend
 
 | Archivo | Pruebas | Qué demuestran |
 |---|---|---|
-| `test_setup_auth.py` | 20 | Configuración inicial única y con token, ingreso, mensajes genéricos, bloqueo temporal, límite de solicitudes por IP en el ingreso, recuperación de contraseña, cabeceras de seguridad |
+| `test_setup_auth.py` | 31 | Configuración inicial única y con token, ingreso, mensajes genéricos, bloqueo temporal, límite de solicitudes por IP en el ingreso, recuperación de contraseña y su invalidación tras demasiados intentos, cambio de contraseña, cambio obligatorio, que ninguna respuesta exponga hashes ni secretos, contrato de errores de validación, `422` en lugar de `500` con valores que la base no admite, cabeceras de seguridad |
 | `test_administracion.py` | 25 | Empresa, sedes, usuarios, roles, **aislamiento entre empresas**, alcance por sede, auditoría |
 | `test_catalogo_inventario.py` | 12 | Catálogo, entradas, salidas, ajustes, mínimos y máximos, alertas, consolidado sin duplicados |
 | `test_ventas_traslados.py` | 12 | Ventas, anulaciones, traslados en tres pasos, invariantes de existencias |
-| `test_ml.py` | 17 | Modelos de pronóstico, control de calidad de datos, validación temporal sin fuga de información, WAPE/MAE, regla de preferencia del modelo avanzado |
+| `test_ml.py` | 21 | Modelos de pronóstico, control de calidad de datos, validación temporal sin fuga de información, WAPE/MAE/RMSE/MAPE, fórmula calibrada del intervalo, regla de preferencia del modelo avanzado |
 | `test_prediccion.py` | 9 | Ejecución completa, omisiones con motivo, permisos, aislamiento, una sola ejecución activa |
 | `test_recomendaciones.py` | 11 | Reglas de reposición y traslado con valores conocidos, ciclo de vida, aprobación humana |
-| `test_dashboard_reportes.py` | 7 | Panel, reportes JSON/CSV/Excel, visibilidad según permisos |
+| `test_dashboard_reportes.py` | 24 | Panel con cifras reales y sin inventar datos, reportes JSON/CSV/Excel/PDF, formato en español, avisos de recorte, auditoría de cada descarga, visibilidad según permisos |
 | `test_demo.py` | 6 | Carga de la demostración en la empresa de la configuración inicial: conserva al administrador, no se repite, exige una sola empresa; y la carga de datos de ejemplo del SIG: coherente, sin duplicar, exige usuarios operativos |
 | `test_agentes.py` | 9 | Llaves, alcances, sede, vencimiento, revocación, solo lectura, aislamiento |
 | `test_flujo_integral.py` | 1 | Escenario de **17 pasos**: empresa y administrador inicial, ingreso, sedes, usuarios por rol y sede, catálogo, existencias iniciales, consolidado, entradas y salidas, ventas, traslado, movimientos y reportes, alertas, predicción y recomendaciones, aislamiento entre empresas y entre sedes, auditoría. Un paso (el historial de ventas de 60 días) se inserta directamente en la base, porque la API no permite fechar ventas en el pasado |
@@ -98,7 +99,7 @@ funcionar a la primera o pedir ajustes menores; no se debe asumir ninguna de las
 | **Envío real de correo** (recuperación de contraseña) | Probado con un envío simulado: el flujo completo funciona y el código llega a la capa de envío | Probar con el servidor SMTP real de la empresa |
 | **Integración continua** (`.github/workflows/ci.yml`) | Cada paso del flujo se ejecutó por separado en local | Ver el flujo correr en GitHub Actions |
 | **Navegadores distintos de Chromium** | — | Firefox, Safari y Edge |
-| **Carga y volumen** | Medición informal sobre la demostración (4 403 ventas, 11 550 movimientos): las consultas principales respondieron en 8 a 40 ms | Prueba de carga con muchos usuarios y millones de filas |
+| **Carga y volumen** | Locust con 5, 20 y 50 usuarios simultáneos (0 fallos; consistencia de datos verificada) y una base 50 veces mayor (275 mil ventas, ~1,9 millones de filas, 406 MB), en un equipo de 2 núcleos con datos sintéticos y una corrida por escenario ([RENDIMIENTO.md](RENDIMIENTO.md)). **Límites hallados:** exportar 50 000 filas a Excel tarda ~16 s y retrasa a los demás usuarios (p95 de 0,16 s a 2,5 s); la predicción hace más lentas las consultas mientras corre | Cientos de usuarios, decenas de millones de filas, varias réplicas de la API, un servidor de producción real y datos reales |
 | **Accesibilidad (WCAG)** | Etiquetas asociadas a cada campo, foco visible, diálogos con foco atrapado y cierre con Escape, un `h1` por pantalla | Medir el contraste con una herramienta, auditoría formal y prueba con lector de pantalla |
 
 **Recomendación:** antes de usar datos reales, haga un primer despliegue de ensayo y siga la lista de
@@ -179,8 +180,10 @@ límites conocidos son:
   recuperación responde igual en ambos casos; pero en la recuperación un atacante paciente podría distinguirlos por
   el tiempo de respuesta, y el aviso de «cuenta bloqueada» confirma que un correo existe tras varios intentos
   fallidos.
-- **No se hizo una prueba de penetración independiente** y la política de contraseñas no consulta listas de
-  contraseñas filtradas.
+- **No se hizo una prueba de penetración independiente ni un escaneo dinámico (OWASP ZAP)**, y la política de contraseñas no
+  consulta listas de contraseñas filtradas. Sí se ejecutaron análisis estático (Bandit), auditoría de dependencias
+  (`pip-audit`, `npm audit`), una sonda de 16 comprobaciones y fuzzing del contrato OpenAPI con Schemathesis
+  ([SEGURIDAD.md](SEGURIDAD.md#verificación-frente-a-owasp-top-102025)).
 
 ### Funcionalidad
 

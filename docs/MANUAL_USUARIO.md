@@ -275,7 +275,7 @@ historial) y las ya aprobadas no se duplican.
 ## 6. Reportes
 
 **Inteligencia → Reportes.** Seleccione el tipo de reporte, aplique filtros (sede, fechas y otros según el tipo) y
-verá una **vista previa**. Luego descargue en **CSV** o **Excel**.
+verá una **vista previa**. Luego descargue en **PDF**, **Excel** o **CSV**.
 
 | Reporte | Contenido |
 |---|---|
@@ -288,7 +288,7 @@ verá una **vista previa**. Luego descargue en **CSV** o **Excel**.
 | Recomendaciones | Reabastecimiento y traslado con su estado |
 
 Solo ve los reportes que su rol permite. Cada descarga queda registrada en la auditoría. Los CSV usan coma como
-separador y se abren bien en Excel; los Excel incluyen una hoja de resumen con los criterios del reporte.
+separador y se abren bien en Excel; los Excel incluyen una hoja de resumen con los criterios del reporte. El **PDF** es para leer o imprimir: trae el encabezado con la empresa, quién lo generó, la fecha y los filtros, y numera las páginas; incluye hasta 1.000 filas y, si hay más, lo avisa (para el reporte completo use Excel o CSV). Cuando un reporte se recorta (la vista previa muestra 200 filas y el PDF 1.000), el resumen suma solo las filas mostradas; los totales completos están en el Excel o el CSV.
 
 ---
 
@@ -493,8 +493,10 @@ registro conserva los parámetros con los que se calculó: cambiar la configurac
 | **Cobertura** | Cuántos días alcanzan las existencias al ritmo de ventas previsto |
 | **Plazo de entrega** | Días que tarda en llegar un pedido desde que se hace |
 | **Demanda estimada** | Unidades que el sistema espera vender en un periodo. Es una estimación |
-| **Intervalo de 80 %** | Rango en el que se espera que caiga la demanda en 8 de cada 10 casos |
+| **Intervalo de 80 %** | Rango pensado para que la demanda real caiga dentro en cerca de 8 de cada 10 casos. En las pruebas con datos de demostración cubrió entre 78 % y 83 %; con sus propios datos puede variar, así que tómelo como una guía, no como una garantía |
 | **WAPE** | Error relativo del pronóstico: 20 % significa que, en promedio, se equivocó en una quinta parte de lo vendido |
+| **RMSE** | Error típico del pronóstico en unidades por día; pesa más los errores grandes |
+| **MAPE** | Error porcentual medio, solo en los días con ventas (con venta cero no se puede calcular) |
 | **Línea base** | Pronóstico simple (promedio de 28 días) contra el que debe ganar cualquier modelo más complejo |
 | **Recomendación** | Sugerencia calculada por el sistema que una persona debe aprobar o rechazar |
 | **SIG** | Sistema Integrado de Gestión: PQRS, seguridad y salud en el trabajo, calidad y gestión ambiental |

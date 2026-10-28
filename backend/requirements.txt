@@ -21,10 +21,12 @@ greenlet==3.5.5
 
 # --- Seguridad ---
 argon2-cffi==25.1.0
-PyJWT==2.13.0
+PyJWT==2.15.1
 
-# --- Reportes ---
+# --- Reportes (Excel y PDF) ---
 openpyxl==3.1.5
+reportlab==5.1.0
+pillow==13.0.0  # lo exige reportlab; se fija para builds reproducibles
 
 # --- Analítica y predicción de demanda ---
 numpy==2.5.3
@@ -35,4 +37,3 @@ statsmodels==0.15.0
 
 # --- Utilidades ---
 tzdata==2026.5
-httpx==0.28.1

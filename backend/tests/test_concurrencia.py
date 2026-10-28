@@ -8,8 +8,8 @@ import asyncio
 import pytest
 from sqlalchemy import func, select
 
-from app.models.inventario import InventarioSede, Movimiento
-from app.models.operaciones import Venta
+from app.model.inventario import InventarioSede, Movimiento
+from app.model.operaciones import Venta
 from tests.ayuda import crear_categoria, crear_empresa, crear_producto, crear_sede, entrada, existencias
 
 pytestmark = pytest.mark.postgres

@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> pendiente: Generar recomendaciones
+    pendiente --> aprobada: Aprobar (reabastecimiento)
+    pendiente --> ejecutada: Aprobar (traslado: crea la solicitud)
+    pendiente --> rechazada: Rechazar
+    pendiente --> reemplazada: Generar de nuevo
+    aprobada --> ejecutada: Marcar como ejecutada
+    ejecutada --> [*]
+    rechazada --> [*]
+    reemplazada --> [*]

@@ -2,8 +2,8 @@
 
 from sqlalchemy import func, select
 
-from app.models.inventario import InventarioSede, Movimiento
-from app.models.operaciones import Venta
+from app.model.inventario import InventarioSede, Movimiento
+from app.model.operaciones import Venta
 from tests.ayuda import (
     crear_categoria,
     crear_empresa,
@@ -40,7 +40,7 @@ async def test_venta_descuenta_existencias_y_calcula_totales(cliente, db):
     assert await existencias(admin, norte["id"], p1["id"]) == 46
     v2 = (await admin.post("/api/ventas", {"sede_id": norte["id"], "items": [{"producto_id": p1["id"], "cantidad": 1}]})).json()
     assert v2["numero"] == 2  # consecutivo por empresa
-    movs = (await admin.get(f"/api/movimientos?tipo=venta")).json()["items"]
+    movs = (await admin.get("/api/movimientos?tipo=venta")).json()["items"]
     assert len(movs) == 3 and all(m["venta_numero"] in (1, 2) for m in movs)
 
 
@@ -78,7 +78,7 @@ async def test_anular_venta_reintegra_y_no_se_repite(cliente, db):
 async def test_plazo_de_anulacion(cliente, db):
     from datetime import timedelta
 
-    from app.core.tiempo import ahora_utc
+    from app.util.tiempo import ahora_utc
 
     admin, norte, sur, p1, p2 = await base(cliente, db)
     v = (await admin.post("/api/ventas", {"sede_id": norte["id"], "items": [{"producto_id": p1["id"], "cantidad": 1}]})).json()

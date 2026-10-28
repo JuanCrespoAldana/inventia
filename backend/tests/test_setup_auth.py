@@ -3,9 +3,9 @@
 import pytest
 from sqlalchemy import select
 
-import app.core.config as cfg
-from app.models.auditoria import Auditoria
-from app.models.usuario import Usuario
+import app.config.settings as cfg
+from app.model.auditoria import Auditoria
+from app.model.usuario import Usuario
 from tests.ayuda import PASSWORD, crear_empresa, iniciar_sesion
 
 DATOS_SETUP = {
@@ -160,7 +160,7 @@ async def test_recuperacion_de_contraseña_flujo_completo(cliente, db, monkeypat
     async def falso_envio(destino, nombre, codigo):
         enviados.append((destino, codigo))
 
-    import app.services.auth_service as svc
+    import app.service.auth_service as svc
 
     monkeypatch.setattr(svc, "enviar_codigo_recuperacion", falso_envio, raising=False)
     r = await cliente.post("/api/auth/forgot-password", json={"email": "admin@andina.com"})
@@ -192,7 +192,7 @@ async def test_codigo_se_invalida_tras_demasiados_intentos(cliente, db, monkeypa
     async def falso_envio(destino, nombre, codigo):
         enviados.append(codigo)
 
-    import app.services.auth_service as svc
+    import app.service.auth_service as svc
 
     monkeypatch.setattr(svc, "enviar_codigo_recuperacion", falso_envio, raising=False)
     await cliente.post("/api/auth/forgot-password", json={"email": "admin@andina.com"})
@@ -200,7 +200,7 @@ async def test_codigo_se_invalida_tras_demasiados_intentos(cliente, db, monkeypa
     equivocado = "123456" if codigo != "123456" else "654321"
     for _ in range(5):
         await cliente.post("/api/auth/verify-reset-code", json={"email": "admin@andina.com", "codigo": equivocado})
-        from app.core.limiter import limiter
+        from app.security.limiter import limiter
 
         limiter.reset()
     r = await cliente.post("/api/auth/verify-reset-code", json={"email": "admin@andina.com", "codigo": codigo})
@@ -222,6 +222,69 @@ async def test_cabeceras_de_seguridad_y_request_id(cliente):
     assert r.headers["x-request-id"]
     r2 = await cliente.get("/api/health")
     assert r2.headers["x-request-id"] != r.headers["x-request-id"]
+
+
+@pytest.mark.parametrize("activa", ["true", "false"])
+def test_la_documentacion_de_la_api_se_puede_ocultar(activa):
+    """DOCS_API_ACTIVA=false retira /api/docs y /api/openapi.json (A02 de OWASP: no exponer lo que no hace falta)."""
+    import os
+    import subprocess
+    import sys
+
+    entorno = {**os.environ, "DOCS_API_ACTIVA": activa}
+    codigo = "from app.main import app; print(app.docs_url, app.openapi_url)"
+    salida = subprocess.run([sys.executable, "-c", codigo], env=entorno, capture_output=True, text=True, timeout=120)
+    assert salida.returncode == 0, salida.stderr
+    assert salida.stdout.split() == (["/api/docs", "/api/openapi.json"] if activa == "true" else ["None", "None"])
+
+
+async def test_el_contrato_describe_el_formato_real_de_los_errores_de_validacion(cliente):
+    """Lo que declara OpenAPI para un 422 debe ser lo que la API responde (lo encontró Schemathesis)."""
+    from app.main import app
+
+    declarado = app.openapi()["components"]["schemas"]["HTTPValidationError"]
+    assert declarado["properties"]["detail"]["type"] == "string"
+    assert {"detail", "codigo"} <= set(declarado["required"])
+    assert "ValidationError" not in app.openapi()["components"]["schemas"]
+
+    real = await cliente.post("/api/auth/login", json={})
+    assert real.status_code == 422
+    cuerpo = real.json()
+    assert isinstance(cuerpo["detail"], str) and cuerpo["codigo"] == "validacion"
+    assert cuerpo["errores"] and set(cuerpo["errores"][0]) == {"campo", "mensaje"}
+    assert set(cuerpo) <= set(declarado["properties"])
+
+
+def test_un_valor_que_no_cabe_en_la_base_se_reconoce_como_entrada_invalida():
+    """Un id de 30 dígitos no es una falla del servidor: debe poder distinguirse de un error real de la base."""
+    from sqlalchemy.exc import DataError, DBAPIError
+
+    from app.exception.manejadores import es_dato_numerico_invalido
+
+    dato_asyncpg = type("DataError", (Exception,), {"__module__": "asyncpg.exceptions"})
+    byte_nulo = type("CharacterNotInRepertoireError", (dato_asyncpg,), {"__module__": "asyncpg.exceptions"})
+    for causa in (dato_asyncpg("fuera de rango"), byte_nulo("invalid byte sequence for encoding UTF8: 0x00")):
+        orig = Exception("envoltura del controlador")
+        orig.__cause__ = causa
+        assert es_dato_numerico_invalido(DBAPIError("SELECT 1", {}, orig))
+    assert es_dato_numerico_invalido(DataError("INSERT", {}, Exception("value too long for type character varying(10)")))
+    assert not es_dato_numerico_invalido(DBAPIError("SELECT 1", {}, Exception("conexión perdida")))
+
+
+@pytest.mark.postgres
+@pytest.mark.parametrize("ruta", [
+    "/api/ventas?numero=99999999999", "/api/ventas?numero=" + "9" * 30, "/api/movimientos?producto_id=99999999999",
+    "/api/productos/99999999999", "/api/usuarios/" + "9" * 30 + "/desbloquear",
+    "/api/sedes?q=a%00b", "/api/productos?q=%00",
+])
+async def test_valores_que_la_base_no_admite_responden_422_y_no_500(cliente, db, ruta):
+    """Lo encontró el fuzzing con Schemathesis: PostgreSQL rechaza enteros que no caben o texto con byte nulo y la API respondía 500."""
+    admin = await crear_empresa(db, cliente)
+    metodo = "post" if ruta.endswith("/desbloquear") else "get"
+    r = await getattr(cliente, metodo)(ruta, headers=admin.cabeceras)
+    assert r.status_code == 422, r.text
+    assert r.json()["codigo"] == "validacion"
+    assert "Traceback" not in r.text
 
 
 async def test_error_interno_no_filtra_detalles(cliente, monkeypatch):

@@ -1,0 +1,11 @@
+admin 1440 salida=0
+gerente 1440 salida=0
+compras 1440 salida=0
+inventario 1440 salida=0
+admin 390 salida=0
+gerente 390 salida=0
+compras 390 salida=0
+inventario 390 salida=0
+admin 320 salida=0
+admin 1280 salida=0
+flujos salida=0

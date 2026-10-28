@@ -10,7 +10,6 @@
     "lint": "oxlint --deny-warnings",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:cov": "vitest run --coverage",
     "preview": "vite preview",
     "tipos": "node scripts/generar-tipos.mjs"
   },

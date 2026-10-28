@@ -52,7 +52,7 @@ export const apiAuditoria = {
 export const apiReportes = {
   catalogo: () => get<TipoReporte[]>("/api/reportes"),
   vistaPrevia: (tipo: string, f: FiltroReporte) => get<Reporte>(`/api/reportes/${tipo}`, { ...f, formato: "json" }),
-  descargar: (tipo: string, formato: "csv" | "xlsx", f: FiltroReporte) => descargar(`/api/reportes/${tipo}`, { ...(f as Parametros), formato }),
+  descargar: (tipo: string, formato: "csv" | "xlsx" | "pdf", f: FiltroReporte) => descargar(`/api/reportes/${tipo}`, { ...(f as Parametros), formato }),
 };
 
 export const apiIntegraciones = {

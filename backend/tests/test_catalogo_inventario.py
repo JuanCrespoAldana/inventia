@@ -2,7 +2,7 @@
 
 from sqlalchemy import func, select
 
-from app.models.inventario import InventarioSede, Movimiento
+from app.model.inventario import InventarioSede, Movimiento
 from tests.ayuda import (
     crear_categoria,
     crear_empresa,

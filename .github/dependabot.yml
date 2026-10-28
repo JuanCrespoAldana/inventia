@@ -1,0 +1,21 @@
+# Propone actualizaciones de dependencias (y avisa de las que tienen vulnerabilidades) una vez por semana.
+# Cada propuesta es una solicitud de cambio que ejecuta el CI; se revisa y se aprueba a mano.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /backend
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+  - package-ecosystem: docker
+    directory: /backend
+    schedule: { interval: monthly }
+  - package-ecosystem: docker
+    directory: /frontend
+    schedule: { interval: monthly }

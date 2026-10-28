@@ -82,9 +82,9 @@ código 10/min, restablecimiento 5/min, configuración inicial 5/min y rutas de 
 
 ### Reportes
 
-`GET /api/reportes/{tipo}?formato=json|csv|xlsx` con `tipo` en `inventario`, `ventas`, `movimientos`, `traslados`,
+`GET /api/reportes/{tipo}?formato=json|csv|xlsx|pdf` con `tipo` en `inventario`, `ventas`, `movimientos`, `traslados`,
 `alertas`, `predicciones`, `recomendaciones`. Con `formato=json` devuelve una vista previa (`columnas`, `filas`,
-`resumen`, `truncado`); con `csv` o `xlsx` devuelve el archivo. Cada generación queda en la auditoría.
+`resumen`, `truncado`); con `csv`, `xlsx` o `pdf` devuelve el archivo (el PDF se limita a 1.000 filas y lo avisa dentro del documento). Cada generación queda en la auditoría.
 
 ## Mapa de rutas
 
@@ -257,7 +257,7 @@ siempre el permiso y, para roles de sede, restringe los resultados a la sede asi
 | Método | Ruta | Descripción | Acceso |
 |---|---|---|---|
 | GET | `/api/reportes` | Reportes que el usuario puede generar | Sesión iniciada (lista solo los permitidos) |
-| GET | `/api/reportes/{tipo}` | Generar un reporte: vista previa (json) o descarga (csv, xlsx) | `reportes.<tipo>` según el tipo |
+| GET | `/api/reportes/{tipo}` | Generar un reporte: vista previa (json) o descarga (csv, xlsx, pdf) | `reportes.<tipo>` según el tipo |
 
 #### Integraciones
 

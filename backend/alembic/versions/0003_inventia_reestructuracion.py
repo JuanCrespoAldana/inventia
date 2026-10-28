@@ -21,8 +21,9 @@ sincroniza al iniciar la API (``sincronizar_permisos``).
 from typing import Sequence, Union
 
 import sqlalchemy as sa
-from alembic import op
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision: str = "0003_inventia"
 down_revision: Union[str, Sequence[str], None] = "5cb4ddecc152"

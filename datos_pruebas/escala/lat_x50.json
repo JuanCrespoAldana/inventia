@@ -1,0 +1,227 @@
+{
+  "host": "http://127.0.0.1:8001",
+  "filas": {
+    "/api/ventas": 275100,
+    "/api/movimientos": 710850,
+    "/api/auditoria": 285408
+  },
+  "resultados": [
+    {
+      "consulta": "Panel (30 días)",
+      "ruta": "/api/dashboard",
+      "parametros": {
+        "dias": 30
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 86.2,
+      "p95_ms": 101.4,
+      "maximo_ms": 101.9,
+      "bytes": 9456
+    },
+    {
+      "consulta": "Panel (365 días)",
+      "ruta": "/api/dashboard",
+      "parametros": {
+        "dias": 365
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 121.9,
+      "p95_ms": 137.6,
+      "maximo_ms": 198.6,
+      "bytes": 32643
+    },
+    {
+      "consulta": "Existencias consolidadas",
+      "ruta": "/api/inventario/consolidado",
+      "parametros": {
+        "tamano": 50
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 12.2,
+      "p95_ms": 14.0,
+      "maximo_ms": 18.1,
+      "bytes": 19981
+    },
+    {
+      "consulta": "Alertas",
+      "ruta": "/api/alertas",
+      "parametros": {
+        "tamano": 50
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 9.0,
+      "p95_ms": 10.1,
+      "maximo_ms": 10.8,
+      "bytes": 16265
+    },
+    {
+      "consulta": "Ventas, primera página",
+      "ruta": "/api/ventas",
+      "parametros": {
+        "tamano": 50
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 50.5,
+      "p95_ms": 52.3,
+      "maximo_ms": 58.7,
+      "bytes": 13240
+    },
+    {
+      "consulta": "Ventas, última página",
+      "ruta": "/api/ventas",
+      "parametros": {
+        "tamano": 50,
+        "pagina": 5502
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 141.2,
+      "p95_ms": 159.7,
+      "maximo_ms": 160.4,
+      "bytes": 13564
+    },
+    {
+      "consulta": "Movimientos, primera página",
+      "ruta": "/api/movimientos",
+      "parametros": {
+        "tamano": 50
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 69.7,
+      "p95_ms": 75.7,
+      "maximo_ms": 81.3,
+      "bytes": 25956
+    },
+    {
+      "consulta": "Movimientos, última página",
+      "ruta": "/api/movimientos",
+      "parametros": {
+        "tamano": 50,
+        "pagina": 14217
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 440.8,
+      "p95_ms": 499.1,
+      "maximo_ms": 510.4,
+      "bytes": 26254
+    },
+    {
+      "consulta": "Movimientos, todo el historial",
+      "ruta": "/api/movimientos",
+      "parametros": {
+        "tamano": 50,
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 72.4,
+      "p95_ms": 89.5,
+      "maximo_ms": 93.6,
+      "bytes": 25955
+    },
+    {
+      "consulta": "Auditoría, primera página",
+      "ruta": "/api/auditoria",
+      "parametros": {
+        "tamano": 50
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 42.9,
+      "p95_ms": 54.4,
+      "maximo_ms": 60.3,
+      "bytes": 14602
+    },
+    {
+      "consulta": "Auditoría, última página",
+      "ruta": "/api/auditoria",
+      "parametros": {
+        "tamano": 50,
+        "pagina": 5708
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 131.8,
+      "p95_ms": 137.7,
+      "maximo_ms": 138.4,
+      "bytes": 9447
+    },
+    {
+      "consulta": "Reporte de ventas en pantalla (todo el historial)",
+      "ruta": "/api/reportes/ventas",
+      "parametros": {
+        "formato": "json",
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 52.6,
+      "p95_ms": 63.6,
+      "maximo_ms": 118.6,
+      "bytes": 48164
+    },
+    {
+      "consulta": "Reporte de movimientos en pantalla (todo el historial)",
+      "ruta": "/api/reportes/movimientos",
+      "parametros": {
+        "formato": "json",
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 23.3,
+      "p95_ms": 30.9,
+      "maximo_ms": 31.5,
+      "bytes": 57114
+    },
+    {
+      "consulta": "Reporte de ventas en PDF (1.000 filas)",
+      "ruta": "/api/reportes/ventas",
+      "parametros": {
+        "formato": "pdf",
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 15,
+      "mediana_ms": 1969.1,
+      "p95_ms": 2054.1,
+      "maximo_ms": 2071.4,
+      "bytes": 158383
+    },
+    {
+      "consulta": "Reporte de ventas en CSV (todo el historial)",
+      "ruta": "/api/reportes/ventas",
+      "parametros": {
+        "formato": "csv",
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 3,
+      "mediana_ms": 3964.8,
+      "p95_ms": 4023.3,
+      "maximo_ms": 4023.3,
+      "bytes": 6462790
+    },
+    {
+      "consulta": "Reporte de ventas en Excel (todo el historial)",
+      "ruta": "/api/reportes/ventas",
+      "parametros": {
+        "formato": "xlsx",
+        "desde": "2020-01-01"
+      },
+      "codigo": 200,
+      "repeticiones": 3,
+      "mediana_ms": 16258.4,
+      "p95_ms": 16284.1,
+      "maximo_ms": 16284.1,
+      "bytes": 2540442
+    }
+  ]
+}

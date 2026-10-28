@@ -1,6 +1,5 @@
 """Migraciones de Alembic sobre PostgreSQL real (base vacía y base heredada con datos)."""
 
-import asyncio
 import os
 import subprocess
 import sys

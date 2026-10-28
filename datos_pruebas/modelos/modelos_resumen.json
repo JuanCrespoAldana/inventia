@@ -1,0 +1,102 @@
+{
+  "corte": "2026-10-25",
+  "horizonte": 14,
+  "historia_max_dias": 200,
+  "series_cargadas": 108,
+  "omitidas": {
+    "historial_insuficiente": 3,
+    "pocas_ventas": 1
+  },
+  "modelo_elegido_por_el_sistema": {
+    "ets_semanal": 36,
+    "media_28": 16,
+    "media_7": 17,
+    "estacional_7": 12,
+    "gbr_rezagos": 18,
+    "croston_sba": 5
+  },
+  "confianza": {
+    "media": 44,
+    "baja": 51,
+    "alta": 9
+  },
+  "sistema": {
+    "series": 104,
+    "wape_sistema": 0.5006891153082418,
+    "wape_linea_base": 0.549061990930684,
+    "rmse_sistema": 1.384519428400717,
+    "rmse_linea_base": 1.507770539875266,
+    "series_mejoran": 88,
+    "series_empatan_o_linea_base": 16,
+    "series_empeoran": 0
+  },
+  "tabla_modelos": [
+    {
+      "modelo": "ets_semanal",
+      "avanzado": true,
+      "series": 102,
+      "wape": 0.5118834154379072,
+      "mae": 0.9475452073281325,
+      "rmse": 1.3876707814770293,
+      "mape": 0.5179191065790651,
+      "sesgo": -0.009579438657885103,
+      "series_donde_gana": 45
+    },
+    {
+      "modelo": "gbr_rezagos",
+      "avanzado": true,
+      "series": 104,
+      "wape": 0.5451997764805617,
+      "mae": 0.9910045373072067,
+      "rmse": 1.4713331412980764,
+      "mape": 0.5651412176046271,
+      "sesgo": -0.007567862686240622,
+      "series_donde_gana": 20
+    },
+    {
+      "modelo": "media_28",
+      "avanzado": false,
+      "series": 104,
+      "wape": 0.5490619863221411,
+      "mae": 0.9980248400332004,
+      "rmse": 1.5077705292673862,
+      "mape": 0.5468382060395526,
+      "sesgo": -0.004129903251182855,
+      "series_donde_gana": 9
+    },
+    {
+      "modelo": "croston_sba",
+      "avanzado": true,
+      "series": 104,
+      "wape": 0.5490668514464858,
+      "mae": 0.9980336833242437,
+      "rmse": 1.515686176047178,
+      "mape": 0.5336857080022757,
+      "sesgo": -0.04688080211457921,
+      "series_donde_gana": 7
+    },
+    {
+      "modelo": "estacional_7",
+      "avanzado": false,
+      "series": 104,
+      "wape": 0.5666383921634222,
+      "mae": 1.0299733086307172,
+      "rmse": 1.5285614547843693,
+      "mape": 0.5873253394761644,
+      "sesgo": -0.004129903251182858,
+      "series_donde_gana": 10
+    },
+    {
+      "modelo": "media_7",
+      "avanzado": false,
+      "series": 104,
+      "wape": 0.5673027879653068,
+      "mae": 1.0311809746691845,
+      "rmse": 1.547158290192598,
+      "mape": 0.5796780647555954,
+      "sesgo": 0.006265919835048021,
+      "series_donde_gana": 13
+    }
+  ],
+  "segundos": 108.2
+}

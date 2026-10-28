@@ -7,10 +7,11 @@ Todo aquí es cálculo puro (sin base de datos), de modo que se puede probar y r
 2. Preparación: los días en que no hubo existencias (la demanda no se pudo observar) se sustituyen por
    el promedio reciente y los picos extremos se limitan (winsorización), para no aprender de ruido.
 3. Validación temporal (rolling origin, hasta 3 cortes): cada modelo se entrena solo con el pasado y se
-   evalúa en los días siguientes. Se mide WAPE y MAE.
+   evalúa en los días siguientes. Se mide WAPE, MAE, RMSE y MAPE (más el sesgo); el WAPE es el que decide.
 4. Selección: un modelo avanzado solo reemplaza al mejor modelo simple si lo supera por al menos 3 %
    de WAPE; la línea base (promedio de 28 días) queda siempre como referencia.
-5. Intervalo de 80 % a partir de la dispersión de los errores de validación y confianza alta/media/baja.
+5. Intervalo de 80 % a partir de la dispersión de los errores de validación (con una forma calibrada en
+   pruebas fuera de muestra) y confianza alta/media/baja.
 """
 
 from __future__ import annotations
@@ -29,6 +30,15 @@ MIN_DIAS_HISTORIA = 28
 MIN_DIAS_CON_VENTAS = 5
 MEJORA_MINIMA_AVANZADO = 0.03  # el modelo avanzado debe ganar al simple por ≥ 3 % de error
 Z_80 = 1.2816  # cuantil normal para un intervalo de 80 %
+# Margen del intervalo = z · ESCALA · σ · h^EXPONENTE, con σ la desviación de los errores diarios de validación.
+# Los errores de días seguidos no son independientes (un error de nivel se repite todos los días), así que la
+# fórmula clásica σ·√h se queda corta para el total del período: en las pruebas fuera de muestra cubrió 62 % en lugar
+# del 80 % nominal con h = 14. El cuantil 80 % del cociente error/margen creció con el horizonte (1,33 con 7 días,
+# 1,49 con 14 y 1,90 con 28), lo que equivale a un exponente cercano a 0,75. Con ESCALA = 0,8 y EXPONENTE = 0,75
+# la cobertura medida fue de 78–83 % para h entre 7 y 28 (docs/PREDICCION.md §11). Constantes calibradas con datos
+# SINTÉTICOS de demostración: con datos reales deben volver a medirse (ml/evaluar_fuera_de_muestra.py).
+ESCALA_INTERVALO = 0.8
+EXPONENTE_HORIZONTE_INTERVALO = 0.75
 MAX_FRACCION_CENSURADA = 0.5
 
 
@@ -184,7 +194,7 @@ def pronosticar_serie(serie: SerieEntrada, horizonte: int, *, solo_modelos_simpl
 
     sigma = float(np.std(metricas.residuos)) if metricas.residuos else 0.0
     total = float(punto.sum())
-    margen = Z_80 * sigma * math.sqrt(horizonte)
+    margen = Z_80 * ESCALA_INTERVALO * sigma * horizonte**EXPONENTE_HORIZONTE_INTERVALO
     mejora = None
     if linea_base.wape is not None and metricas.wape is not None and linea_base.wape > 0:
         mejora = (linea_base.wape - metricas.wape) / linea_base.wape * 100.0
@@ -200,15 +210,23 @@ def pronosticar_serie(serie: SerieEntrada, horizonte: int, *, solo_modelos_simpl
     base.confianza = _confianza(metricas.wape, metricas, n, dias_con_ventas)
     base.advertencias = advertencias
     base.metricas = {
-        "wape": _r(metricas.wape), "mae": _r(metricas.mae), "sesgo": _r(metricas.sesgo),
+        "wape": _r(metricas.wape), "mae": _r(metricas.mae), "rmse": _r(metricas.rmse), "mape": _r(metricas.mape),
+        "sesgo": _r(metricas.sesgo),
         "wape_linea_base": _r(linea_base.wape), "mae_linea_base": _r(linea_base.mae),
+        "rmse_linea_base": _r(linea_base.rmse), "mape_linea_base": _r(linea_base.mape),
         "mejora_vs_linea_base_pct": _r(mejora, 1),
         "n_pliegues": metricas.n_pliegues, "dias_validados": metricas.n_dias_validados,
         "dias_historia": n, "dias_con_ventas": dias_con_ventas,
         "suma_error_abs": _r(metricas.suma_error_abs), "suma_real": _r(metricas.suma_real),
         "suma_error_abs_base": _r(linea_base.suma_error_abs), "suma_real_base": _r(linea_base.suma_real),
+        "suma_error_cuad": _r(metricas.suma_error_cuad), "suma_error_cuad_base": _r(linea_base.suma_error_cuad),
+        "suma_error_pct": _r(metricas.suma_error_pct), "suma_error_pct_base": _r(linea_base.suma_error_pct),
+        "dias_validados_con_ventas": metricas.n_dias_con_ventas,
         "candidatos": [
-            {"modelo": k, "avanzado": POR_NOMBRE[k].avanzado, "wape": _r(m.wape), "mae": _r(m.mae)}
+            {
+                "modelo": k, "avanzado": POR_NOMBRE[k].avanzado,
+                "wape": _r(m.wape), "mae": _r(m.mae), "rmse": _r(m.rmse), "mape": _r(m.mape),
+            }
             for k, m in sorted(evaluados.items(), key=lambda kv: _error(kv[1]))
         ],
     }
@@ -248,6 +266,17 @@ def resumir(resultados: list[ResultadoSerie]) -> dict:
     real_b = sum(r.metricas.get("suma_real_base") or 0.0 for r in hechos)
     wape = err / real if real > 0 else None
     wape_base = err_b / real_b if real_b > 0 else None
+    # RMSE y MAPE globales: se acumulan las sumas de cada serie (no se promedian promedios).
+    dias = sum(r.metricas.get("dias_validados") or 0 for r in hechos)
+    dias_pct = sum(r.metricas.get("dias_validados_con_ventas") or 0 for r in hechos)
+    cuad = sum(r.metricas.get("suma_error_cuad") or 0.0 for r in hechos)
+    cuad_b = sum(r.metricas.get("suma_error_cuad_base") or 0.0 for r in hechos)
+    pct = sum(r.metricas.get("suma_error_pct") or 0.0 for r in hechos)
+    pct_b = sum(r.metricas.get("suma_error_pct_base") or 0.0 for r in hechos)
+    rmse = math.sqrt(cuad / dias) if dias else None
+    rmse_base = math.sqrt(cuad_b / dias) if dias else None
+    mape = pct / dias_pct if dias_pct else None
+    mape_base = pct_b / dias_pct if dias_pct else None
     mejora = (wape_base - wape) / wape_base * 100.0 if wape is not None and wape_base else None
     por_modelo: dict[str, int] = {}
     for r in hechos:
@@ -264,6 +293,10 @@ def resumir(resultados: list[ResultadoSerie]) -> dict:
         "motivos_omision": motivos,
         "wape_global": _r(wape),
         "wape_linea_base_global": _r(wape_base),
+        "rmse_global": _r(rmse),
+        "rmse_linea_base_global": _r(rmse_base),
+        "mape_global": _r(mape),
+        "mape_linea_base_global": _r(mape_base),
         "mejora_vs_linea_base_pct": _r(mejora, 1),
         "modelos_elegidos": por_modelo,
         "series_por_confianza": por_confianza,

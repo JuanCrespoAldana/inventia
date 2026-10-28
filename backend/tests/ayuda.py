@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 
 from httpx import AsyncClient
 
-from app.models.sede import Sede
-from app.services import setup_service
+from app.model.sede import Sede
+from app.service import setup_service
 
 PASSWORD = "Clave#Segura1"
 
@@ -131,15 +131,15 @@ async def sembrar_historial(
 
     from sqlalchemy import select
 
-    from app.api.deps import contexto_de_usuario
     from app.demo import SinAlertas, _momento
-    from app.core.tiempo import hoy_local
-    from app.models.catalogo import Producto
-    from app.models.enums import TipoMovimiento
-    from app.models.usuario import Usuario
-    from app.schemas.ventas import VentaCrear, VentaItemCrear
-    from app.services import inventario_service, ventas_service
-    from app.services.inventario_service import Operacion
+    from app.dto.ventas_dto import VentaCrear, VentaItemCrear
+    from app.model.catalogo import Producto
+    from app.model.enums import TipoMovimiento
+    from app.model.usuario import Usuario
+    from app.security.dependencias import contexto_de_usuario
+    from app.service import inventario_service, ventas_service
+    from app.service.inventario_service import Operacion
+    from app.util.tiempo import hoy_local
 
     usuario = await db.scalar(
         select(Usuario).where(Usuario.id == admin.usuario["id"]).execution_options(populate_existing=True)

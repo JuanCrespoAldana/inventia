@@ -70,6 +70,9 @@ export function DetalleSerieModal({ sedeId, productoId, onCerrar }: { sedeId: nu
                 <dt className="text-xs text-ink-faint">Error de validación (WAPE)</dt>
                 <dd className="tabular mt-1 font-display text-xl font-semibold">{m.wape == null ? "—" : porcentaje(m.wape * 100)}</dd>
                 <dd className="mt-0.5 text-xs text-ink-dim">Línea base: {m.wape_linea_base == null ? "—" : porcentaje(m.wape_linea_base * 100)}</dd>
+                <dd className="tabular mt-0.5 text-xs text-ink-dim">
+                  RMSE {m.rmse == null ? "—" : `${decimal(m.rmse, 2)} u./día`} · MAPE {m.mape == null ? "—" : porcentaje(m.mape * 100)}
+                </dd>
               </div>
               <div className="rounded-(--radius-control) bg-surface-2 p-4">
                 <dt className="text-xs text-ink-faint">Mejora frente a la línea base</dt>
@@ -89,6 +92,8 @@ export function DetalleSerieModal({ sedeId, productoId, onCerrar }: { sedeId: nu
                       <th scope="col" className="px-4 py-2.5 font-semibold">Modelo</th>
                       <th scope="col" className="px-4 py-2.5 text-right font-semibold">WAPE</th>
                       <th scope="col" className="px-4 py-2.5 text-right font-semibold">MAE (u./día)</th>
+                      <th scope="col" className="px-4 py-2.5 text-right font-semibold">RMSE (u./día)</th>
+                      <th scope="col" className="px-4 py-2.5 text-right font-semibold">MAPE</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
@@ -99,13 +104,15 @@ export function DetalleSerieModal({ sedeId, productoId, onCerrar }: { sedeId: nu
                         </td>
                         <td className="tabular px-4 py-2.5 text-right">{c.wape == null ? "—" : porcentaje(c.wape * 100)}</td>
                         <td className="tabular px-4 py-2.5 text-right">{decimal(c.mae, 2)}</td>
+                        <td className="tabular px-4 py-2.5 text-right">{c.rmse == null ? "—" : decimal(c.rmse, 2)}</td>
+                        <td className="tabular px-4 py-2.5 text-right">{c.mape == null ? "—" : porcentaje(c.mape * 100)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <p className="mt-2 text-xs text-ink-faint">
-                Un modelo avanzado solo se elige si reduce el error al menos 3 % frente al mejor modelo simple en datos que no vio al entrenar.
+                Un modelo avanzado solo se elige si reduce el WAPE al menos 3 % frente al mejor modelo simple en datos que no vio al entrenar. El MAPE se calcula solo sobre los días con ventas; RMSE y MAPE se muestran como complemento.
               </p>
             </div>
           )}

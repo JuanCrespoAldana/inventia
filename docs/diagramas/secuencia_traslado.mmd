@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant D as Usuario de<br/>la sede destino
+    participant O as Encargado de<br/>la sede origen
+    participant R as Encargado de<br/>la sede destino
+    participant A as API
+    participant B as PostgreSQL
+    D->>A: POST /api/traslados (productos y cantidades)
+    A->>B: Crea el traslado «solicitado»<br/>con consecutivo atómico
+    A-->>D: 201 traslado solicitado
+    O->>A: POST /api/traslados/{id}/aprobar
+    A->>B: UPDATE estado = «aprobado» WHERE estado = «solicitado»
+    A-->>O: 200 aprobado<br/>(las existencias aún no cambian)
+    R->>A: POST /api/traslados/{id}/confirmar
+    A->>B: UPDATE estado = «confirmado»<br/>WHERE estado = «aprobado» (llave)
+    alt la transición tuvo éxito
+        A->>B: Descuenta del origen y suma al destino (misma transacción)
+        A->>B: Inserta dos movimientos por producto y recalcula alertas
+        A->>B: COMMIT
+        A-->>R: 200 confirmado
+    else otra persona confirmó antes
+        A-->>R: 409 estado inválido<br/>(no se mueve nada)
+    end
+    Note over O,A: Si el origen rechaza, o alguien cancela, el traslado se cierra sin mover existencias

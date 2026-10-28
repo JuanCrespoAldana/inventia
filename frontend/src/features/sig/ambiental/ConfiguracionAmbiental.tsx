@@ -295,6 +295,7 @@ export function ConfiguracionAmbientalTab() {
           descripcion="Categorías y parámetros ambientales"
           idDe={(c) => c.categoria_id}
           filas={cfg.categorias}
+          paginar={10}
           vacio={{ titulo: "No hay categorías", descripcion: "Crea categorías en el catálogo para poder marcarlas como vehículos." }}
           columnas={[
             { clave: "c", encabezado: "Categoría", celda: (c) => <span className="font-medium">{c.categoria_nombre}</span> },

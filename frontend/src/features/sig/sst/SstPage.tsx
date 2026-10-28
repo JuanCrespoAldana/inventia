@@ -21,6 +21,7 @@ import { Paginacion } from "@/components/ui/Pagination";
 import { PanelCargando } from "@/components/ui/Skeleton";
 import { Pestanas } from "@/components/ui/Tabs";
 import { useFiltros } from "@/hooks/useFiltros";
+import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
 import { useMutacion } from "@/hooks/useMutacion";
 import { mensajeDeError } from "@/lib/errors";
 import { AREA_PAUSA, ESTADO_PAUSA, estado, etiqueta } from "@/lib/etiquetas";
@@ -39,10 +40,14 @@ function duracionTexto(s: number | null | undefined) {
 
 /* ------------------------------------------------------------------------------ ejercicios */
 
+/** Seis tarjetas por página: llenan filas completas de 2 y de 3 columnas. */
+const EJERCICIOS_POR_PAGINA = 6;
+
 function Ejercicios({ gestor }: { gestor: boolean }) {
   const actividades = useQuery({ queryKey: ["sst", "actividades", false], queryFn: () => apiSst.actividades(false) });
   const configuracion = useQuery({ queryKey: ["sst", "configuracion"], queryFn: apiSst.configuracion });
   const [vista, setVista] = useState<ActividadSst | null>(null);
+  const pagina = usePaginacionLocal(actividades.data, EJERCICIOS_POR_PAGINA);
 
   return (
     <div className="flex flex-col gap-6">
@@ -62,28 +67,35 @@ function Ejercicios({ gestor }: { gestor: boolean }) {
           <EstadoError error={actividades.error} onReintentar={() => actividades.refetch()} />
         </Card>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Ejercicios de pausas activas">
-          {actividades.data.map((a) => (
-            <li key={a.id}>
-              <Card className="flex h-full flex-col gap-3 p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <Badge tono="accent">{etiqueta(AREA_PAUSA, a.area)}</Badge>
-                  <span className="tabular inline-flex items-center gap-1 text-xs text-ink-faint">
-                    <Timer className="size-3.5" aria-hidden />
-                    {duracionTexto(a.duracion_segundos)}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-display text-base font-semibold text-ink">{a.titulo}</h3>
-                  <p className="mt-1 text-sm text-ink-dim">{a.mensaje}</p>
-                </div>
-                <Button variante="secondary" tamano="sm" icono={<Eye className="size-4" aria-hidden />} onClick={() => setVista(a)}>
-                  Ver ejercicio
-                </Button>
-              </Card>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-label="Ejercicios de pausas activas">
+            {pagina.visibles.map((a) => (
+              <li key={a.id}>
+                <Card className="flex h-full flex-col gap-3 p-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <Badge tono="accent">{etiqueta(AREA_PAUSA, a.area)}</Badge>
+                    <span className="tabular inline-flex items-center gap-1 text-xs text-ink-faint">
+                      <Timer className="size-3.5" aria-hidden />
+                      {duracionTexto(a.duracion_segundos)}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-display text-base font-semibold text-ink">{a.titulo}</h3>
+                    <p className="mt-1 text-sm text-ink-dim">{a.mensaje}</p>
+                  </div>
+                  <Button variante="secondary" tamano="sm" icono={<Eye className="size-4" aria-hidden />} onClick={() => setVista(a)}>
+                    Ver ejercicio
+                  </Button>
+                </Card>
+              </li>
+            ))}
+          </ul>
+          {pagina.total > 0 && (
+            <Card>
+              <Paginacion {...pagina.paginacion} unidad="ejercicios" etiqueta="Paginación de ejercicios" />
+            </Card>
+          )}
+        </>
       )}
       {vista && <ModalPausa key={vista.id} actividad={vista} vistaPrevia onCerrarVistaPrevia={() => setVista(null)} />}
     </div>
@@ -171,6 +183,8 @@ function Cumplimiento() {
               descripcion="Cumplimiento de pausas por persona"
               idDe={(u) => u.usuario_id}
               filas={r.por_usuario}
+              paginar={10}
+              reiniciarCon={dias}
               vacio={{ titulo: "Sin pausas en el periodo", descripcion: "Todavía no se ha mostrado ninguna pausa en estas fechas." }}
               columnas={[
                 { clave: "u", encabezado: "Persona", celda: (u) => <span className="font-medium">{u.usuario_nombre ?? "—"}</span> },
@@ -389,6 +403,7 @@ function Contenido() {
         descripcion="Actividades de pausas activas"
         idDe={(a) => a.id}
         filas={actividades.data}
+        paginar={10}
         cargando={actividades.isPending}
         error={actividades.error}
         onReintentar={() => actividades.refetch()}

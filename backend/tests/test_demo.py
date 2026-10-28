@@ -4,16 +4,16 @@ import pytest
 from sqlalchemy import func, select
 
 from app import cli, demo, demo_sig
-from app.core.exceptions import Conflicto
-from app.models.ambiental import AmbRegistro
-from app.models.calidad import Garantia, NoConformidad
-from app.models.catalogo import Producto
-from app.models.empresa import Empresa
-from app.models.inventario import EntradaInventario
-from app.models.pqrs import Pqrs
-from app.models.sede import Sede
-from app.models.sst import SstPausa
-from app.models.usuario import Usuario
+from app.exception.excepciones import Conflicto
+from app.model.ambiental import AmbRegistro
+from app.model.calidad import Garantia, NoConformidad
+from app.model.catalogo import Producto
+from app.model.empresa import Empresa
+from app.model.inventario import EntradaInventario
+from app.model.pqrs import Pqrs
+from app.model.sede import Sede
+from app.model.sst import SstPausa
+from app.model.usuario import Usuario
 from tests.ayuda import PASSWORD, crear_empresa, iniciar_sesion
 
 DIAS = 60  # el mínimo permitido

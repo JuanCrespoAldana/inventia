@@ -2,7 +2,7 @@
 
 from sqlalchemy import select
 
-from app.models.auditoria import Auditoria
+from app.model.auditoria import Auditoria
 from tests.ayuda import PASSWORD, crear_empresa, crear_sede, crear_usuario, iniciar_sesion, roles_por_clave
 
 # ---------- Empresa ----------
@@ -28,8 +28,8 @@ async def test_parametros_de_empresa_se_validan(cliente, db):
 
 async def test_dos_empresas_no_pueden_repetir_identificacion(cliente, db):
     await crear_empresa(db, cliente)
-    from app.core.exceptions import Conflicto
-    from app.services import setup_service
+    from app.exception.excepciones import Conflicto
+    from app.service import setup_service
 
     try:
         await setup_service.crear_empresa_con_admin(

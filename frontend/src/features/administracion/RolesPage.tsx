@@ -15,8 +15,10 @@ import { EstadoError } from "@/components/ui/EstadoVacio";
 import { Casilla, Input, Select, Textarea } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
 import { EncabezadoPagina } from "@/components/ui/PageHeader";
+import { Paginacion } from "@/components/ui/Pagination";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useMutacion } from "@/hooks/useMutacion";
+import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
 import { cn } from "@/lib/cn";
 import { mensajeDeError } from "@/lib/errors";
 import { aplicarErroresServidor, v } from "@/lib/formularios";
@@ -24,6 +26,9 @@ import type { Permiso, Rol } from "@/types/api";
 
 const INVALIDAR = [["roles"], ["catalogo", "roles"], ["usuarios"]];
 const ALCANCE: Record<string, string> = { empresa: "Todas las sedes", sede: "Una sede" };
+/** Hay unos 19 módulos con 61 permisos: se muestran de a cinco para que la pantalla no se alargue. */
+const MODULOS_POR_PAGINA = 5;
+const ROLES_POR_PAGINA = 10;
 
 const esquema = z.object({
   nombre: v.texto("El nombre", 3, 80),
@@ -112,6 +117,7 @@ function EditorPermisos({ rol, catalogo }: { rol: Rol; catalogo: Permiso[] }) {
   const esAdmin = rol.clave === "admin";
   const puedeEditar = tiene("roles.asignar_permisos") && !esAdmin;
   const grupos = useMemo(() => agruparPorModulo(catalogo), [catalogo]);
+  const modulos = usePaginacionLocal(grupos, MODULOS_POR_PAGINA);
   const original = useMemo(() => new Set(rol.permisos), [rol.permisos]);
   const hayCambios = seleccion.size !== original.size || [...seleccion].some((p) => !original.has(p));
 
@@ -152,7 +158,7 @@ function EditorPermisos({ rol, catalogo }: { rol: Rol; catalogo: Permiso[] }) {
       )}
       {error && <Aviso tipo="error" className="m-5 mb-0">{error}</Aviso>}
       <div className="flex flex-col gap-6 p-5">
-        {grupos.map(([modulo, permisos]) => {
+        {modulos.visibles.map(([modulo, permisos]) => {
           const marcados = permisos.filter((p) => seleccion.has(p.codigo)).length;
           const editables = permisos.filter((p) => editable(p.codigo));
           return (
@@ -183,6 +189,7 @@ function EditorPermisos({ rol, catalogo }: { rol: Rol; catalogo: Permiso[] }) {
           );
         })}
       </div>
+      <Paginacion {...modulos.paginacion} unidad="módulos" etiqueta="Paginación de módulos de permisos" />
       {puedeEditar && (
         <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-3 rounded-b-(--radius-panel) border-t border-line bg-surface/95 px-5 py-3 backdrop-blur">
           <span className="text-[13px] text-ink-dim" aria-live="polite">
@@ -223,6 +230,7 @@ export default function RolesPage() {
 
   const lista = roles.data ?? [];
   const actual = lista.find((r) => r.id === elegido) ?? lista[0];
+  const paginaRoles = usePaginacionLocal(lista, ROLES_POR_PAGINA);
 
   const eliminar = useMutacion((r: Rol) => apiRoles.eliminar(r.id), { exito: "Rol eliminado.", invalidar: INVALIDAR, avisarError: false, onExito: () => { setAEliminar(null); setElegido(null); } });
   const estado = useMutacion((r: Rol) => apiRoles.actualizar(r.id, { activo: !r.activo }), {
@@ -249,7 +257,7 @@ export default function RolesPage() {
                 ? Array.from({ length: 5 }, (_, i) => (
                     <li key={i} className="p-4"><Skeleton className="h-4 w-32" /><Skeleton className="mt-2 h-3 w-24" /></li>
                   ))
-                : lista.map((r) => (
+                : paginaRoles.visibles.map((r) => (
                     <li key={r.id}>
                       <button
                         type="button"
@@ -274,6 +282,7 @@ export default function RolesPage() {
                     </li>
                   ))}
             </ul>
+            <Paginacion {...paginaRoles.paginacion} unidad="roles" etiqueta="Paginación de roles" />
           </Card>
 
           {actual && (

@@ -20,10 +20,10 @@ from sqlalchemy import select
 
 
 async def _inicializar(args: argparse.Namespace) -> int:
-    from app.core.database import fabrica_de_sesiones
-    from app.core.exceptions import ErrorNegocio
-    from app.schemas.comunes import validar_password_segura
-    from app.services import setup_service
+    from app.config.database import fabrica_de_sesiones
+    from app.dto.comunes_dto import validar_password_segura
+    from app.exception.excepciones import ErrorNegocio
+    from app.service import setup_service
 
     password = os.environ.get("INVENTIA_ADMIN_PASSWORD") or getpass.getpass("Contraseña del administrador: ")
     if not os.environ.get("INVENTIA_ADMIN_PASSWORD") and password != getpass.getpass("Repite la contraseña: "):
@@ -53,8 +53,8 @@ async def _inicializar(args: argparse.Namespace) -> int:
 
 
 async def _sincronizar_permisos(_args: argparse.Namespace) -> int:
-    from app.core.database import fabrica_de_sesiones
-    from app.services.bootstrap import sincronizar_permisos
+    from app.config.database import fabrica_de_sesiones
+    from app.service.bootstrap import sincronizar_permisos
 
     async with fabrica_de_sesiones()() as db:
         await sincronizar_permisos(db)
@@ -64,13 +64,13 @@ async def _sincronizar_permisos(_args: argparse.Namespace) -> int:
 
 
 async def _predecir(args: argparse.Namespace) -> int:
-    from app.api.deps import contexto_de_usuario
-    from app.core.database import fabrica_de_sesiones
-    from app.core.exceptions import ErrorNegocio
-    from app.models.acceso import Rol
-    from app.models.empresa import Empresa
-    from app.models.usuario import Usuario
-    from app.services import prediccion_service
+    from app.config.database import fabrica_de_sesiones
+    from app.exception.excepciones import ErrorNegocio
+    from app.model.acceso import Rol
+    from app.model.empresa import Empresa
+    from app.model.usuario import Usuario
+    from app.security.dependencias import contexto_de_usuario
+    from app.service import prediccion_service
 
     codigo = 0
     async with fabrica_de_sesiones()() as db:
@@ -97,7 +97,8 @@ async def _predecir(args: argparse.Namespace) -> int:
             await db.refresh(ejecucion)
             r = ejecucion.resumen or {}
             print(f"{nombre}: {ejecucion.estado}; series con predicción {r.get('series_con_prediccion')}, "
-                  f"omitidas {r.get('series_omitidas')}, WAPE global {r.get('wape_global')}")
+                  f"omitidas {r.get('series_omitidas')}, WAPE global {r.get('wape_global')}, "
+                  f"RMSE global {r.get('rmse_global')}, MAPE global {r.get('mape_global')}")
             if ejecucion.estado != "completada":
                 codigo = 1
     return codigo
@@ -105,8 +106,8 @@ async def _predecir(args: argparse.Namespace) -> int:
 
 async def _cargar_demo_sig(_args: argparse.Namespace) -> int:
     from app import demo_sig
-    from app.core.database import fabrica_de_sesiones
-    from app.core.exceptions import ErrorNegocio
+    from app.config.database import fabrica_de_sesiones
+    from app.exception.excepciones import ErrorNegocio
 
     async with fabrica_de_sesiones()() as db:
         try:
@@ -128,10 +129,9 @@ async def _cargar_demo_sig(_args: argparse.Namespace) -> int:
 
 async def _cargar_demo(args: argparse.Namespace) -> int:
     from app import demo, demo_sig
-    from app.core.database import fabrica_de_sesiones
-    from app.services import setup_service
-
-    from app.core.exceptions import ErrorNegocio
+    from app.config.database import fabrica_de_sesiones
+    from app.exception.excepciones import ErrorNegocio
+    from app.service import setup_service
 
     async with fabrica_de_sesiones()() as db:
         if not args.en_empresa_existente and await setup_service.hay_empresa(db) and not args.permitir_con_datos:

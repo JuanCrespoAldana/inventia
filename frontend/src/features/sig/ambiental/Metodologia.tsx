@@ -54,6 +54,7 @@ function ParametrosVigentes() {
         descripcion="Parámetros de cálculo por categoría de vehículo"
         idDe={(c) => c.categoria_id}
         filas={vehiculos}
+        paginar={10}
         vacio={{ titulo: "Aún no hay categorías de vehículos", descripcion: "Una persona administradora debe marcar qué categorías son vehículos para que se cuenten las ventas." }}
         columnas={[
           {

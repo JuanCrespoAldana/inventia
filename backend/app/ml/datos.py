@@ -13,12 +13,12 @@ import numpy as np
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.tiempo import a_fecha_local, inicio_de_dia_utc
 from app.ml.pipeline import SerieEntrada
-from app.models.catalogo import Producto
-from app.models.inventario import InventarioSede, Movimiento
-from app.models.operaciones import Venta, VentaItem
-from app.models.sede import Sede
+from app.model.catalogo import Producto
+from app.model.inventario import InventarioSede, Movimiento
+from app.model.operaciones import Venta, VentaItem
+from app.model.sede import Sede
+from app.util.tiempo import a_fecha_local, inicio_de_dia_utc
 
 
 async def cargar_series(

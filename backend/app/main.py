@@ -8,18 +8,40 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
 
-from app.api import (
-    adjuntos, agentes, alertas, ambiental, auditoria, auth, calidad, categorias, dashboard, empresa, integraciones, inventario, pqrs,
-    predicciones, productos, recomendaciones, reportes, roles, sedes, setup, sst, traslados, usuarios, ventas,
+from app.config.database import engine, fabrica_de_sesiones
+from app.config.logging import configurar_logging
+from app.config.settings import settings
+from app.controller import (
+    adjuntos_controller,
+    agentes_controller,
+    alertas_controller,
+    ambiental_controller,
+    auditoria_controller,
+    auth_controller,
+    calidad_controller,
+    categorias_controller,
+    dashboard_controller,
+    empresa_controller,
+    integraciones_controller,
+    inventario_controller,
+    pqrs_controller,
+    predicciones_controller,
+    productos_controller,
+    recomendaciones_controller,
+    reportes_controller,
+    roles_controller,
+    sedes_controller,
+    setup_controller,
+    sst_controller,
+    traslados_controller,
+    usuarios_controller,
+    ventas_controller,
 )
-from app.core.config import settings
-from app.core.contexto import ContextoPeticionMiddleware
-from app.core.database import engine, fabrica_de_sesiones
-from app.core.exceptions import registrar_manejadores_excepciones
-from app.core.limiter import limiter
-from app.core.logging import configurar_logging
-from app.services.bootstrap import sincronizar_permisos
-from app.services.prediccion_service import cerrar_ejecuciones_colgadas
+from app.exception.manejadores import registrar_manejadores_excepciones
+from app.security.contexto import ContextoPeticionMiddleware
+from app.security.limiter import limiter
+from app.service.bootstrap import sincronizar_permisos
+from app.service.prediccion_service import cerrar_ejecuciones_colgadas
 
 configurar_logging()
 logger = logging.getLogger("inventia")
@@ -49,9 +71,9 @@ app = FastAPI(
     ),
     version="1.1.0",
     lifespan=ciclo_de_vida,
-    docs_url="/api/docs",
+    docs_url="/api/docs" if settings.docs_api_activa else None,
     redoc_url=None,
-    openapi_url="/api/openapi.json",
+    openapi_url="/api/openapi.json" if settings.docs_api_activa else None,
 )
 
 app.state.limiter = limiter
@@ -69,10 +91,11 @@ app.add_middleware(
 app.add_middleware(ContextoPeticionMiddleware)
 
 ROUTERS = (
-    setup, auth, empresa, sedes, usuarios, roles, categorias, productos, inventario, alertas, ventas, traslados,
-    predicciones, recomendaciones, auditoria, dashboard, reportes,
-    integraciones, agentes,
-    pqrs, adjuntos, calidad, sst, ambiental,
+    setup_controller, auth_controller, empresa_controller, sedes_controller, usuarios_controller, roles_controller,
+    categorias_controller, productos_controller, inventario_controller, alertas_controller, ventas_controller, traslados_controller,
+    predicciones_controller, recomendaciones_controller, auditoria_controller, dashboard_controller, reportes_controller,
+    integraciones_controller, agentes_controller,
+    pqrs_controller, adjuntos_controller, calidad_controller, sst_controller, ambiental_controller,
 )
 for modulo in ROUTERS:
     app.include_router(modulo.router)

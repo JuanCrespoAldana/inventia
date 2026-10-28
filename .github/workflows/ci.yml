@@ -40,7 +40,7 @@ jobs:
       - name: Pruebas con PostgreSQL (concurrencia, migraciones desde cero, índices parciales)
         env:
           TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/inventia_test
-        run: python -m pytest -q
+        run: python -m pytest -q --cov=app --cov-report=term
 
   frontend:
     name: Frontend (lint, tipos, pruebas, compilación)
@@ -79,6 +79,30 @@ jobs:
       - run: npm --prefix frontend run tipos
       - name: Verificar que no hay cambios sin confirmar
         run: git diff --exit-code -- frontend/src/types/api.gen.ts
+
+  seguridad:
+    name: Revisión de seguridad (informativa)
+    runs-on: ubuntu-latest
+    # No bloquea la integración: un aviso nuevo en una dependencia no debe impedir un cambio ajeno. Se revisa el resultado.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dependencias de Python con vulnerabilidades conocidas (pip-audit)
+        run: |
+          pip install pip-audit
+          pip-audit -r backend/requirements.txt --progress-spinner off
+      - name: Dependencias de Node en producción con vulnerabilidades conocidas (npm audit)
+        run: npm --prefix frontend audit --omit=dev --audit-level=moderate
+      - name: Análisis estático del código del backend (Bandit)
+        run: |
+          pip install bandit
+          bandit -r backend/app -q
 
   imagenes:
     name: Las imágenes de Docker se construyen

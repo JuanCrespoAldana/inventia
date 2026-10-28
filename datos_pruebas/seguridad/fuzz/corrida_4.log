@@ -1,0 +1,174 @@
+Schemathesis v4.32.5
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8002/api/openapi.json (in
+ 0.91s)
+
+     Base URL:         http://127.0.0.1:8002/
+     Specification:    Open API 3.1.0
+     Operations:       115 selected / 131 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.12s)
+
+     ⏭  115 skipped
+
+ ✅  Coverage (in 38.47s)
+
+     ✅ 115 passed
+
+ ❌  Fuzzing (in 789.40s)
+
+     ✅ 114 passed  ❌   1 failed
+
+ ✅  Stateful (in 71.84s)
+
+     Scenarios:    901
+     API Links:    42 covered / 391 selected / 391 total
+
+     ✅ 901 passed
+
+=================================== FAILURES ===================================
+___________________________ GET /api/reportes/{tipo} ___________________________
+1. Test Case ID: PeJ04E
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno","request_id":"9b20d1ddc35b427a"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/reportes/traslados?clase=%C2%9DZ&sede_id=197519&desde=2026-07-01&formato=csv&categoria_id=97875818'
+
+    st replay PeJ04E
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 13 operations returned only 401/403 responses
+
+403 Forbidden (13 operations):
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+
+💡 Ensure valid authentication credentials are set via `--auth` or `-H`
+
+Missing test data: 11 operations repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+No links point to this operation - nothing in the schema appears to supply the data it needs:
+  - POST /api/sig/adjuntos
+
+💡 Schemathesis found no operation that creates this data - create it outside the test run and supply the identifiers in your config file
+
+Reachable via links, but stateful testing never reached them (4 operations):
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+
+💡 Raise `phases.stateful.max-steps` or run longer so stateful testing reaches these operations
+
+Reached via links, but the linked data was not usable (6 operations):
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+
+💡 Check the operations that create this data - their responses do not yield usable identifiers
+
+Schema validation mismatch: 41 operations mostly rejected generated data due to validation errors, indicating schema constraints don't match API validation
+
+  - DELETE /api/roles/{rol_id}
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/inventario
+  - GET /api/reportes/{tipo}
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/traslados/{traslado_id}
+  - PATCH /api/sig/calidad/garantias/{garantia_id}
+  - PATCH /api/sig/calidad/no-conformidades/{nc_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - POST /api/categorias
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/inventario/ajustes
+  - POST /api/inventario/entradas/{entrada_id}/observaciones
+  - POST /api/inventario/salidas
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/roles
+  - POST /api/sedes
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/calidad/no-conformidades
+  - POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones
+  - POST /api/sig/pqrs
+  - POST /api/sig/sst/actividades
+  - POST /api/traslados
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - POST /api/ventas
+  - POST /api/ventas/{venta_id}/anular
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}
+  - PUT /api/roles/{rol_id}/permisos
+  - PUT /api/sig/ambiental/factor-red
+  - PUT /api/usuarios/{usuario_id}
+
+💡 Check your schema constraints - API validation may be stricter than documented
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 115/131
+  Tested: 115
+
+Test Phases:
+  ⏭  Examples
+  ✅ Coverage
+  ❌ Fuzzing
+  ✅ Stateful
+
+Failures:
+  ❌ ST101 Server error: 1
+
+For more information, run `st explain ST101`.
+
+Warnings:
+  ⚠️ Authentication failed: 13 operations returned only 401/403 responses
+  ⚠️ Missing test data: 11 operations repeatedly returned 404 responses
+  ⚠️ Schema validation mismatch: 41 operations mostly rejected generated data
+
+Test cases:
+  67518 generated, 1 found 1 unique failure
+
+Reports:
+  - JUnit: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/junit-20261026T205932Z.xml
+  - NDJSON: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/ndjson-20261026T205932Z.ndjson
+
+Seed: 20261026
+
+======================= 1 failure, 3 warnings in 900.03s =======================

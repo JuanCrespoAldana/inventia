@@ -13,28 +13,28 @@ estudio: antes de usar las cifras en un informe real hay que reemplazarlos por d
 import random
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import timedelta
 from decimal import Decimal
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import contexto_de_usuario
-from app.core.acceso import Contexto
-from app.core.exceptions import Conflicto
-from app.core.tiempo import hoy_local
 from app.demo import _momento
-from app.models.acceso import Rol
-from app.models.catalogo import Categoria, Producto
-from app.models.empresa import Empresa
-from app.models.pqrs import Pqrs
-from app.models.sst import SstPausa
-from app.models.usuario import Usuario
-from app.schemas.ambiental import CategoriaAmbientalActualizar, FactorRedActualizar
-from app.schemas.calidad import GarantiaCrear, GarantiaGestionar, NoConformidadCrear, NoConformidadGestionar, ObservacionCrear
-from app.schemas.inventario import EntradaCrear, EntradaObservacionCrear, ItemCantidad
-from app.schemas.pqrs import PqrsCrear, PqrsGestionar
-from app.services import ambiental_service, calidad_service, entradas_service, inventario_service, pqrs_service, sst_service
+from app.dto.ambiental_dto import CategoriaAmbientalActualizar, FactorRedActualizar
+from app.dto.calidad_dto import GarantiaCrear, GarantiaGestionar, NoConformidadCrear, NoConformidadGestionar, ObservacionCrear
+from app.dto.inventario_dto import EntradaCrear, EntradaObservacionCrear, ItemCantidad
+from app.dto.pqrs_dto import PqrsCrear, PqrsGestionar
+from app.exception.excepciones import Conflicto
+from app.model.acceso import Rol
+from app.model.catalogo import Categoria, Producto
+from app.model.empresa import Empresa
+from app.model.pqrs import Pqrs
+from app.model.sst import SstPausa
+from app.model.usuario import Usuario
+from app.security.acceso import Contexto
+from app.security.dependencias import contexto_de_usuario
+from app.service import ambiental_service, calidad_service, entradas_service, inventario_service, pqrs_service, sst_service
+from app.util.tiempo import hoy_local
 
 FUENTE_DEMO = (
     "VALORES DE DEMOSTRACIÓN: no provienen de una ficha técnica ni de un estudio. "
@@ -207,7 +207,8 @@ async def _pausas(db: AsyncSession, admin: Contexto, personas: list[Usuario], re
     actividades = await sst_service.listar_actividades(db, admin, incluir_inactivas=False)
     if not actividades:
         return
-    azar = random.Random(11)
+    # Datos de demostración reproducibles: no es un uso criptográfico.
+    azar = random.Random(11)  # nosec B311
     hoy = hoy_local()
     for dias_atras in range(10, 0, -1):
         dia = hoy - timedelta(days=dias_atras)

@@ -124,7 +124,7 @@ Con HTTPS en su lugar, agregue `Strict-Transport-Security` en ese proxy y fije `
    el controlador asíncrono: `postgresql+asyncpg://USUARIO:CLAVE@HOST/BASE`. Para servidores remotos el SSL se
    exige automáticamente (`DATABASE_SSL=auto`). Con *poolers* de conexión de transacción puede necesitar ajustar
    `DB_POOL_SIZE`.
-2. **API:** construya `backend/Dockerfile` o instale `requirements.txt` en Python 3.13 y ejecute
+2. **API:** construya `backend/Dockerfile` o instale `requirements.txt` en Python 3.13 (sirven 3.12 a 3.14) y ejecute
 
    ```bash
    alembic upgrade head
@@ -153,6 +153,7 @@ Con HTTPS en su lugar, agregue `Strict-Transport-Security` en ese proxy y fije `
 - [ ] Usuarios con el rol de menor privilegio necesario; ningún usuario de demostración.
 - [ ] Sin datos de demostración cargados.
 - [ ] Monitoreo de `/api/health/ready` desde un servicio externo.
+- [ ] `DOCS_API_ACTIVA=false` si la documentación interactiva de la API (`/api/docs`) no debe ser pública.
 
 ## Respaldos y restauración (RNF-009)
 
@@ -227,14 +228,19 @@ generan después desde la pantalla *Recomendaciones*, para que una persona las r
 
 ## Dimensionamiento orientativo
 
-Estas cifras son una orientación, **no resultados de pruebas de carga**.
+Las cifras de la tabla son una orientación. Lo que sí se midió (en un equipo de 2 núcleos y 8 GB, con datos sintéticos,
+una sola corrida por escenario) está en [RENDIMIENTO.md](RENDIMIENTO.md): hasta 50 usuarios simultáneos sin errores y
+con la mediana por debajo de 25 ms, y una base de 406 MB con ~1,9 millones de filas en las tablas de mayor crecimiento
+con el panel respondiendo en ~90 ms.
 
 | Escala | Recursos sugeridos |
 |---|---|
 | Hasta ~5 sedes, ~5 000 productos, ~20 usuarios | 2 vCPU, 2 GB de RAM |
 | Predicción de más de ~10 000 series (sede × producto) | Más CPU y programar la predicción fuera del horario de operación |
 
-Sin ninguna medición de carga con cientos de usuarios simultáneos, no se garantiza el rendimiento a esa escala.
+Dos advertencias que salieron de esas pruebas: la predicción hace más lentas las consultas mientras corre (por eso conviene
+programarla fuera del horario de operación) y exportar a Excel decenas de miles de filas ocupa el servidor durante
+varios segundos. No se midió el rendimiento con cientos de usuarios simultáneos.
 
 ## Primera prueba del despliegue
 

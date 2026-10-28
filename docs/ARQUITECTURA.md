@@ -34,27 +34,38 @@ flowchart TB
 | Interfaz | React 19, TypeScript estricto, Vite, Tailwind v4, TanStack Query, React Hook Form + zod | Presentación, validación en el cliente, ocultar lo que el usuario no puede usar |
 | Servidor web | nginx (imagen sin privilegios) | Servir la aplicación compilada, reenviar `/api`, cabeceras de seguridad |
 | API | FastAPI, SQLAlchemy 2 asíncrono, Alembic, pydantic v2 | Reglas de negocio, permisos, transacciones, auditoría |
-| Predicción | numpy, pandas, statsmodels, scikit-learn | Pronóstico de demanda y evaluación (sin acceso a la base de datos) |
+| Predicción | numpy, statsmodels, scikit-learn (pandas y SciPy se instalan porque las exige statsmodels) | Pronóstico de demanda y evaluación (sin acceso a la base de datos) |
 | Base de datos | PostgreSQL 16 | Única fuente de verdad; restricciones, índices y disparadores de solo inserción |
 
 ## Capas del backend
 
+La API usa la estructura por capas de los proyectos Spring (`controller` → `service` → `model`), con los mismos nombres de
+carpeta. La guía con las equivalencias y el recorrido de una petición está en [GUIA_ESTRUCTURA.md](GUIA_ESTRUCTURA.md).
+
 ```
 backend/app/
-├── api/         Rutas HTTP: validan entrada, exigen permisos y delegan. Sin reglas de negocio.
-├── services/    Reglas de negocio y transacciones. Reciben un Contexto, nunca ids de empresa del cliente.
-├── ml/          Cálculo de predicción puro (sin base de datos): modelos, evaluación, pipeline, extracción.
-├── models/      Tablas SQLAlchemy.
-├── schemas/     Esquemas pydantic de entrada y salida (generan el contrato OpenAPI).
-├── core/        Configuración, seguridad, permisos, errores, contexto de petición, base de datos.
-├── cli.py       Administración desde la terminal (inicializar, predecir, cargar-demo, cargar-demo-sig, sincronizar-permisos).
-├── demo.py      Datos de demostración generados a través de los mismos servicios que usa la API.
-└── demo_sig.py  Datos de demostración del SIG (PQRS, calidad, pausas, ambiental), también a través de los servicios.
+├── controller/     Rutas HTTP: validan entrada, exigen permisos y delegan. Sin reglas de negocio.
+├── dto/            Esquemas pydantic de entrada y salida (generan el contrato OpenAPI).
+├── service/        Reglas de negocio y transacciones. Reciben un Contexto, nunca ids de empresa del cliente.
+├── specification/  Filtros dinámicos de consulta: arman la lista de condiciones SQL según los parámetros recibidos.
+├── mapper/         Conversión de entidades (model) a DTO de salida.
+├── model/          Tablas SQLAlchemy (entidades).
+├── security/       JWT, Argon2, permisos, contexto de la petición y dependencias que exigen permiso.
+├── exception/      Excepciones de negocio (excepciones.py) y su traducción a JSON (manejadores.py).
+├── config/         Configuración por variables de entorno, base de datos y registro de eventos.
+├── util/           Utilidades pequeñas: fechas y zona horaria, niveles de stock, SQL.
+├── ml/             Cálculo de predicción puro (sin base de datos): modelos, evaluación, pipeline, extracción.
+├── cli.py          Administración desde la terminal (inicializar, predecir, cargar-demo, cargar-demo-sig, sincronizar-permisos).
+├── demo.py         Datos de demostración generados a través de los mismos servicios que usa la API.
+└── demo_sig.py     Datos de demostración del SIG (PQRS, calidad, pausas, ambiental), también a través de los servicios.
 ```
+
+No hay carpeta `repository`: las consultas a la base de datos están dentro de cada servicio (decisión
+[D-39](DECISIONES.md#d-39)).
 
 Reglas que se mantienen en todo el código:
 
-- **Las rutas no contienen reglas de negocio.** Una ruta valida, exige permiso y llama a un servicio.
+- **Los controladores no contienen reglas de negocio.** Un controlador valida, exige permiso y llama a un servicio.
 - **El contexto manda.** Cada servicio recibe un `Contexto` (usuario, empresa, permisos, sedes autorizadas).
   Ninguna consulta confía en una empresa o sede enviada por el navegador sin comprobarla contra el contexto.
 - **Un servicio, una transacción.** Cada operación confirma (`commit`) una sola vez al final; si algo falla, no

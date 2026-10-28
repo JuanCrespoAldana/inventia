@@ -6,8 +6,8 @@ from datetime import timedelta
 import pytest
 from sqlalchemy import func, select, update
 
-from app.core.tiempo import ahora_utc
-from app.models.sst import SstPausa
+from app.model.sst import SstPausa
+from app.util.tiempo import ahora_utc
 from tests.ayuda import crear_empresa, crear_sede, crear_usuario
 
 

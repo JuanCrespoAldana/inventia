@@ -1,0 +1,3735 @@
+Schemathesis v4.32.5
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8002/api/openapi.json (in
+ 0.84s)
+
+     Base URL:         http://127.0.0.1:8002/
+     Specification:    Open API 3.1.0
+     Operations:       116 selected / 131 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.12s)
+
+     ⏭  116 skipped
+
+ ❌  Coverage (in 7.11s)
+
+     ✅  19 passed  ❌  97 failed
+
+ ❌  Fuzzing (in 660.70s)
+
+     ✅  28 passed  ❌  88 failed
+
+ ❌  Stateful (in 231.99s)
+
+     Scenarios:    3428
+     API Links:    36 covered / 407 selected / 407 total
+
+     ✅ 3263 passed  ❌ 165 failed
+
+=================================== FAILURES ===================================
+__________________________ DELETE /api/roles/{rol_id} __________________________
+1. Test Case ID: 2s1En2
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"rol_id","mensaje":"Debe ser un número entero"}],"request_id":"c5909471f94242b3"}`
+
+Reproduce with:
+
+    curl -X DELETE -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/roles/null%2Cnull
+
+    st replay 2s1En2
+
+____________________ DELETE /api/sig/adjuntos/{adjunto_id} _____________________
+1. Test Case ID: CrmwqP
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"adjunto_id","mensaje":"Debe ser un número entero"}],"request_id":"6377c2db5fcd474d"}`
+
+Reproduce with:
+
+    curl -X DELETE -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/adjuntos/null%2Cnull
+
+    st replay CrmwqP
+
+2. Test Case ID: 4jPdT7
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X DELETE -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/adjuntos/17273527617
+
+    st replay 4jPdT7
+
+________________ DELETE /api/sig/sst/actividades/{actividad_id} ________________
+1. Test Case ID: PpJqut
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"actividad_id","mensaje":"Debe ser un número entero"}],"request_id":"4e141741397c4b10"}`
+
+Reproduce with:
+
+    curl -X DELETE -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/sst/actividades/null%2Cnull
+
+    st replay PpJqut
+
+_______________________________ GET /api/alertas _______________________________
+1. Test Case ID: Tg2RIq
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tipo","mensaje":"No puede superar los 30 caracteres"}],"request_id":"0b111d649e574010"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/alertas?tipo=0000000000000000000000000000000'
+
+    st replay Tg2RIq
+
+___________________________ GET /api/alertas/resumen ___________________________
+1. Test Case ID: 4cPxp6
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser mayor que 0"}],"request_id":"eae643493f6d4197"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/alertas/resumen?sede_id=0'
+
+    st replay 4cPxp6
+
+______________________________ GET /api/auditoria ______________________________
+1. Test Case ID: hX9mHg
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser mayor que 0"}],"request_id":"ad1e649a4ee54a27"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/auditoria?usuario_id=0'
+
+    st replay hX9mHg
+
+_____________________________ GET /api/categorias ______________________________
+1. Test Case ID: MWsNK2
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"c9141f238a134ae8"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/categorias?tamano=0'
+
+    st replay MWsNK2
+
+______________________ GET /api/categorias/{categoria_id} ______________________
+1. Test Case ID: Xnzf8t
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"categoria_id","mensaje":"Debe ser un número entero"}],"request_id":"d4ce9dbc5b964c56"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/categorias/null%2Cnull
+
+    st replay Xnzf8t
+
+______________________________ GET /api/dashboard ______________________________
+1. Test Case ID: RLH4pT
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser mayor que 0"}],"request_id":"2acd2294f9ab4b99"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/dashboard?sede_id=0'
+
+    st replay RLH4pT
+
+_____________________________ GET /api/inventario ______________________________
+1. Test Case ID: G0MN0s
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"589366fa52604639"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario?tamano=0'
+
+    st replay G0MN0s
+
+_______________________ GET /api/inventario/consolidado ________________________
+1. Test Case ID: yAr3Du
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"8076198f1d6a4f05"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario/consolidado?tamano=0'
+
+    st replay yAr3Du
+
+_________________________ GET /api/inventario/entradas _________________________
+1. Test Case ID: P1UuO3
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"719d871345124938"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario/entradas?tamano=0'
+
+    st replay P1UuO3
+
+__________________ GET /api/inventario/entradas/{entrada_id} ___________________
+1. Test Case ID: rKJF6v
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"entrada_id","mensaje":"Debe ser un número entero"}],"request_id":"10e0b13ea0f646b5"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/entradas/null%2Cnull
+
+    st replay rKJF6v
+
+_____________________________ GET /api/movimientos _____________________________
+1. Test Case ID: SoqyUk
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser mayor que 0"}],"request_id":"c7b7af3f86a0407c"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/movimientos?usuario_id=0'
+
+    st replay SoqyUk
+
+____________________________ GET /api/predicciones _____________________________
+1. Test Case ID: SmGKTv
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"720af0afb57e43b8"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones?tamano=0'
+
+    st replay SmGKTv
+
+2. Test Case ID: S8Xlob
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones?sede_id=38771334476480&producto_id=34764367&pagina=9414&orden=demanda&confianza=alta&tamano=79'
+
+    st replay S8Xlob
+
+______________________ GET /api/predicciones/ejecuciones _______________________
+1. Test Case ID: 1cQGti
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"ebf2bc209b0d49eb"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones/ejecuciones?tamano=0'
+
+    st replay 1cQGti
+
+_______________ GET /api/predicciones/ejecuciones/{ejecucion_id} _______________
+1. Test Case ID: Do2qUz
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"ejecucion_id","mensaje":"Debe ser un número entero"}],"request_id":"1adf7fce14724494"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/predicciones/ejecuciones/null%2Cnull
+
+    st replay Do2qUz
+
+_________________________ GET /api/predicciones/serie __________________________
+1. Test Case ID: lXeXsf
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"producto_id","mensaje":"Debe ser mayor que 0"}],"request_id":"fd87f484387146fc"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones/serie?producto_id=0&sede_id=1'
+
+    st replay lXeXsf
+
+______________________________ GET /api/productos ______________________________
+1. Test Case ID: 4WYQ5F
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"1ac8436901a6403e"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/productos?tamano=0'
+
+    st replay 4WYQ5F
+
+2. Test Case ID: BtF3NV
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/productos?q=%E9%BB%8A&pagina=19407633289607819264&tamano=26'
+
+    st replay BtF3NV
+
+_______________________ GET /api/productos/{producto_id} _______________________
+1. Test Case ID: FRUxxq
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"producto_id","mensaje":"Debe ser un número entero"}],"request_id":"35cf94b2c850477e"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/productos/null%2Cnull
+
+    st replay FRUxxq
+
+2. Test Case ID: BC4noG
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/productos/5015321391782054188060954501054464
+
+    st replay BC4noG
+
+___________________________ GET /api/recomendaciones ___________________________
+1. Test Case ID: 9TAF0F
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tipo","mensaje":"El formato no es válido"}],"request_id":"8ca838cdf34549dd"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/recomendaciones?tipo=AAA'
+
+    st replay 9TAF0F
+
+_________________ GET /api/recomendaciones/{recomendacion_id} __________________
+1. Test Case ID: vlUK8i
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"recomendacion_id","mensaje":"Debe ser un número entero"}],"request_id":"6c1a4c8b74ad4feb"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/recomendaciones/null%2Cnull
+
+    st replay vlUK8i
+
+___________________________ GET /api/reportes/{tipo} ___________________________
+1. Test Case ID: ZFNb8A
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser mayor que 0"}],"request_id":"c78abe454efe45ea"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/reportes/0?sede_id=0'
+
+    st replay ZFNb8A
+
+___________________________ GET /api/roles/{rol_id} ____________________________
+1. Test Case ID: CLMQ2w
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"rol_id","mensaje":"Debe ser un número entero"}],"request_id":"5ac213ee5a214676"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/roles/null%2Cnull
+
+    st replay CLMQ2w
+
+________________________________ GET /api/sedes ________________________________
+1. Test Case ID: lS8UgQ
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"6e2ccba3ebb74545"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sedes?tamano=0'
+
+    st replay lS8UgQ
+
+___________________________ GET /api/sedes/{sede_id} ___________________________
+1. Test Case ID: Kp53bj
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser un número entero"}],"request_id":"8d02564d8de14548"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sedes/null%2Cnull
+
+    st replay Kp53bj
+
+____________________________ GET /api/sig/adjuntos _____________________________
+1. Test Case ID: rB7nau
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"entidad_id","mensaje":"Este campo es obligatorio"}],"request_id":"68fd3f45f197448f"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/adjuntos?entidad=pqrs'
+
+    st replay rB7nau
+
+__________________ GET /api/sig/adjuntos/{adjunto_id}/archivo __________________
+1. Test Case ID: 15M27J
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"adjunto_id","mensaje":"Debe ser un número entero"}],"request_id":"0ea9b7d9c9f14929"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/adjuntos/null%2Cnull/archivo
+
+    st replay 15M27J
+
+_______________________ GET /api/sig/ambiental/registros _______________________
+1. Test Case ID: oYWR7a
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tipo_vehiculo","mensaje":"Valor no permitido"}],"request_id":"ec5541ca7c914b7a"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/ambiental/registros?tipo_vehiculo=null&x-schemathesis-unknown-property=42'
+
+    st replay oYWR7a
+
+________________________ GET /api/sig/ambiental/resumen ________________________
+1. Test Case ID: AF05oD
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser mayor que 0"}],"request_id":"ff8ee286c9d541da"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/ambiental/resumen?sede_id=0'
+
+    st replay AF05oD
+
+________________________ GET /api/sig/calidad/garantias ________________________
+1. Test Case ID: AaJAHY
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"149f5883443540a0"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/calidad/garantias?tamano=0'
+
+    st replay AaJAHY
+
+2. Test Case ID: m3rsw9
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/calidad/garantias?sede_id=9999999999&estado=cerrada&proveedor=Y&desde=2026-11-08&pagina=8388609'
+
+    st replay m3rsw9
+
+_________________ GET /api/sig/calidad/garantias/{garantia_id} _________________
+1. Test Case ID: Of8YKU
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"garantia_id","mensaje":"Debe ser un número entero"}],"request_id":"d26082e3e8da430c"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/garantias/null%2Cnull
+
+    st replay Of8YKU
+
+2. Test Case ID: S4DN0s
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/garantias/100000000001
+
+    st replay S4DN0s
+
+____________________ GET /api/sig/calidad/no-conformidades _____________________
+1. Test Case ID: Hq8Zk7
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tipo","mensaje":"Valor no permitido"}],"request_id":"811fc22a048a4234"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/calidad/no-conformidades?tipo=null&x-schemathesis-unknown-property=42'
+
+    st replay Hq8Zk7
+
+________________ GET /api/sig/calidad/no-conformidades/{nc_id} _________________
+1. Test Case ID: WlTIRx
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"nc_id","mensaje":"Debe ser un número entero"}],"request_id":"cc3ab842a74c4857"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/no-conformidades/null%2Cnull
+
+    st replay WlTIRx
+
+2. Test Case ID: 9bu859
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/no-conformidades/5529465933666733056
+
+    st replay 9bu859
+
+_________________________ GET /api/sig/calidad/resumen _________________________
+1. Test Case ID: OzXhCk
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"sede_id","mensaje":"Debe ser mayor que 0"}],"request_id":"1be9940a25a84755"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/calidad/resumen?sede_id=0'
+
+    st replay OzXhCk
+
+______________________________ GET /api/sig/pqrs _______________________________
+1. Test Case ID: IHnh7w
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser mayor que 0"}],"request_id":"32fa001b854648ba"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/pqrs?usuario_id=0'
+
+    st replay IHnh7w
+
+_________________________ GET /api/sig/pqrs/{pqrs_id} __________________________
+1. Test Case ID: h5668s
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"pqrs_id","mensaje":"Debe ser un número entero"}],"request_id":"5d7057aa8c454d9b"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/pqrs/null%2Cnull
+
+    st replay h5668s
+
+2. Test Case ID: ym7rmJ
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/pqrs/3414483775362
+
+    st replay ym7rmJ
+
+_________________________ GET /api/sig/sst/actividades _________________________
+1. Test Case ID: cN5jUw
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"todas","mensaje":"Debe ser verdadero o falso"}],"request_id":"9808e3ebb8f94ca0"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/sst/actividades?todas=null&todas=null'
+
+    st replay cN5jUw
+
+___________________________ GET /api/sig/sst/pausas ____________________________
+1. Test Case ID: Nxgpjp
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser mayor que 0"}],"request_id":"d169c1e77c804320"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/sst/pausas?usuario_id=0'
+
+    st replay Nxgpjp
+
+2. Test Case ID: mK0kBr
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/sst/pausas?hasta=2026-10-25&pagina=370952588958810963968&usuario_id=4'
+
+    st replay mK0kBr
+
+___________________________ GET /api/sig/sst/resumen ___________________________
+1. Test Case ID: 3wBLs0
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"dias","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"84758dfdd6b34c29"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/sst/resumen?dias=0'
+
+    st replay 3wBLs0
+
+______________________________ GET /api/traslados ______________________________
+1. Test Case ID: tUkl0L
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"d1da66e10c82477d"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/traslados?tamano=0'
+
+    st replay tUkl0L
+
+2. Test Case ID: l4qZdR
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/traslados?numero=131257&tamano=15&sede_id=2789362743012&desde=0427-01-13'
+
+    st replay l4qZdR
+
+_______________________ GET /api/traslados/{traslado_id} _______________________
+1. Test Case ID: ToXkvo
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"traslado_id","mensaje":"Debe ser un número entero"}],"request_id":"107da69326934bfd"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/null%2Cnull
+
+    st replay ToXkvo
+
+______________________________ GET /api/usuarios _______________________________
+1. Test Case ID: eLclcW
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"a7e6f2dd49344da4"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/usuarios?tamano=0'
+
+    st replay eLclcW
+
+________________________ GET /api/usuarios/{usuario_id} ________________________
+1. Test Case ID: OMfyVp
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser un número entero"}],"request_id":"1fde7a183d4d4fca"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/null%2Cnull
+
+    st replay OMfyVp
+
+_______________________________ GET /api/ventas ________________________________
+1. Test Case ID: xIJ7SJ
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"tamano","mensaje":"Debe ser mayor o igual que 1"}],"request_id":"66693e93b73c4804"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/ventas?tamano=0'
+
+    st replay xIJ7SJ
+
+2. Test Case ID: NjDjPt
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/ventas?hasta=0063-08-30&numero=20922789887999&pagina=2305843009213693951&estado=anulada&sede_id=1&desde=2026-11-08'
+
+    st replay NjDjPt
+
+__________________________ GET /api/ventas/{venta_id} __________________________
+1. Test Case ID: EUJBly
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"venta_id","mensaje":"Debe ser un número entero"}],"request_id":"30a7577c176b4277"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/ventas/null%2Cnull
+
+    st replay EUJBly
+
+_________________ PATCH /api/categorias/{categoria_id}/estado __________________
+1. Test Case ID: Ky5Npw
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"b2060c65fe574ca5"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/categorias/4/estado
+
+    st replay Ky5Npw
+
+__________________ PATCH /api/productos/{producto_id}/estado ___________________
+1. Test Case ID: LuzDQ8
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"567dcd9bb1284e0c"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/productos/22/estado
+
+    st replay LuzDQ8
+
+2. Test Case ID: wL9dOL
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"activo": true}' http://127.0.0.1:8002/api/productos/10724693023992/estado
+
+    st replay wL9dOL
+
+______________________ PATCH /api/sedes/{sede_id}/estado _______________________
+1. Test Case ID: k9RrWx
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"71ed876b4e794c1a"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sedes/1/estado
+
+    st replay k9RrWx
+
+________________ PATCH /api/sig/calidad/garantias/{garantia_id} ________________
+1. Test Case ID: 2diEdd
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"ed4305d7cad8441f"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/garantias/0
+
+    st replay 2diEdd
+
+_______________ PATCH /api/sig/calidad/no-conformidades/{nc_id} ________________
+1. Test Case ID: pw3S9R
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"34a7cb5258aa4f90"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/no-conformidades/0
+
+    st replay pw3S9R
+
+________________________ PATCH /api/sig/pqrs/{pqrs_id} _________________________
+1. Test Case ID: OguNde
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"a3400ae0e4ab4336"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/pqrs/0
+
+    st replay OguNde
+
+________________ PATCH /api/sig/sst/actividades/{actividad_id} _________________
+1. Test Case ID: TSv6Jh
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"548127dbe39b4b90"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/sst/actividades/0
+
+    st replay TSv6Jh
+
+___________________ PATCH /api/usuarios/{usuario_id}/estado ____________________
+1. Test Case ID: 6hQP7n
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"b0f0094caf934f94"}`
+
+Reproduce with:
+
+    curl -X PATCH -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/1/estado
+
+    st replay 6hQP7n
+
+_____________________________ POST /api/categorias _____________________________
+1. Test Case ID: ChW99e
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"ed5ad16203a34fd0"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/categorias
+
+    st replay ChW99e
+
+________________________ POST /api/integraciones/llaves ________________________
+1. Test Case ID: oJ5i9l
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"e9d21458371d46eb"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/integraciones/llaves
+
+    st replay oJ5i9l
+
+______________ POST /api/integraciones/llaves/{llave_id}/revocar _______________
+1. Test Case ID: CUzYmz
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"llave_id","mensaje":"Debe ser un número entero"}],"request_id":"026430b8c4284c59"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/integraciones/llaves/null%2Cnull/revocar
+
+    st replay CUzYmz
+
+2. Test Case ID: wKEDR3
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/integraciones/llaves/2673469758401/revocar
+
+    st replay wKEDR3
+
+_________________________ POST /api/inventario/ajustes _________________________
+1. Test Case ID: hVRgjz
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"ce8741045c8444cb"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/ajustes
+
+    st replay hVRgjz
+
+________________________ POST /api/inventario/entradas _________________________
+1. Test Case ID: ldrKGu
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"f924221c760d41b4"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/entradas
+
+    st replay ldrKGu
+
+___________ POST /api/inventario/entradas/{entrada_id}/observaciones ___________
+1. Test Case ID: CC3uwW
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"fa7f60628bab4573"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/entradas/0/observaciones
+
+    st replay CC3uwW
+
+_________________________ POST /api/inventario/salidas _________________________
+1. Test Case ID: QJ6a7Z
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"7579d7cd56be46f9"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/salidas
+
+    st replay QJ6a7Z
+
+_____________________________ POST /api/productos ______________________________
+1. Test Case ID: u1RQmo
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3078c5ae22d24bf3"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/productos
+
+    st replay u1RQmo
+
+_____________ POST /api/recomendaciones/{recomendacion_id}/aprobar _____________
+1. Test Case ID: niLd4W
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"d08371186ba141d0"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/recomendaciones/0/aprobar
+
+    st replay niLd4W
+
+____________ POST /api/recomendaciones/{recomendacion_id}/ejecutar _____________
+1. Test Case ID: FZ6uvm
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"23e5ef82c88d4e90"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/recomendaciones/0/ejecutar
+
+    st replay FZ6uvm
+
+____________ POST /api/recomendaciones/{recomendacion_id}/rechazar _____________
+1. Test Case ID: pou0n1
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"567b556cb9de4243"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/recomendaciones/0/rechazar
+
+    st replay pou0n1
+
+_______________________________ POST /api/roles ________________________________
+1. Test Case ID: JLgEzj
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"b753004f233a4827"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/roles
+
+    st replay JLgEzj
+
+_______________________________ POST /api/sedes ________________________________
+1. Test Case ID: AC4c4k
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"8ff8fbd5a59d4d7b"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sedes
+
+    st replay AC4c4k
+
+____________________________ POST /api/sig/adjuntos ____________________________
+1. Test Case ID: aDqHp8
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"entidad_id","mensaje":"Debe ser mayor que 0"}],"request_id":"1767c0d7a59846fd"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/adjuntos?entidad=pqrs&entidad_id=0'
+
+    st replay aDqHp8
+
+_______________________ POST /api/sig/calidad/garantias ________________________
+1. Test Case ID: aAncQ0
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"b06563e39dbc4875"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/garantias
+
+    st replay aAncQ0
+
+_________ POST /api/sig/calidad/garantias/{garantia_id}/observaciones __________
+1. Test Case ID: sOo9X8
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3aa0396adc5544c5"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/garantias/0/observaciones
+
+    st replay sOo9X8
+
+____________________ POST /api/sig/calidad/no-conformidades ____________________
+1. Test Case ID: Ghrabi
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"353ec8e575734da1"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/no-conformidades
+
+    st replay Ghrabi
+
+_________ POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones _________
+1. Test Case ID: kbRNwp
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"cb0fc9d9bcb6475f"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/calidad/no-conformidades/0/observaciones
+
+    st replay kbRNwp
+
+______________________________ POST /api/sig/pqrs ______________________________
+1. Test Case ID: ncQ7mg
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3c1bd1a946c24273"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/pqrs
+
+    st replay ncQ7mg
+
+________________________ POST /api/sig/sst/actividades _________________________
+1. Test Case ID: DdjMhj
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"30fde69665bb4862"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/sst/actividades
+
+    st replay DdjMhj
+
+__________________ POST /api/sig/sst/pausa/{pausa_id}/cerrar ___________________
+1. Test Case ID: 5GLVb1
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"98863a11c89141e8"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/sst/pausa/0/cerrar
+
+    st replay 5GLVb1
+
+_____________________________ POST /api/traslados ______________________________
+1. Test Case ID: gm0goN
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"198b0baa1ac8417f"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados
+
+    st replay gm0goN
+
+__________________ POST /api/traslados/{traslado_id}/aprobar ___________________
+1. Test Case ID: 7Ji3Kp
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"traslado_id","mensaje":"Debe ser un número entero"}],"request_id":"3dd0d9206e254809"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/null%2Cnull/aprobar
+
+    st replay 7Ji3Kp
+
+2. Test Case ID: U4nQ2H
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/5946321458/aprobar
+
+    st replay U4nQ2H
+
+__________________ POST /api/traslados/{traslado_id}/cancelar __________________
+1. Test Case ID: jYVYkw
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3978e69deee44976"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/0/cancelar
+
+    st replay jYVYkw
+
+_________________ POST /api/traslados/{traslado_id}/confirmar __________________
+1. Test Case ID: crCW63
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"traslado_id","mensaje":"Debe ser un número entero"}],"request_id":"1bfb766847094e57"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/null%2Cnull/confirmar
+
+    st replay crCW63
+
+__________________ POST /api/traslados/{traslado_id}/rechazar __________________
+1. Test Case ID: 3OdYj7
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"592abe44a7704ec9"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/0/rechazar
+
+    st replay 3OdYj7
+
+______________________________ POST /api/usuarios ______________________________
+1. Test Case ID: fzrLXO
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"ee54587b9e0140a6"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios
+
+    st replay fzrLXO
+
+_________________ POST /api/usuarios/{usuario_id}/desbloquear __________________
+1. Test Case ID: zK0AWe
+
+- ST108 Response violates schema
+
+    "Hay datos que no son válidos" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Hay datos que no son v\u00e1lidos"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Hay datos que no son válidos","codigo":"validacion","errores":[{"campo":"usuario_id","mensaje":"Debe ser un número entero"}],"request_id":"0f8b538a0b8140fb"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/null%2Cnull/desbloquear
+
+    st replay zK0AWe
+
+2. Test Case ID: VMGFbk
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/11409194105/desbloquear
+
+    st replay VMGFbk
+
+_____________ POST /api/usuarios/{usuario_id}/restablecer-password _____________
+1. Test Case ID: kVjpJz
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"336fc97d20734576"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/0/restablecer-password
+
+    st replay kVjpJz
+
+_______________________________ POST /api/ventas _______________________________
+1. Test Case ID: Phlfin
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"5d0b89a0fcfa44a8"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/ventas
+
+    st replay Phlfin
+
+______________________ POST /api/ventas/{venta_id}/anular ______________________
+1. Test Case ID: 3zCD2d
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"ae576e5f499c4f69"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/ventas/0/anular
+
+    st replay 3zCD2d
+
+______________________ PUT /api/categorias/{categoria_id} ______________________
+1. Test Case ID: xoyj3X
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"6ed01874337b4f72"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/categorias/6
+
+    st replay xoyj3X
+
+_______________________________ PUT /api/empresa _______________________________
+1. Test Case ID: EJlSsy
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"2d6aa1257c524ee4"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/empresa
+
+    st replay EJlSsy
+
+_________________________ PUT /api/empresa/parametros __________________________
+1. Test Case ID: 9PGXO3
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"e0c283b23b32416f"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/empresa/parametros
+
+    st replay 9PGXO3
+
+_________________________ PUT /api/inventario/niveles __________________________
+1. Test Case ID: r7S5Xq
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"9d154da50c1d4700"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/inventario/niveles
+
+    st replay r7S5Xq
+
+_______________________ PUT /api/productos/{producto_id} _______________________
+1. Test Case ID: gSo94J
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"a868cbd476dd4bf7"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/productos/0
+
+    st replay gSo94J
+
+___________________________ PUT /api/roles/{rol_id} ____________________________
+1. Test Case ID: MuXEr6
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"8f57b82d2857431a"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/roles/1
+
+    st replay MuXEr6
+
+_______________________ PUT /api/roles/{rol_id}/permisos _______________________
+1. Test Case ID: zYMzxD
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3840db7f33ba4b83"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/roles/0/permisos
+
+    st replay zYMzxD
+
+___________________________ PUT /api/sedes/{sede_id} ___________________________
+1. Test Case ID: S9gkL5
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"b06b545d88dc47c6"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sedes/2
+
+    st replay S9gkL5
+
+_______________ PUT /api/sig/ambiental/categorias/{categoria_id} _______________
+1. Test Case ID: IrLGVz
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"5e03189df38d4657"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/ambiental/categorias/4
+
+    st replay IrLGVz
+
+______________________ PUT /api/sig/ambiental/factor-red _______________________
+1. Test Case ID: EO363z
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"5c0eb26cd0624f9b"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/ambiental/factor-red
+
+    st replay EO363z
+
+________________________ PUT /api/sig/sst/configuracion ________________________
+1. Test Case ID: YN2HRg
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"3a070bace9f540ba"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/sig/sst/configuracion
+
+    st replay YN2HRg
+
+________________________ PUT /api/usuarios/{usuario_id} ________________________
+1. Test Case ID: 913cEz
+
+- ST108 Response violates schema
+
+    "Este campo es obligatorio" is not of type "array"
+
+    Validated against the response schema for status code 422.
+
+    Schema at /components/schemas/HTTPValidationError/properties/detail:
+
+        {
+            "type": "array",
+            "items": {
+                "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail"
+        }
+
+    Value:
+
+        "Este campo es obligatorio"
+
+[422] Unprocessable Content:
+
+    `{"detail":"Este campo es obligatorio","codigo":"validacion","errores":[{"campo":"","mensaje":"Este campo es obligatorio"}],"request_id":"7d88bb70a49f4ae3"}`
+
+Reproduce with:
+
+    curl -X PUT -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/usuarios/0
+
+    st replay 913cEz
+
+________________________________ Stateful tests ________________________________
+1. Test Case ID: XFcdGF
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"motivo": "excluido"}' http://127.0.0.1:8002/api/traslados/7085745953269675/cancelar
+
+    st replay XFcdGF
+
+2. Test Case ID: grRIBt
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' http://127.0.0.1:8002/api/traslados/128048147799175344/confirmar
+
+    st replay grRIBt
+
+3. Test Case ID: USoggR
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"motivo": "compra"}' http://127.0.0.1:8002/api/traslados/13283094430803060/rechazar
+
+    st replay USoggR
+
+4. Test Case ID: MY7GwR
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/calidad/no-conformidades?tamano=31&sede_id=12569216798928188&tipo=producto_equivocado'
+
+    st replay MY7GwR
+
+5. Test Case ID: hcPEjz
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/movimientos?desde=2025-12-28&tipo=predicciones&pagina=47845&usuario_id=9007199254740993&tamano=21&hasta=4017-02-23&sede_id=136&producto_id=1389'
+
+    st replay hcPEjz
+
+6. Test Case ID: mDzMC8
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sedes?pagina=4222324845623070208'
+
+    st replay mDzMC8
+
+7. Test Case ID: FUGUq2
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/usuarios?tamano=55&sede_id=123091020524465&pagina=58589887952'
+
+    st replay FUGUq2
+
+8. Test Case ID: OLKb3m
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/categorias?tamano=4&pagina=7176239996813564706816'
+
+    st replay OLKb3m
+
+9. Test Case ID: uk1D3A
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:8002/api/recomendaciones/1460872578744777/aprobar
+
+    st replay uk1D3A
+
+10. Test Case ID: NbFJon
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/predicciones/serie?sede_id=87178291200&dias=82&producto_id=3387130'
+
+    st replay NbFJon
+
+11. Test Case ID: 52Zg9u
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno","request_id":"ffb48322645d4536"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario/consolidado?pagina=224790&categoria_id=4493330908&solo_con_existencias=false&q=%C2%85vcs&tamano=10'
+
+    st replay 52Zg9u
+
+12. Test Case ID: ESqtom
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"comentario": "\uda4e\udfc2LtZa\udb58\udccc\ud855\udeea\u008f1M"}' http://127.0.0.1:8002/api/recomendaciones/549755813889/ejecutar
+
+    st replay ESqtom
+
+13. Test Case ID: FtiMSe
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario/entradas?tamano=5&hasta=2026-11-08&numero=13127219880853&sede_id=3'
+
+    st replay FtiMSe
+
+14. Test Case ID: RnMLhE
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -d '{"contenido": "b)\u008d-\u00ef"}' http://127.0.0.1:8002/api/sig/calidad/garantias/2334893481711/observaciones
+
+    st replay RnMLhE
+
+15. Test Case ID: bgMCzC
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/inventario?sede_id=362476731180084992'
+
+    st replay bgMCzC
+
+16. Test Case ID: gMyfiJ
+
+- ST101 Server error
+
+[500] Internal Server Error:
+
+    `{"detail":"Ocurrió un error interno. Inténtalo de nuevo; si persiste, informa al administrador.","codigo":"error_interno"}`
+
+Reproduce with:
+
+    curl -X GET -H 'Authorization: [Filtered]' 'http://127.0.0.1:8002/api/sig/ambiental/registros?estado=activo&tamano=43&pagina=771138726981413403361280&sede_id=1&tipo_vehiculo=patineta_electrica'
+
+    st replay gMyfiJ
+
+=================================== WARNINGS ===================================
+
+Authentication failed: 25 operations returned only 401/403 responses
+
+401 Unauthorized (25 operations):
+  - DELETE /api/roles/{rol_id}
+  - DELETE /api/sig/adjuntos/{adjunto_id}
+  - GET /api/inventario/entradas/{entrada_id}
+  - GET /api/sig/adjuntos
+  - GET /api/sig/adjuntos/{adjunto_id}/archivo
+  - GET /api/sig/calidad/garantias/{garantia_id}
+  - GET /api/sig/pqrs/{pqrs_id}
+  - GET /api/traslados/{traslado_id}
+  - PATCH /api/sig/pqrs/{pqrs_id}
+  - PATCH /api/sig/sst/actividades/{actividad_id}
+  - POST /api/integraciones/llaves
+  - POST /api/integraciones/llaves/{llave_id}/revocar
+  - POST /api/inventario/entradas/{entrada_id}/observaciones
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/sig/adjuntos
+  - POST /api/sig/calidad/garantias/{garantia_id}/observaciones
+  - POST /api/sig/calidad/no-conformidades/{nc_id}/observaciones
+  - POST /api/sig/sst/pausa/{pausa_id}/cerrar
+  - POST /api/traslados/{traslado_id}/aprobar
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}/permisos
+
+💡 Ensure valid authentication credentials are set via `--auth` or `-H`
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 116/131
+  Tested: 116
+
+Test Phases:
+  ⏭  Examples
+  ❌ Coverage
+  ❌ Fuzzing
+  ❌ Stateful
+
+Failures:
+  ❌ ST101 Server error: 31
+  ❌ ST108 Response violates schema: 97
+
+For more information, run `st explain <code>` for ST101, ST108.
+
+Warnings:
+  ⚠️ Authentication failed: 25 operations returned only 401/403 responses
+
+Test cases:
+  80128 generated, 128 found 128 unique failures
+
+Reports:
+  - JUnit: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/junit-20261026T201051Z.xml
+  - NDJSON: /tmp/claude-0/-home-claude/96d2aac8-ceba-5071-b3a2-b1a2b6db9c4d/scratchpad/seguridad/fuzz/ndjson-20261026T201051Z.ndjson
+
+Seed: 20261026
+
+====================== 128 failures, 1 warning in 900.13s ======================

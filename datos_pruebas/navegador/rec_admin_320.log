@@ -1,0 +1,24 @@
+/                            h1='Panel de control'                       desborde_horizontal=False
+/inventario                  h1='Existencias'                            desborde_horizontal=False
+/inventario/consolidado      h1='Inventario consolidado'                 desborde_horizontal=False
+/movimientos                 h1='Movimientos'                            desborde_horizontal=False
+/productos                   h1='Productos'                              desborde_horizontal=False
+/categorias                  h1='Categorías'                             desborde_horizontal=False
+/ventas                      h1='Ventas'                                 desborde_horizontal=False
+/ventas/nueva                h1='Nueva venta'                            desborde_horizontal=False
+/traslados                   h1='Traslados entre sedes'                  desborde_horizontal=False
+/traslados/nuevo             h1='Solicitar traslado'                     desborde_horizontal=False
+/alertas                     h1='Alertas de inventario'                  desborde_horizontal=False
+/predicciones                h1='Predicción de demanda'                  desborde_horizontal=False
+/recomendaciones             h1='Recomendaciones'                        desborde_horizontal=False
+/reportes                    h1='Reportes'                               desborde_horizontal=False
+/empresa                     h1='Empresa'                                desborde_horizontal=False
+/sedes                       h1='Sedes'                                  desborde_horizontal=False
+/usuarios                    h1='Usuarios'                               desborde_horizontal=False
+/roles                       h1='Roles y permisos'                       desborde_horizontal=False
+/auditoria                   h1='Auditoría'                              desborde_horizontal=False
+/integraciones               h1='Agentes de IA'                          desborde_horizontal=False
+/perfil                      h1='Mi perfil'                              desborde_horizontal=False
+
+== PROBLEMAS ==
+total=0

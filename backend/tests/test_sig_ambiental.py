@@ -5,8 +5,8 @@ from decimal import Decimal
 
 from sqlalchemy import func, select
 
-from app.models.ambiental import AmbRegistro
-from app.services.ambiental_service import co2_por_unidad
+from app.model.ambiental import AmbRegistro
+from app.service.ambiental_service import co2_por_unidad
 from tests.ayuda import crear_categoria, crear_empresa, crear_producto, crear_sede, crear_usuario, entrada
 
 # Ejemplo de la documentación: 5 000 km/año, 1 año, 5 kWh/100 km, referencia 70 g/km y red a 0,220 kg/kWh

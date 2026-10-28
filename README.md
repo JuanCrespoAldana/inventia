@@ -20,9 +20,9 @@ RNF-001 a RNF-050); la correspondencia punto por punto está en [`docs/TRAZABILI
 | **Ventas** | Registro multiproducto con descuento atómico de existencias; anulación con motivo y reintegro |
 | **Traslados** | Solicitud → aprobación de la sede de origen → confirmación de la sede de destino; las existencias se mueven solo al confirmar |
 | **Alertas** | Inventario bajo, excesivo, riesgo de desabastecimiento (según demanda prevista) y sin rotación; se abren y cierran solas |
-| **Predicción** | Pronóstico por sede y producto con 6 modelos comparados contra una línea base, validación temporal, error medido (WAPE/MAE), intervalo de 80 % y confianza; **omite con motivo** lo que no tiene datos suficientes |
+| **Predicción** | Pronóstico por sede y producto con 6 modelos comparados contra una línea base, validación temporal, error medido (WAPE, MAE, RMSE y MAPE), intervalo de 80 % y confianza; **omite con motivo** lo que no tiene datos suficientes |
 | **Recomendaciones** | Reabastecimiento y traslado con explicación en español; aprobación humana obligatoria |
-| **Reportes** | Siete reportes en vista previa, CSV y Excel |
+| **Reportes** | Siete reportes en vista previa, PDF, Excel y CSV |
 | **Auditoría** | Accesos y operaciones; registro inmutable |
 | **SIG** | PQRS y sugerencias con historial; pausas activas automáticas de seguridad y salud en el trabajo; no conformidades y garantías con evidencias e historial (sin tocar el inventario); observaciones por entrada; gestión ambiental con vehículos vendidos y CO₂ evitado estimado según parámetros documentados |
 | **Agentes de IA** | API de solo lectura con llaves propias, alcances, vencimiento y revocación |
@@ -44,7 +44,8 @@ Abra <http://localhost:8080>: la pantalla **Configuración inicial** crea la emp
 
 ### En su máquina (desarrollo)
 
-Requisitos: Python 3.13, Node.js 22 y PostgreSQL 16.
+Requisitos: Python 3.13 (sirven 3.12 a 3.14), Node.js 22 y PostgreSQL 16. `npm run setup` busca solo un Python compatible
+y crea el entorno virtual; si falta, le indica cómo instalarlo.
 
 ```bash
 npm install
@@ -74,7 +75,7 @@ La contraseña se pide por consola sin eco (o se lee de `INVENTIA_ADMIN_PASSWORD
 | Capa | Tecnología |
 |---|---|
 | Backend | Python 3.13 · FastAPI · SQLAlchemy 2 (asíncrono) · Alembic · pydantic v2 · Argon2 · JWT |
-| Predicción | numpy · pandas · scipy · scikit-learn · statsmodels |
+| Predicción | numpy · scikit-learn · statsmodels (pandas y SciPy las exige statsmodels; el código propio no las importa) |
 | Frontend | React 19 · TypeScript estricto · Vite · Tailwind v4 · TanStack Query · React Hook Form + zod |
 | Datos | PostgreSQL 16 (SQLite solo para pruebas rápidas) |
 | Infraestructura | Docker · Docker Compose · nginx · GitHub Actions |
@@ -83,7 +84,8 @@ La contraseña se pide por consola sin eco (o se lee de `INVENTIA_ADMIN_PASSWORD
 
 ```
 .
-├── backend/     API, modelos, migraciones y pruebas
+├── backend/     API, migraciones y pruebas
+│   └── app/     controller · dto · service · specification · mapper · model · security · exception · config · util · ml
 ├── frontend/    Interfaz web
 ├── ml/          Experimento reproducible de evaluación de modelos
 ├── agents/      Ejemplo de agente de IA (solo lectura)
@@ -91,6 +93,8 @@ La contraseña se pide por consola sin eco (o se lee de `INVENTIA_ADMIN_PASSWORD
 ├── scripts/     Utilidades multiplataforma para npm run …
 └── docs/        Documentación
 ```
+
+Las carpetas del backend siguen la organización por capas de un proyecto Spring; la guía [`docs/GUIA_ESTRUCTURA.md`](docs/GUIA_ESTRUCTURA.md) explica qué hay en cada una y cómo viaja una petición.
 
 ## Pruebas
 
@@ -109,6 +113,7 @@ Las pruebas que dependen de PostgreSQL (concurrencia, migraciones, disparadores)
 |---|---|
 | [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md) | Uso diario, por tareas y por rol |
 | [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) | Capas, aislamiento, integridad del inventario, diagramas |
+| [`docs/GUIA_ESTRUCTURA.md`](docs/GUIA_ESTRUCTURA.md) | Dónde está cada cosa en el backend (equivalencias con Spring) y recorrido de una petición |
 | [`docs/MODELO_DATOS.md`](docs/MODELO_DATOS.md) | Tablas, restricciones, índices e invariantes |
 | [`docs/PREDICCION.md`](docs/PREDICCION.md) | Cómo se estima la demanda, se mide el error y se generan recomendaciones |
 | [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md) | Controles implementados, roles y responsabilidades de quien despliega |
