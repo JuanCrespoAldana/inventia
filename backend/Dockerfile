@@ -2,7 +2,7 @@
 # Imagen de la API de Inventia. Dos etapas: en la primera se instalan las dependencias (con compilador por si
 # alguna rueda binaria no existe para la plataforma); la imagen final no lleva compiladores y corre sin root.
 
-FROM python:3.13-slim AS dependencias
+FROM python:3.15-slim AS dependencias
 ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential \
@@ -12,7 +12,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-FROM python:3.13-slim AS final
+FROM python:3.15-slim AS final
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH" \
