@@ -2,6 +2,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Bot,
   Boxes,
   Building2,
   ClipboardList,
@@ -46,7 +47,13 @@ export interface GrupoNavegacion {
 const alguno = (...c: string[]) => (s: Sesion) => tieneAlguno(s, ...c);
 
 export const NAVEGACION: GrupoNavegacion[] = [
-  { titulo: null, items: [{ ruta: "/", etiqueta: "Panel de control", icono: LayoutDashboard, visible: () => true, fin: true }] },
+  {
+    titulo: null,
+    items: [
+      { ruta: "/", etiqueta: "Panel de control", icono: LayoutDashboard, visible: () => true, fin: true },
+      { ruta: "/asistente", etiqueta: "Asistente", icono: Bot, visible: () => true },
+    ],
+  },
   {
     titulo: "Inventario",
     items: [

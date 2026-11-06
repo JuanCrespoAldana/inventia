@@ -25,6 +25,7 @@ RNF-001 a RNF-050); la correspondencia punto por punto está en [`docs/TRAZABILI
 | **Reportes** | Siete reportes en vista previa, PDF, Excel y CSV |
 | **Auditoría** | Accesos y operaciones; registro inmutable |
 | **SIG** | PQRS y sugerencias con historial; pausas activas automáticas de seguridad y salud en el trabajo; no conformidades y garantías con evidencias e historial (sin tocar el inventario); observaciones por entrada; gestión ambiental con vehículos vendidos y CO₂ evitado estimado según parámetros documentados |
+| **Asistente** | Chat en español dentro de la aplicación para consultar existencias, ventas, alertas, predicción y más, comparar sedes, categorías o productos, y explicar términos y pasos del sistema; motor por reglas (sin servicio de pago), solo lectura y con los permisos y la sede del rol |
 | **Agentes de IA** | API de solo lectura con llaves propias, alcances, vencimiento y revocación |
 
 ## Inicio rápido

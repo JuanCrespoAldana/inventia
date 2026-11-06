@@ -48,6 +48,7 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D
 | [D-37](#d-37) | Errores de entrada documentados y manejados de forma uniforme |
 | [D-38](#d-38) | Las recomendaciones se validan por simulación, no solo con pruebas unitarias |
 | [D-39](#d-39) | Estructura por capas con los nombres de carpeta de Spring y sin capa `repository` |
+| [D-40](#d-40) | El asistente de consultas funciona por reglas, sin modelo de lenguaje, y solo lee |
 
 ---
 
@@ -598,3 +599,45 @@ uniones y agregaciones específicas de un caso de uso, y envolverlas en reposito
 repetidas lo justifica.
 
 **Código.** Todo `backend/app/`. **Guía.** [GUIA_ESTRUCTURA.md](GUIA_ESTRUCTURA.md).
+
+---
+
+## D-40 · El asistente de consultas funciona por reglas, sin modelo de lenguaje, y solo lee
+
+**Decisión.** La pantalla **Asistente** responde preguntas en español sobre inventario, ventas, movimientos, traslados, alertas,
+cobertura y rotación, predicción, recomendaciones, SIG y administración con un motor **por reglas** dentro del backend
+(`app/service/asistente/`), sin llamar a ningún modelo de lenguaje externo. El motor normaliza el texto (sin tildes ni
+mayúsculas, plurales, errores de escritura frecuentes), puntúa unas 100 intenciones con expresiones regulares, resuelve sedes,
+categorías, productos y periodos contra el directorio de la empresa y ejecuta consultas SQL de solo lectura parametrizadas.
+Cada respuesta es una lista de bloques (métricas, tabla, barras, lista) más texto, enlaces y sugerencias. Recuerda solo el turno
+anterior (sede, producto, categoría y periodo) para preguntas como «¿y en la Sede Norte?». Además de consultar datos, tiene
+una capa de **conocimiento** (`conocimiento_datos.py`: glosario de términos, guías paso a paso, lo que Inventia no registra),
+compara sedes, categorías y productos, y divide un mensaje en hasta tres preguntas cuando el corte es claro
+(`compuestas.py`); cada parte debe entenderse sola o ser un seguimiento, y si no, el mensaje se responde entero.
+
+**Por qué.** (1) **Costo y privacidad:** un modelo de pago cobraría por cada consulta y enviaría datos de ventas e inventario de
+la empresa a un tercero; el proyecto no cuenta con presupuesto para un servicio de pago por uso. (2) **Exactitud:** las cifras salen de la base de datos con la
+misma lógica que usan las pantallas; el motor no puede inventar un número ni un producto. (3) **Control de acceso verificable:**
+cada intención declara los permisos que exige y el alcance de sedes se resuelve en un solo lugar, de modo que un rol limitado a
+una sede nunca recibe datos de otra, lo que se prueba con pruebas automáticas. (4) **Determinismo:** la misma pregunta da la
+misma respuesta, así que se puede probar (corpus de más de 300 frases con la intención esperada).
+
+**Consecuencias.** Entiende bien las preguntas habituales y sus variantes, pero **no es lenguaje natural libre**: una frase muy
+rebuscada puede no entenderse, y en ese caso lo dice y sugiere preguntas parecidas, en vez de adivinar. Lo que Inventia no
+maneja (por ejemplo, consumo de energía) se responde como no entendido, no con datos de otro tema; lo que es un hueco conocido del
+producto (descuentos, clientes, metas, medios de pago, lotes, órdenes de compra) se responde diciendo expresamente que el sistema no
+lo registra. Los textos del glosario y de las guías están escritos a mano a partir del manual: si cambia una pantalla, hay que
+actualizarlos, y una prueba verifica que la versión que menciona el asistente sea la de la API. Agregar una consulta nueva
+exige escribir su intención y su respuesta; no se «aprende» sola. Las rutas son `POST /api/asistente/preguntar` (60/min por IP) y
+`GET /api/asistente/ayuda`; no hay tablas ni migraciones nuevas y no se guarda el historial de preguntas.
+
+**Seguridad.** Solo lee: ninguna intención escribe en la base. El contexto de la conversación viaja en el cliente, así que se
+revalida contra el directorio de la empresa y contra las sedes del rol en cada pregunta (un contexto manipulado no amplía el
+acceso). El texto se limita en longitud y la interfaz lo muestra como texto, nunca como HTML.
+
+**Descartado.** Conectar un modelo de lenguaje por API (costo, datos hacia terceros, respuestas no verificables y dependencia de
+un proveedor). Se mantiene el conector MCP para Claude Desktop (`agents/`) para quien ya tenga ese servicio: usa las mismas rutas
+de solo lectura de los agentes y no reemplaza al asistente interno.
+
+**Código.** `backend/app/service/asistente/`, `backend/app/controller/asistente_controller.py`, `frontend/src/features/asistente/`.
+**Pruebas.** `backend/tests/test_asistente.py` y `backend/tests/asistente_corpus.py`.

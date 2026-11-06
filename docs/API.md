@@ -78,7 +78,7 @@ aparece en validaciones. `request_id` coincide con la cabecera `X-Request-ID` y 
 ### Límites de solicitudes
 
 Por IP: ingreso 10/min, cambio de contraseña 5/min, solicitud de código de recuperación 3/min, validación del
-código 10/min, restablecimiento 5/min, configuración inicial 5/min y rutas de agentes 60/min.
+código 10/min, restablecimiento 5/min, configuración inicial 5/min, rutas de agentes 60/min y preguntas al asistente 60/min.
 
 ### Reportes
 
@@ -238,6 +238,13 @@ siempre el permiso y, para roles de sede, restringe los resultados a la sede asi
 | POST | `/api/recomendaciones/{recomendacion_id}/aprobar` | Aprobar una recomendación | `recomendaciones.aprobar` |
 | POST | `/api/recomendaciones/{recomendacion_id}/rechazar` | Rechazar una recomendación | `recomendaciones.aprobar` |
 | POST | `/api/recomendaciones/{recomendacion_id}/ejecutar` | Marcar un reabastecimiento aprobado como realizado | `recomendaciones.aprobar` |
+
+#### Asistente de consultas
+
+| Método | Ruta | Descripción | Acceso |
+|---|---|---|---|
+| POST | `/api/asistente/preguntar` | Pregunta en español (`mensaje`, hasta 500 caracteres, y el `contexto` de la respuesta anterior si es un seguimiento). Devuelve texto, bloques (métricas, tabla, barras, lista), enlaces, sugerencias y el contexto para la siguiente pregunta. Si el mensaje trae hasta tres preguntas claramente separadas, la `intencion` es `compuesta` y el texto y los bloques van numerados. Solo lee | Sesión iniciada; cada intención exige sus permisos y respeta la sede del rol |
+| GET | `/api/asistente/ayuda` | Ejemplos de preguntas agrupados por tema, solo de lo que el rol puede consultar | Sesión iniciada |
 
 #### Auditoría
 

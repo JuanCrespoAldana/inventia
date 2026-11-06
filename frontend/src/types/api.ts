@@ -35,6 +35,15 @@ export type RolActualizar = S["RolActualizar"];
 export type Permiso = S["PermisoSalida"];
 
 export type Categoria = S["CategoriaSalida"];
+
+export type RespuestaAsistente = S["RespuestaAsistente"];
+export type AyudaAsistente = S["AyudaAsistente"];
+export type ContextoAsistente = S["ContextoConversacion"];
+export type BloqueAsistente = NonNullable<RespuestaAsistente["bloques"]>[number];
+export type BloqueMetricasAsistente = Extract<BloqueAsistente, { tipo: "metricas" }>;
+export type BloqueTablaAsistente = Extract<BloqueAsistente, { tipo: "tabla" }>;
+export type BloqueBarrasAsistente = Extract<BloqueAsistente, { tipo: "barras" }>;
+export type BloqueListaAsistente = Extract<BloqueAsistente, { tipo: "lista" }>;
 export type Producto = S["ProductoSalida"];
 export type ProductoCrear = S["ProductoCrear"];
 export type ProductoActualizar = S["ProductoActualizar"];

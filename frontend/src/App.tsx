@@ -9,6 +9,7 @@ const ConfiguracionInicialPage = lazy(() => import("@/features/acceso/Configurac
 const CambiarPasswordPage = lazy(() => import("@/features/acceso/CambiarPasswordPage"));
 const PerfilPage = lazy(() => import("@/features/acceso/PerfilPage"));
 const PanelPage = lazy(() => import("@/features/panel/PanelPage"));
+const AsistentePage = lazy(() => import("@/features/asistente/AsistentePage"));
 
 const ExistenciasPage = lazy(() => import("@/features/inventario/ExistenciasPage"));
 const ConsolidadoPage = lazy(() => import("@/features/inventario/ConsolidadoPage"));
@@ -69,6 +70,7 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route index element={<PanelPage />} />
           <Route path="/perfil" element={<PerfilPage />} />
+          <Route path="/asistente" element={<AsistentePage />} />
 
           <Route path="/inventario" element={<Con permisos={["inventario.ver"]}><ExistenciasPage /></Con>} />
           <Route path="/inventario/consolidado" element={<Con permisos={["inventario.consolidado"]}><ConsolidadoPage /></Con>} />

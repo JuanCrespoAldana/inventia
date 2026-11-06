@@ -7,8 +7,8 @@ const etiquetas = (permisos: string[], rol: Partial<ReturnType<typeof crearSesio
     .flatMap((g) => g.items.map((i) => i.etiqueta));
 
 describe("menú de navegación por permisos", () => {
-  it("siempre muestra el panel de control y nada más sin permisos", () => {
-    expect(etiquetas([])).toEqual(["Panel de control"]);
+  it("siempre muestra el panel de control y el asistente, y nada más sin permisos", () => {
+    expect(etiquetas([])).toEqual(["Panel de control", "Asistente"]);
   });
 
   it("un encargado de sede no ve administración", () => {

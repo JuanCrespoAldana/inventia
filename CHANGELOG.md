@@ -36,8 +36,41 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Variable `DOCS_API_ACTIVA` (por defecto `true`): con `false` se retiran `/api/docs` y `/api/openapi.json`.
 - CI: trabajo informativo de seguridad (`pip-audit`, `npm audit`, Bandit; no bloquea), cobertura de pruebas en la
   salida del backend y configuración de Dependabot (`.github/dependabot.yml`).
+- **Conector MCP para Claude (`agents/servidor_mcp.py`).** Permite conectar Claude Desktop con la llave de un agente y hacerle
+  preguntas en lenguaje natural sobre existencias, alertas, predicciones y recomendaciones. Son cinco herramientas de solo
+  lectura que llaman a las rutas `/api/agentes/*` existentes; no hay cambios en la API ni en la base de datos. Solo usa la
+  biblioteca estándar de Python. Pasos de instalación en `agents/README.md`.
+- **Asistente de consultas dentro de Inventia** (menú *Asistente*, ruta `/asistente`; D-40). Un chat en español para preguntar
+  por existencias, ventas, movimientos, traslados, alertas, cobertura y rotación, predicción, recomendaciones, el SIG
+  (PQRS, no conformidades, garantías, SST, gestión ambiental) y la administración, con comparaciones entre periodos y
+  preguntas de seguimiento («¿y en la Sede Norte?»). Es un motor **por reglas** (sin modelo de lenguaje, sin costo por
+  consulta y sin enviar datos a terceros): reconoce la intención, resuelve sedes, categorías, productos y periodos
+  contra el directorio de la empresa, corrige errores de escritura frecuentes y responde con cifras, tablas y barras. Solo
+  lee. Cada respuesta respeta los permisos y la sede del rol (un rol limitado a una sede nunca ve otras). Si no entiende,
+  lo dice y sugiere preguntas. Rutas nuevas: `POST /api/asistente/preguntar` (60/min) y `GET /api/asistente/ayuda`; sin
+  cambios en la base de datos. 98 intenciones; 411 frases de prueba y 73 pruebas automáticas del backend, más pruebas de
+  la pantalla.
+- **Asistente que también explica, guía, compara y atiende varias preguntas a la vez** (ampliación de D-40; sin cambios en
+  la API ni en la base de datos). Además de consultar datos, ahora responde: **qué significa un término** (glosario de 61
+  términos: stock mínimo, cobertura, WAPE, PQRS, punto de reposición…), **cómo se hace una tarea** paso a paso (40 guías con
+  enlace a la pantalla; si el rol no tiene el permiso, explica los pasos y avisa que los hace quien lo tenga), qué módulos
+  tiene el sistema, cómo funciona el asistente y cuáles son sus límites, qué versión se está usando, y **qué cosas Inventia
+  no registra** (descuentos, clientes, metas, medios de pago, lotes, órdenes de compra…) en lugar de adivinar. **Compara**
+  dos o más sedes, categorías o productos lado a lado («compara la sede Norte con la sede Sur», «bicicletas vs
+  monopatines»; un rol limitado a una sede no compara sedes ajenas). Atiende **hasta tres preguntas en un mismo mensaje**
+  («¿cuántos productos hay y cuáles están agotados?») y numera cada respuesta; si el corte no es claro, contesta el mensaje
+  entero como antes. Entiende más fechas: «primer trimestre», «Q3», «segundo semestre», «primera quincena de octubre»,
+  «de abril a junio» y «hace 3 meses». La ayuda reparte hasta 6 ejemplos por tema y suma los grupos *Comparaciones* y
+  *Ayuda del sistema*.
 
 ### Cambiado
+
+- **Asistente: correcciones de interpretación.** «Ventas de la sede Norte» respondía el inventario de la sede en lugar de las
+  ventas; ahora responde ventas. Se añadieron al glosario las palabras que nombra («modelos», «cobertura»…) para que el
+  corrector de erratas no las confunda con otras parecidas («modelos» no se vuelve «módulos»). «Compara el inventario entre
+  sedes» y «comparar ventas entre sedes» ahora muestran una comparación lado a lado. Un «gracias» a mitad de conversación ya
+  no repite la respuesta anterior, y se entienden más frases de uso diario («se me está acabando», «en qué sede me va mejor»,
+  «qué tan bien está mi inventario», «¿hay algo raro?», «cuánto gastamos en mercancía», «el más caro y el más barato»).
 
 - **Estructura del backend con los nombres de carpeta de Spring** (D-39): `api` → `controller`, `schemas` → `dto`,
   `models` → `model`, `services` → `service`, `core` repartido en `config`, `security`, `exception` y `util`. Se crearon

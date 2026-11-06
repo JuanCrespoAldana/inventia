@@ -146,6 +146,78 @@ export interface components {
             producto: components["schemas"]["ProductoResumen"];
             sede: components["schemas"]["SedeResumen"];
         };
+        /** AyudaAsistente */
+        AyudaAsistente: {
+            /** Saludo */
+            saludo: string;
+            /** Iniciales */
+            iniciales: string[];
+            /** Grupos */
+            grupos: components["schemas"]["GrupoAyuda"][];
+        };
+        /** Barra */
+        Barra: {
+            /** Etiqueta */
+            etiqueta: string;
+            /** Valor */
+            valor: number;
+            /** Texto */
+            texto: string;
+        };
+        /** BloqueBarras */
+        BloqueBarras: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tipo: "barras";
+            /** Titulo */
+            titulo?: string | null;
+            /** Barras */
+            barras: components["schemas"]["Barra"][];
+        };
+        /** BloqueLista */
+        BloqueLista: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tipo: "lista";
+            /** Titulo */
+            titulo?: string | null;
+            /** Elementos */
+            elementos: string[];
+        };
+        /** BloqueMetricas */
+        BloqueMetricas: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tipo: "metricas";
+            /** Titulo */
+            titulo?: string | null;
+            /** Metricas */
+            metricas: components["schemas"]["Metrica"][];
+        };
+        /** BloqueTabla */
+        BloqueTabla: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            tipo: "tabla";
+            /** Titulo */
+            titulo?: string | null;
+            /** Columnas */
+            columnas: components["schemas"]["Columna"][];
+            /** Filas */
+            filas: components["schemas"]["Fila"][];
+            /** Total */
+            total: number;
+            /** Nota */
+            nota?: string | null;
+        };
         /** CambiarPasswordEntrada */
         CambiarPasswordEntrada: {
             /** Password Actual */
@@ -345,6 +417,25 @@ export interface components {
             /** Tipo Vehiculo */
             tipo_vehiculo: string;
         };
+        /** Columna */
+        Columna: {
+            /** Clave */
+            clave: string;
+            /** Etiqueta */
+            etiqueta: string;
+            /**
+             * Formato
+             * @default texto
+             * @enum {string}
+             */
+            formato: "texto" | "entero" | "decimal" | "moneda" | "porcentaje" | "fecha" | "fecha_hora";
+            /**
+             * Alinear
+             * @default izq
+             * @enum {string}
+             */
+            alinear: "izq" | "der";
+        };
         /** ConfiguracionAmbiental */
         ConfiguracionAmbiental: {
             factor_red: components["schemas"]["FactorRedSalida"];
@@ -426,6 +517,25 @@ export interface components {
             estado: string;
             /** Total */
             total: number;
+        };
+        /**
+         * ContextoConversacion
+         * @description Lo que el asistente recuerda de la última respuesta para entender preguntas de seguimiento («¿y en la Sede Sur?»).
+         *     Solo contiene identificadores: cada uno se vuelve a validar contra la empresa y el alcance de quien pregunta.
+         */
+        ContextoConversacion: {
+            /** Intencion */
+            intencion?: string | null;
+            /** Sede Ids */
+            sede_ids?: number[];
+            /** Categoria Ids */
+            categoria_ids?: number[];
+            /** Producto Ids */
+            producto_ids?: number[];
+            /** Desde */
+            desde?: string | null;
+            /** Hasta */
+            hasta?: string | null;
         };
         /** DesgloseSede */
         DesgloseSede: {
@@ -532,6 +642,13 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+        };
+        /** Enlace */
+        Enlace: {
+            /** Etiqueta */
+            etiqueta: string;
+            /** Ruta */
+            ruta: string;
         };
         /** EntradaCrear */
         EntradaCrear: {
@@ -721,6 +838,19 @@ export interface components {
             anio: number | null;
             /** Fuente */
             fuente: string | null;
+        };
+        /** Fila */
+        Fila: {
+            /** Celdas */
+            celdas: {
+                [key: string]: string | number | boolean | null;
+            };
+            /** Tonos */
+            tonos?: {
+                [key: string]: "neutral" | "accent" | "success" | "warning" | "danger";
+            };
+            /** Ruta */
+            ruta?: string | null;
         };
         /** GarantiaCrear */
         GarantiaCrear: {
@@ -927,6 +1057,13 @@ export interface components {
              */
             adjuntos: number;
         };
+        /** GrupoAyuda */
+        GrupoAyuda: {
+            /** Titulo */
+            titulo: string;
+            /** Ejemplos */
+            ejemplos: string[];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1065,6 +1202,21 @@ export interface components {
         Mensaje: {
             /** Mensaje */
             mensaje: string;
+        };
+        /** Metrica */
+        Metrica: {
+            /** Etiqueta */
+            etiqueta: string;
+            /** Valor */
+            valor: string;
+            /** Detalle */
+            detalle?: string | null;
+            /**
+             * Tono
+             * @default neutral
+             * @enum {string}
+             */
+            tono: "neutral" | "accent" | "success" | "warning" | "danger";
         };
         /** ModeloInfo */
         ModeloInfo: {
@@ -1892,6 +2044,12 @@ export interface components {
              */
             generada_en: string;
         };
+        /** PreguntaAsistente */
+        PreguntaAsistente: {
+            /** Mensaje */
+            mensaje: string;
+            contexto?: components["schemas"]["ContextoConversacion"] | null;
+        };
         /**
          * ProductoActualizar
          * @description El código no se puede modificar: identifica al producto en todo su historial.
@@ -2087,6 +2245,28 @@ export interface components {
             ip: string | null;
             /** Sede Id */
             sede_id: number | null;
+        };
+        /** RespuestaAsistente */
+        RespuestaAsistente: {
+            /** Intencion */
+            intencion: string;
+            /** Entendida */
+            entendida: boolean;
+            /** Texto */
+            texto: string;
+            /** Bloques */
+            bloques?: (components["schemas"]["BloqueMetricas"] | components["schemas"]["BloqueTabla"] | components["schemas"]["BloqueBarras"] | components["schemas"]["BloqueLista"])[];
+            /** Enlaces */
+            enlaces?: components["schemas"]["Enlace"][];
+            /** Sugerencias */
+            sugerencias?: string[];
+            /** Avisos */
+            avisos?: string[];
+            /** Alcance */
+            alcance?: string | null;
+            /** Periodo */
+            periodo?: string | null;
+            contexto: components["schemas"]["ContextoConversacion"];
         };
         /** RestablecerPasswordEntrada */
         RestablecerPasswordEntrada: {

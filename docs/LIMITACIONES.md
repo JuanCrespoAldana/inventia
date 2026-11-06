@@ -200,6 +200,29 @@ límites conocidos son:
 - **El respaldo es manual o por tarea programada del cliente**; la aplicación no lo ejecuta ni lo guarda fuera del
   servidor.
 
+### Asistente de consultas
+
+- **Es un motor por reglas, no un modelo de lenguaje** (decisión D-40). Entiende las preguntas habituales de inventario,
+  ventas, alertas, predicción, SIG y administración, con errores de escritura frecuentes y sin tildes. Atiende hasta tres
+  preguntas por mensaje si están claramente separadas («¿…? ¿…?», «… y además …»); una frase muy larga o con una
+  formulación poco común puede no entenderse. Cuando no entiende, lo dice y sugiere
+  preguntas; no inventa una respuesta.
+- **El glosario, las guías y la lista de lo que Inventia no registra son textos fijos** (`conocimiento_datos.py`), escritos a
+  partir del manual: no se generan solos. Si una pantalla cambia de nombre o de pasos, hay que actualizarlos. El asistente
+  explica cómo se hace una tarea pero no la ejecuta.
+- **Solo español** y solo **consulta**: no registra ventas, no mueve mercancía ni cambia datos.
+- **Recuerda un solo turno.** Las preguntas de seguimiento («¿y en la Sede Norte?») usan la respuesta anterior; la
+  conversación se pierde al recargar la página y no se guarda en el servidor.
+- **Aproximaciones:** la rotación usa el inventario de hoy (no el promedio del periodo) y supone que el ritmo de ventas se
+  mantiene; la cobertura divide las existencias entre la demanda estimada, y sin predicción vigente usa las ventas de
+  los últimos 30 días. Cada respuesta con una aproximación lo indica.
+- **Cobertura fija de temas:** solo responde lo que Inventia registra. Preguntas sobre algo ajeno al sistema (consumo de
+  energía, nómina) se responden como no entendidas; las que tocan un dato que Inventia no guarda (clientes, descuentos,
+  metas, medios de pago, lotes, órdenes de compra) se responden aclarando que no se registra. Agregar un tema nuevo requiere
+  programarlo.
+- **Las fechas relativas usan la hora de Colombia** (`America/Bogota`). Con un mes que apenas empieza y sin ventas, el
+  asistente lo dice y muestra el último mes con ventas como referencia.
+
 ### Operación
 
 - **Una sola base de datos por despliegue.** Varias empresas comparten las mismas tablas y están aisladas por

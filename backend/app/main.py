@@ -16,6 +16,7 @@ from app.controller import (
     agentes_controller,
     alertas_controller,
     ambiental_controller,
+    asistente_controller,
     auditoria_controller,
     auth_controller,
     calidad_controller,
@@ -94,7 +95,7 @@ ROUTERS = (
     setup_controller, auth_controller, empresa_controller, sedes_controller, usuarios_controller, roles_controller,
     categorias_controller, productos_controller, inventario_controller, alertas_controller, ventas_controller, traslados_controller,
     predicciones_controller, recomendaciones_controller, auditoria_controller, dashboard_controller, reportes_controller,
-    integraciones_controller, agentes_controller,
+    integraciones_controller, agentes_controller, asistente_controller,
     pqrs_controller, adjuntos_controller, calidad_controller, sst_controller, ambiental_controller,
 )
 for modulo in ROUTERS:

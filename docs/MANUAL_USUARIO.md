@@ -69,6 +69,7 @@ crearse un administrador.
 | Zona | Qué contiene |
 |---|---|
 | Menú lateral | Las secciones a las que tiene acceso: Inventario, Operación, Inteligencia, SIG y Administración. El grupo **SIG** se despliega con sus cuatro apartados. En celular se abre con el botón de menú |
+| Asistente | Chat para preguntar por inventario, ventas, alertas y más escribiendo en lenguaje normal ([4.11](#411-preguntarle-al-asistente)) |
 | Panel de control | Resumen de su operación (según permisos): ventas por día, productos más vendidos, inventario por sede, alertas prioritarias, resumen de la predicción de demanda y movimientos recientes |
 | Encabezado de cada página | Título, descripción y el botón de la acción principal (por ejemplo **Nueva venta**) |
 | Filtros | Buscador y filtros sobre cada lista. Quedan en la dirección de la página: puede copiar el enlace y compartirlo |
@@ -218,6 +219,60 @@ unidad de medida, costo y precio de venta.
 - El **código no se puede cambiar** una vez creado: identifica al producto en todo el historial.
 - Un producto **inhabilitado** deja de aparecer para operar, pero conserva su historial. Puede reactivarse.
 - Un producto sin **costo** no se incluye en la valoración del inventario de los reportes (el reporte lo advierte).
+
+### 4.11 Preguntarle al asistente
+
+**Asistente** (primer grupo del menú, bajo el Panel de control) es un chat para consultar la información de la empresa
+escribiendo como habla: no hace falta buscar la pantalla ni armar filtros. Escriba la pregunta y pulse **Enter**
+(**Mayús + Enter** baja de línea). En la parte de arriba de la pantalla hay preguntas para empezar y, bajo **Qué puedes
+preguntar**, ejemplos por tema que se envían con un clic. Si no sabe por dónde empezar, escriba «ayuda».
+
+Qué puede responder:
+
+| Tema | Ejemplos |
+|---|---|
+| Existencias | «¿Cuánto hay de BAT-001?», «¿qué productos se están agotando?», «inventario de la sede Norte», «valor del inventario» |
+| Ventas | «¿Cuánto vendimos la semana pasada?», «productos más vendidos de octubre», «ventas por sede», «ticket promedio» |
+| Comparaciones | «Compara octubre con septiembre», «¿vendimos más este mes que el anterior?», «compara la sede Norte con la sede Sur», «bicicletas vs monopatines», «compara BAT-001 con BAT-002» |
+| Movimientos y traslados | «últimas entradas», «traslados pendientes», «últimos ajustes de inventario», «movimientos de hoy» |
+| Alertas | «alertas críticas», «¿qué alertas hay en la Sede Sur?», «y las resueltas?» |
+| Cobertura y rotación | «¿cuántos días me dura la cobertura de los cargadores?», «productos de baja rotación» |
+| Predicción y recomendaciones | «¿qué se va a vender el próximo mes?», «¿qué debería comprar?», «recomendaciones pendientes», «¿qué productos se van a agotar pronto?» |
+| SIG | «PQRS abiertas», «no conformidades sin cerrar», «garantías vigentes», «¿cuánto CO₂ evitamos este año?» |
+| Administración | «¿cuántos usuarios hay?», «¿qué sedes tiene la empresa?», «últimos cambios en la auditoría» |
+| Ayuda del sistema | «¿Qué es el stock mínimo?», «¿cómo se calcula la cobertura?», «¿cómo registro una venta?», «¿cómo solicito un traslado?», «¿qué módulos tiene el sistema?», «¿cómo funciona el asistente?» |
+
+Cómo funciona, para que sepa qué esperar:
+
+- **Entiende sedes, categorías, productos y fechas** con los nombres que usted usa («cargadores», «la sede norte»,
+  «hoy», «ayer», «el lunes», «el fin de semana», «el mes pasado», «lo que va del año», «los últimos 30 días»,
+  «del 1 al 15 de octubre», «el primer trimestre», «Q3», «el segundo semestre», «la primera quincena de octubre», «de abril a
+  junio», «hace 3 meses»), también con errores de escritura frecuentes o sin tildes.
+- **Explica y guía, además de consultar.** Si pregunta qué significa un término («¿qué es la cobertura?», «¿qué significa
+  WAPE?») o cómo se hace algo («¿cómo anulo una venta?»), responde con la definición o con los pasos y el enlace a la
+  pantalla. Si su rol no tiene el permiso para esa tarea, se lo dice y explica los pasos por si necesita pedirlo a quien sí lo tenga.
+- **Compara.** «Compara la sede Norte con la sede Sur» o «bicicletas vs monopatines» muestra existencias, ventas y alertas
+  lado a lado. Con un rol limitado a una sede no puede compararla con otras.
+- **Puede responder varias preguntas en un mismo mensaje** (hasta tres) si están claramente separadas:
+  «¿cuántos productos hay y cuáles están agotados?». Cada respuesta se numera. Si el mensaje no se puede separar con
+  claridad, responde el mensaje completo como una sola pregunta.
+- **Dice lo que Inventia no registra.** Descuentos, clientes, metas de ventas, medios de pago, lotes y fechas de
+  vencimiento, o la emisión de órdenes de compra no existen en el sistema; el asistente lo aclara y sugiere lo más
+  cercano que sí puede consultar, en vez de inventar un dato.
+- **Recuerda la pregunta anterior.** Después de «ventas de la sede Norte» puede seguir con «¿y la semana pasada?» o «¿y en la
+  Sede Sur?». Si cambia de tema, empieza de cero. Al recargar la página, la conversación se borra.
+- **Respeta su rol.** Solo responde lo que su rol puede ver: un Encargado de sede o un Usuario de inventario obtiene datos
+  de su sede, y si pregunta por otra, el asistente se lo dice. Una pregunta sobre un módulo sin permiso se rechaza y se
+  explica por qué.
+- **Solo consulta.** No registra ventas, no mueve mercancía ni cambia nada. Cada respuesta trae enlaces a la pantalla
+  donde sí puede actuar.
+- **Si no entiende, lo dice.** Sugiere preguntas parecidas en lugar de inventar una respuesta. Si menciona un producto o
+  una sede que no existe, avisa en vez de contestar con los datos de toda la empresa.
+- **No es un modelo de lenguaje.** Reconoce frases por reglas: acierta con las preguntas habituales de inventario, pero una
+  frase muy rebuscada puede no entenderse. Reformúlela con palabras más directas («ventas de octubre por sede»).
+- **Si no dice la fecha**, usa el mes en curso o, si todavía no tiene ventas, el último mes que las tenga, y lo indica. Si
+  pide una fecha concreta sin ventas (por ejemplo, el mes apenas empieza), lo dice y muestra el último mes con ventas como
+  referencia en vez de comparar contra cero.
 
 ---
 
