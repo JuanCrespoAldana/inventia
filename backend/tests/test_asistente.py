@@ -10,6 +10,7 @@ from app import demo
 from app.model.catalogo import Producto
 from app.model.inventario import InventarioSede
 from app.model.usuario import Usuario
+from app.security.limiter import limiter
 from app.security.dependencias import contexto_de_usuario
 from app.service.asistente import motor
 from app.service.asistente.entidades import armar_directorio, resolver
@@ -94,6 +95,19 @@ async def test_responde_con_datos_reales_y_bloques_estructurados(cliente, db):
 
     ayuda = (await admin.get("/api/asistente/ayuda")).json()
     assert ayuda["iniciales"] and ayuda["grupos"] and all(g["ejemplos"] for g in ayuda["grupos"])
+
+
+async def test_todas_las_preguntas_del_corpus_se_responden_sin_error_con_datos_reales(cliente, db):
+    """Las frases del corpus se envían de verdad al endpoint: cada intención ejecuta su consulta contra la base de datos de
+    la demostración y devuelve texto, sin errores del servidor ni respuestas vacías."""
+    admin, _ = await escenario(cliente, db)
+    fallos = []
+    for pregunta, _esperada in CASOS:
+        limiter.reset()  # el límite de 60 por minuto por IP no es lo que se prueba aquí
+        r = await admin.post("/api/asistente/preguntar", {"mensaje": pregunta})
+        if r.status_code != 200 or not r.json().get("texto"):
+            fallos.append(f"{pregunta!r}: {r.status_code} {r.text[:120]}")
+    assert not fallos, "\n".join(fallos)
 
 
 async def test_no_entendida_y_charla_no_fallan(cliente, db):
@@ -373,7 +387,7 @@ def test_el_glosario_y_las_guias_estan_completos():
 
     claves = [t.clave for t in GLOSARIO] + [g.clave for g in GUIAS] + [n.clave for n in NO_REGISTRA]
     assert len(claves) == len(set(claves)), "claves repetidas"
-    assert len(GLOSARIO) >= 55 and len(GUIAS) >= 40 and len(NO_REGISTRA) >= 12
+    assert len(GLOSARIO) >= 53 and len(GUIAS) >= 33 and len(NO_REGISTRA) >= 12
     assert all(t.definicion.strip() and t.nombre.strip() for t in GLOSARIO)
     assert all(len(g.pasos) >= 2 and all(paso.strip() for paso in g.pasos) for g in GUIAS)
 

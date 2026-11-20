@@ -1,0 +1,11 @@
+npm run tipos exit 0 (src/types/api.gen.ts sin cambios: sha256 ba43f32552a7ce34da01b369ff9f237c0b3b5c0b823f80e22a2a2c526f25b1bf)
+
+> inventia-frontend@1.2.0 tipos
+> node scripts/generar-tipos.mjs
+
+Contrato OpenAPI escrito en /tmp/…/openapi.json (71 rutas)
+
+added 33 packages in 2s
+✨ openapi-typescript 7.13.0
+🚀 /tmp/…/openapi.json → /tmp/…/api.ts [305.8ms]
+Tipos escritos en src/types/api.gen.ts

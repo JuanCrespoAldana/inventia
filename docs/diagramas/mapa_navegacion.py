@@ -45,8 +45,7 @@ GRUPOS = [
     ("INVENTARIO", "azul", [("Existencias", "/inventario"), ("Consolidado", "/inventario/consolidado"), ("Movimientos", "/movimientos"), ("Productos", "/productos"), ("Categorías", "/categorias")]),
     ("OPERACIÓN", "verde", [("Ventas", "/ventas  ▸  /ventas/nueva · /ventas/:id"), ("Traslados", "/traslados  ▸  /traslados/nuevo · /traslados/:id"), ("Alertas", "/alertas")]),
     ("INTELIGENCIA", "naranja", [("Predicción de demanda", "/predicciones"), ("Recomendaciones", "/recomendaciones"), ("Reportes", "/reportes")]),
-    ("SIG", "amarillo", [("PQRS y sugerencias", "/sig/pqrs"), ("Seguridad y Salud en el Trabajo", "/sig/sst"), ("Calidad", "/sig/calidad"), ("Gestión ambiental", "/sig/ambiental")]),
-    ("ADMINISTRACIÓN", "gris", [("Empresa", "/empresa"), ("Sedes", "/sedes"), ("Usuarios", "/usuarios"), ("Roles y permisos", "/roles"), ("Auditoría", "/auditoria"), ("Agentes de IA", "/integraciones")]),
+    ("ADMINISTRACIÓN", "gris", [("Empresa", "/empresa"), ("Sedes", "/sedes"), ("Usuarios", "/usuarios"), ("Roles y permisos", "/roles"), ("Auditoría", "/auditoria")])
 ]
 W, GAP, TOP = 2.95, 0.12, 5.6
 centros = []

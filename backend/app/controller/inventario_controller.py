@@ -11,7 +11,6 @@ from app.dto.inventario_dto import (
     ConsolidadoFila,
     EntradaCrear,
     EntradaDetalle,
-    EntradaObservacionCrear,
     EntradaResumen,
     InventarioFila,
     MovimientoSalida,
@@ -92,18 +91,10 @@ async def entradas(
 
 
 @router.get("/inventario/entradas/{entrada_id}", response_model=EntradaDetalle,
-            summary="Detalle de una entrada con su historial de observaciones")
+            summary="Detalle de una entrada con sus líneas")
 async def entrada_detalle(entrada_id: int, ctx: Contexto = Depends(requiere("movimientos.ver")), db: AsyncSession = Depends(get_db)):
     return await entradas_service.detalle(db, ctx, await entradas_service.obtener_entrada(db, ctx, entrada_id))
 
-
-@router.post("/inventario/entradas/{entrada_id}/observaciones", response_model=EntradaDetalle,
-             status_code=status.HTTP_201_CREATED, summary="Agregar una observación a una entrada")
-async def entrada_observar(
-    entrada_id: int, datos: EntradaObservacionCrear,
-    ctx: Contexto = Depends(requiere("inventario.entrada")), db: AsyncSession = Depends(get_db),
-):
-    return await entradas_service.agregar_observacion(db, ctx, entrada_id, datos)
 
 
 @router.post("/inventario/salidas", response_model=ResultadoOperacion, status_code=status.HTTP_201_CREATED,

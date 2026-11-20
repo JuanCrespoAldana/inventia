@@ -24,7 +24,6 @@ CATEGORIAS_AYUDA = (
     "Traslados",
     "Alertas",
     "Predicción y recomendaciones",
-    "Calidad y SIG",
     "Administración",
     "Ayuda del sistema",
     "General",
@@ -95,7 +94,7 @@ _BASE: tuple[Intencion, ...] = (
         (r"\b(domicilios?|transportadora|guias? de envio|rutas? de entrega|tracking|despachos? a clientes|pedidos? de clientes)\b", 10),
         (r"\b(codigos? de barras?|qr|escaner|escanear|lector de codigos?)\b", 10),
         (r"\b(clima|lluvia|temporada alta|festivos?|dia de la madre|navidad|black friday)\b.*\b(ventas?|demanda|prediccion)\b|\b(ventas?|demanda|prediccion)\b.*\b(clima|lluvia|festivos?|navidad|black friday|temporada alta|dia de la madre)\b", 10),
-    ], contras=[(r"\b(quejas?|reclamos?|pqrs|peticion\w*|sugerencias?|garantia\w*|no ?conformidad\w*|defect\w*|calidad)\b", -8)]),
+    ]),
     _i("charla", "General", "Conversación fuera de tema", (), ("Cuéntame un chiste",), [
         (r"\b(chiste|cuentame algo|que opinas|clima|futbol|noticias|quien gano|receta|poema|cancion|horoscopo|capital de|presidente)\b", 6),
     ]),
@@ -408,34 +407,6 @@ _BASE: tuple[Intencion, ...] = (
         (r"\b(excel|xlsx|csv|pdf)\b", 5),
         (r"\binforme\w*\b", 4.5),
     ], ruta="/reportes"),
-    # ------------------------------------------------------------------------------------------ Calidad y SIG
-    _i("pqrs_resumen", "Calidad y SIG", "PQRS (peticiones, quejas, reclamos y sugerencias)", ("pqrs.crear", "pqrs.gestionar"), ("¿Cuántas PQRS hay pendientes?", "Mis quejas y reclamos"), [
-        (r"\bpqrs\b", 9),
-        (r"\bcuant[oa]s? (pqrs|quejas|reclamos|peticiones)\b.*\b(sin responder|sin respuesta|pendientes|abiertas|sin atender|sin resolver)\b", 12),
-        (r"\b(quejas?|reclamos?|peticion\w+|buzon|radicado\w*)\b", 6.5),
-        (r"\bsugerencias? (de |del )?(los )?(clientes?|usuarios?|empleados?)\b|\bmis (quejas|reclamos|peticiones|solicitudes|pqrs)\b", 8),
-    ], ruta="/sig/pqrs"),
-    _i("calidad_resumen", "Calidad y SIG", "Calidad: no conformidades y garantías", ("calidad.ver", "calidad.reportar", "calidad.gestionar"), ("¿Cuántas no conformidades hay abiertas?", "Resumen de calidad"), [
-        (r"\bno ?conformidad\w*\b", 9),
-        (r"\bcalidad\b", 6),
-        (r"\bacciones? (correctivas?|preventivas?|de mejora)\b|\bcapa\b|\bmejora continua\b|\bcausa raiz\b|\breclamos? de calidad\b", 8),
-        (r"\bdefect\w+\b|\bdefectuos\w+\b|\bhallazgos?\b", 6),
-        (r"\bproductos? (danados?|equivocados?|con (defecto|falla|problema))\b|\bproveedor\w* (con )?(problemas?|fallas?|incumpl\w+)\b", 7),
-    ], ruta="/sig/calidad"),
-    _i("garantias", "Calidad y SIG", "Garantías", ("calidad.ver", "calidad.reportar", "calidad.gestionar"), ("¿Qué garantías están abiertas?",), [
-        (r"\bgarantia\w*\b", 9.5),
-    ], ruta="/sig/calidad"),
-    _i("sst", "Calidad y SIG", "Seguridad y salud en el trabajo (pausas activas)", ("sst.ver", "sst.gestionar"), ("¿Cómo va el cumplimiento de las pausas activas?",), [
-        (r"\bpausas? activas?\b|\bcumplimiento de (las )?pausas\b", 9),
-        (r"\b(sst|seguridad y salud|salud ocupacional|salud en el trabajo)\b", 9),
-        (r"\b(ergonomi\w+|postura\w*|estiramient\w+|descansos? activos?|ejercicios? (de|para) (pausa|descanso)|bienestar laboral)\b", 6),
-        (r"\bcuantas pausas\b|\bpausas (se )?(hicieron|realizaron|hechas|realizadas|activas hechas)\b", 8),
-    ], ruta="/sig/sst"),
-    _i("ambiental", "Calidad y SIG", "Gestión ambiental (CO₂ evitado)", ("ambiental.ver", "ambiental.configurar"), ("¿Cuánto CO₂ evitamos este año?",), [
-        (r"\b(ambiental\w*|co2|dioxido de carbono|carbono|huella de carbono|emision\w*|ecologic\w+|sostenib\w+|medio ?ambiente|contamin\w+)\b", 8),
-        (r"\b(toneladas?|kg) de co2\b|\bevit\w+ (emitir|emisiones)\b|\bimpacto (ambiental|verde)\b", 9),
-        (r"\bvehiculos? electricos? (vendid\w+|que vendimos)\b", 5),
-    ], ruta="/sig/ambiental"),
     # ------------------------------------------------------------------------------------------ Administración
     _i("sedes_info", "Administración", "Sedes de la empresa", ("sedes.ver",), ("¿Cuántas sedes tenemos?", "¿Dónde queda la Sede Norte?"), [
         (r"\bcuantas sedes\b|\bque sedes (tenemos|hay|existen|tiene|manejamos|estan|activas)\b", 9),
@@ -478,13 +449,6 @@ _BASE: tuple[Intencion, ...] = (
         (r"\bzona horaria\b|\bmoneda\b", 6),
         (r"\bempresa\b", 2.5),
     ], ruta="/empresa"),
-    _i("agentes_ia", "Administración", "Agentes de IA y llaves de acceso", ("agentes.gestionar",), ("¿Cómo conecto un agente de IA?",), [
-        (r"\bagentes? (de )?(ia|inteligencia)\b", 8),
-        (r"\b(api ?key|llave\w*|token de acceso)\b", 6.5),
-        (r"\bintegraci\w+\b", 5.5),
-        (r"\b(claude|mcp|chatgpt|gpt|openai)\b", 5),
-        (r"\bconectar\w*\b|\bapi\b", 4),
-    ], ruta="/integraciones"),
 )
 
 INTENCIONES: tuple[Intencion, ...] = _BASE + INTENCIONES_EXT + INTENCIONES_CONOCIMIENTO
@@ -552,15 +516,10 @@ TEMAS: tuple[Tema, ...] = (
     _t(r"\breport\w+|\bexportar\b|\bdescargar\b|\bexcel\b|\bpdf\b|\bcsv\b", "Reportes", "/reportes", (
         "reportes.inventario", "reportes.ventas", "reportes.movimientos", "reportes.traslados", "reportes.alertas", "reportes.predicciones",
         "reportes.recomendaciones")),
-    _t(r"\bpqrs\b|\bqueja\w*|\breclamo\w*|\bpeticion\w*", "PQRS", "/sig/pqrs", ("pqrs.crear", "pqrs.gestionar")),
-    _t(r"\bpausas?\b|\bsst\b", "Seguridad y Salud en el Trabajo", "/sig/sst", ("sst.ver", "sst.gestionar")),
-    _t(r"\bno ?conformidad\w*|\bgarantia\w*|\bcalidad\b", "Calidad", "/sig/calidad", ("calidad.ver", "calidad.reportar", "calidad.gestionar")),
-    _t(r"\bambiental\w*|\bco2\b", "Gestión ambiental", "/sig/ambiental", ("ambiental.ver", "ambiental.configurar")),
     _t(r"\bsedes?\b|\bsucursal\w*|\bbodega\w*", "Sedes", "/sedes", ("sedes.ver",)),
     _t(r"\busuario\w*|\bempleado\w*|\bcontrasena\b", "Usuarios", "/usuarios", ("usuarios.ver",)),
     _t(r"\brol(?:es)?\b|\bpermiso\w*", "Roles y permisos", "/roles", ("roles.ver", "usuarios.ver")),
     _t(r"\bauditoria\b|\bbitacora\b", "Auditoría", "/auditoria", ("auditoria.ver", "auditoria.operaciones")),
-    _t(r"\bagente\w*|\bllave\w*|\bintegraci\w+|\bapi\b", "Agentes de IA", "/integraciones", ("agentes.gestionar",)),
     _t(r"\bempresa\b|\bparametros?\b", "Empresa", "/empresa", ("empresa.ver",)),
     _t(r"\bperfil\b|\bmi cuenta\b", "Mi perfil", "/perfil", ()),
     _t(r"\bpanel\b|\binicio\b|\bdashboard\b", "Panel de control", "/", ()),
@@ -585,11 +544,11 @@ VOCABULARIO_BASE = frozenset(
     pronostico demanda recomendacion recomendaciones reponer comprar pedir trasladar movimientos movimiento kardex entradas
     entrada salidas salida ajustes ajuste mermas perdidas margen ganancia utilidad cobertura desabastecimiento excesivo exceso
     sobrestock minimo maximo usuarios usuario empleados administrador gerente encargado analista permisos rol roles empresa
-    auditoria garantia garantias calidad conformidad conformidades pausas activas ambiental carbono reporte reportes
+    auditoria reporte reportes
     resumen cuantos cuantas cuanto cuanta cuales ultimos ultimas semana mes ayer manana trimestre quincena rotacion
     bateria baterias cargador cargadores bicicleta bicicletas patineta patinetas motocicleta motocicletas casco cascos
     precio costo valor total promedio semanal mensual diario tendencia comparar vendedor vendedores pendientes pendiente
     aprobado aprobados confirmado confirmados rechazado rechazados cancelado cancelados critica criticas critico criticos
-    prioridad alta media baja bajo bajos normal queja quejas reclamo reclamos peticion peticiones sugerencia sugerencias clave contrasena password
-    sesion llave llaves pausa pausas evidencia evidencias glosario modulos modulo""".split()
+    prioridad alta media baja bajo bajos normal clave contrasena password
+    sesion glosario modulos modulo""".split()
 )

@@ -3,7 +3,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, Field
 
 from app.dto.catalogo_dto import ProductoResumen
-from app.dto.comunes_dto import EsquemaBase, Texto, TextoOpcional
+from app.dto.comunes_dto import EsquemaBase, TextoOpcional
 from app.dto.sede_dto import SedeResumen
 
 
@@ -61,29 +61,6 @@ class SerieDemanda(BaseModel):
     metricas: dict
     advertencias: list[str]
     motivo_sin_prediccion: str | None
-
-
-class LlaveCrear(EsquemaBase):
-    nombre: Texto(3, 100)
-    alcances: list[str] = Field(min_length=1, max_length=10)
-    sede_id: int | None = Field(default=None, gt=0)
-    dias_vigencia: int | None = Field(default=90, ge=1, le=730)
-
-
-class LlaveSalida(BaseModel):
-    id: int
-    nombre: str
-    prefijo: str
-    alcances: list[str]
-    sede_id: int | None
-    activa: bool
-    creada_en: datetime
-    expira_en: datetime | None
-    ultimo_uso_en: datetime | None
-
-
-class LlaveCreada(LlaveSalida):
-    llave: str  # se muestra UNA sola vez
 
 
 class RecomendacionSalida(BaseModel):

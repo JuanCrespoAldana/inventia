@@ -69,7 +69,7 @@ def decode_access_token(token: str) -> dict | None:
 
 
 def hash_token(valor: str) -> str:
-    """SHA-256 para valores aleatorios de alta entropía (llaves de API, tokens de sesión)."""
+    """SHA-256 para valores aleatorios de alta entropía (tokens de sesión y de recuperación de contraseña)."""
     return hashlib.sha256(valor.encode()).hexdigest()
 
 

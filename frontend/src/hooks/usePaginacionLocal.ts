@@ -13,7 +13,7 @@ export interface PropiedadesPaginacion {
 
 /**
  * Paginado en el navegador para listas que el servidor entrega completas (vista previa de un reporte,
- * roles, llaves de integración, líneas de un documento…). Los listados grandes de verdad se paginan en
+ * roles, líneas de un documento…). Los listados grandes de verdad se paginan en
  * el servidor con `useFiltros`; este hook cubre el resto para que ninguna pantalla crezca sin límite.
  *
  * - `tamano` indefinido o 0 desactiva el paginado y devuelve la lista completa.

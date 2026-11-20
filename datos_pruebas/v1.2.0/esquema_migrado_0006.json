@@ -1,0 +1,2368 @@
+{
+ "alertas": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "bigint",
+    "largo": null,
+    "precision": 64,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "tipo",
+    "tipo": "character varying",
+    "largo": 30,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "prioridad",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "estado",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "mensaje",
+    "tipo": "character varying",
+    "largo": 300,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "detalle",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "abierta_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "resuelta_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "inventario_sede",
+    "destino": "sede_id"
+   },
+   {
+    "columna": "producto_id",
+    "tabla": "inventario_sede",
+    "destino": "producto_id"
+   }
+  ],
+  "indices": 2,
+  "fks_n": 2
+ },
+ "auditoria": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "bigint",
+    "largo": null,
+    "precision": 64,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "usuario_email",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "fecha",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "modulo",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "accion",
+    "tipo": "character varying",
+    "largo": 60,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "entidad",
+    "tipo": "character varying",
+    "largo": 60,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "entidad_id",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "resultado",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "detalle",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "ip",
+    "tipo": "character varying",
+    "largo": 64,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "request_id",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 3
+ },
+ "categorias": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 100,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "descripcion",
+    "tipo": "character varying",
+    "largo": 300,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "activa",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   }
+  ],
+  "indices": 2,
+  "fks_n": 1
+ },
+ "ejecuciones_prediccion": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "estado",
+    "tipo": "character varying",
+    "largo": 15,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "horizonte_dias",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha_corte",
+    "tipo": "date",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "parametros",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "resumen",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "error",
+    "tipo": "text",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "creada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "iniciada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "finalizada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 1,
+  "fks_n": 2
+ },
+ "empresas": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 150,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "identificacion",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "direccion",
+    "tipo": "character varying",
+    "largo": 200,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "ciudad",
+    "tipo": "character varying",
+    "largo": 100,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "telefono",
+    "tipo": "character varying",
+    "largo": 30,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "email",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "activa",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "configuracion",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [],
+  "indices": 1,
+  "fks_n": 0
+ },
+ "entradas_inventario": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "numero",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "motivo",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 3
+ },
+ "inventario_sede": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "cantidad",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "stock_minimo",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "stock_maximo",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   }
+  ],
+  "indices": 4,
+  "fks_n": 3
+ },
+ "movimientos": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "bigint",
+    "largo": null,
+    "precision": 64,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "tipo",
+    "tipo": "character varying",
+    "largo": 30,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "motivo",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "delta",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "saldo_anterior",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "saldo_posterior",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_contraparte_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "observacion",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "venta_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "traslado_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "entrada_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "entrada_id",
+    "tabla": "entradas_inventario",
+    "destino": "id"
+   },
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_contraparte_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "traslado_id",
+    "tabla": "traslados",
+    "destino": "id"
+   },
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "venta_id",
+    "tabla": "ventas",
+    "destino": "id"
+   }
+  ],
+  "indices": 7,
+  "fks_n": 8
+ },
+ "password_reset_tokens": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "expires_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "used",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "codigo_hash",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "intentos",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "verificado",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "session_token_hash",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 2,
+  "fks_n": 1
+ },
+ "permisos": {
+  "columnas": [
+   {
+    "nombre": "codigo",
+    "tipo": "character varying",
+    "largo": 80,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "modulo",
+    "tipo": "character varying",
+    "largo": 50,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "descripcion",
+    "tipo": "character varying",
+    "largo": 200,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "codigo"
+  ],
+  "fks": [],
+  "indices": 0,
+  "fks_n": 0
+ },
+ "predicciones": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "bigint",
+    "largo": null,
+    "precision": 64,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "ejecucion_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha_inicio",
+    "tipo": "date",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha_fin",
+    "tipo": "date",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "demanda_estimada",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": false
+   },
+   {
+    "nombre": "limite_inferior",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": true
+   },
+   {
+    "nombre": "limite_superior",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": true
+   },
+   {
+    "nombre": "modelo",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "es_linea_base",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "confianza",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "metricas",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "serie_diaria",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "advertencias",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "generada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "ejecucion_id",
+    "tabla": "ejecuciones_prediccion",
+    "destino": "id"
+   },
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 4
+ },
+ "productos": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 200,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "descripcion",
+    "tipo": "character varying",
+    "largo": 1000,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "categoria_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "codigo",
+    "tipo": "character varying",
+    "largo": 60,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "unidad_medida",
+    "tipo": "character varying",
+    "largo": 20,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "costo",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": true
+   },
+   {
+    "nombre": "precio_venta",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": true
+   },
+   {
+    "nombre": "activo",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "categoria_id",
+    "tabla": "categorias",
+    "destino": "id"
+   },
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 2
+ },
+ "recomendaciones": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "ejecucion_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "tipo",
+    "tipo": "character varying",
+    "largo": 20,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_origen_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "cantidad_sugerida",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "prioridad",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "estado",
+    "tipo": "character varying",
+    "largo": 15,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "resumen",
+    "tipo": "character varying",
+    "largo": 600,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "justificacion",
+    "tipo": "jsonb",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "generada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "revisada_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "revisada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "comentario_revision",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "ejecucion_id",
+    "tabla": "ejecuciones_prediccion",
+    "destino": "id"
+   },
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "revisada_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_origen_id",
+    "tabla": "sedes",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 6
+ },
+ "rol_permisos": {
+  "columnas": [
+   {
+    "nombre": "rol_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "permiso_codigo",
+    "tipo": "character varying",
+    "largo": 80,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "rol_id",
+   "permiso_codigo"
+  ],
+  "fks": [
+   {
+    "columna": "permiso_codigo",
+    "tabla": "permisos",
+    "destino": "codigo"
+   },
+   {
+    "columna": "rol_id",
+    "tabla": "roles",
+    "destino": "id"
+   }
+  ],
+  "indices": 0,
+  "fks_n": 2
+ },
+ "roles": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "clave",
+    "tipo": "character varying",
+    "largo": 40,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 80,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "descripcion",
+    "tipo": "character varying",
+    "largo": 300,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "alcance",
+    "tipo": "character varying",
+    "largo": 10,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "es_sistema",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "activo",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 1
+ },
+ "secuencias": {
+  "columnas": [
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 30,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "valor",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "empresa_id",
+   "nombre"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   }
+  ],
+  "indices": 0,
+  "fks_n": 1
+ },
+ "sedes": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 150,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "ciudad",
+    "tipo": "character varying",
+    "largo": 150,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "direccion",
+    "tipo": "character varying",
+    "largo": 200,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "activa",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   }
+  ],
+  "indices": 2,
+  "fks_n": 1
+ },
+ "traslado_items": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "traslado_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "cantidad",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "traslado_id",
+    "tabla": "traslados",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 2
+ },
+ "traslados": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "numero",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_origen_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_destino_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "estado",
+    "tipo": "character varying",
+    "largo": 15,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "observacion",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "recomendacion_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "solicitado_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "solicitado_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "aprobado_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "aprobado_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "confirmado_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "confirmado_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "cerrado_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "cerrado_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "motivo_cierre",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "aprobado_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "cerrado_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "confirmado_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "recomendacion_id",
+    "tabla": "recomendaciones",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_destino_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_origen_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "solicitado_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 5,
+  "fks_n": 8
+ },
+ "usuarios": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "nombre",
+    "tipo": "character varying",
+    "largo": 150,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "email",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "password_hash",
+    "tipo": "character varying",
+    "largo": 255,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "activo",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "rol_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "debe_cambiar_password",
+    "tipo": "boolean",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "password_version",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "intentos_fallidos",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "bloqueado_hasta",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "ultimo_acceso",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "rol_id",
+    "tabla": "roles",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   }
+  ],
+  "indices": 4,
+  "fks_n": 3
+ },
+ "venta_items": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "venta_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "producto_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "cantidad",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "precio_unitario",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": false
+   },
+   {
+    "nombre": "subtotal",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "producto_id",
+    "tabla": "productos",
+    "destino": "id"
+   },
+   {
+    "columna": "venta_id",
+    "tabla": "ventas",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 2
+ },
+ "ventas": {
+  "columnas": [
+   {
+    "nombre": "id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "empresa_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "sede_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "numero",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "usuario_id",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "fecha_dia",
+    "tipo": "date",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "total",
+    "tipo": "numeric",
+    "largo": null,
+    "precision": 14,
+    "escala": 2,
+    "nulo": false
+   },
+   {
+    "nombre": "estado",
+    "tipo": "character varying",
+    "largo": 15,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "observacion",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "anulada_por",
+    "tipo": "integer",
+    "largo": null,
+    "precision": 32,
+    "escala": 0,
+    "nulo": true
+   },
+   {
+    "nombre": "anulada_en",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "motivo_anulacion",
+    "tipo": "character varying",
+    "largo": 500,
+    "precision": null,
+    "escala": null,
+    "nulo": true
+   },
+   {
+    "nombre": "created_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   },
+   {
+    "nombre": "updated_at",
+    "tipo": "timestamp with time zone",
+    "largo": null,
+    "precision": null,
+    "escala": null,
+    "nulo": false
+   }
+  ],
+  "pk": [
+   "id"
+  ],
+  "fks": [
+   {
+    "columna": "anulada_por",
+    "tabla": "usuarios",
+    "destino": "id"
+   },
+   {
+    "columna": "empresa_id",
+    "tabla": "empresas",
+    "destino": "id"
+   },
+   {
+    "columna": "sede_id",
+    "tabla": "sedes",
+    "destino": "id"
+   },
+   {
+    "columna": "usuario_id",
+    "tabla": "usuarios",
+    "destino": "id"
+   }
+  ],
+  "indices": 3,
+  "fks_n": 4
+ }
+}

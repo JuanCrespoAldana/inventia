@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { apiInventario } from "@/api/inventario";
-import { apiEntradas } from "@/api/sig";
+import { apiEntradas, apiInventario } from "@/api/inventario";
 import { useAuth } from "@/auth/AuthContext";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -165,8 +164,6 @@ function ListaEntradas({ abrirEntrada }: { abrirEntrada: (id: number) => void })
           { clave: "sede", encabezado: "Sede", desde: "md", celda: (e) => e.sede.nombre },
           { clave: "motivo", encabezado: "Motivo", desde: "sm", celda: (e) => <span className="text-ink-dim">{etiqueta(MOTIVO, e.motivo)}</span> },
           { clave: "u", encabezado: "Productos", alinear: "derecha", celda: (e) => <span className="tabular">{entero(e.lineas)} · {entero(e.unidades)} u.</span> },
-          { clave: "obs", encabezado: "Observaciones", alinear: "derecha", desde: "sm", celda: (e) => <span className="tabular text-ink-dim">{entero(e.observaciones)}</span> },
-          { clave: "nc", encabezado: "No conformidades", alinear: "derecha", desde: "md", celda: (e) => (e.no_conformidades > 0 ? <Badge tono="warning">{entero(e.no_conformidades)}</Badge> : <span className="text-ink-faint">—</span>) },
           { clave: "usuario", encabezado: "Registró", desde: "lg", celda: (e) => <span className="text-ink-dim">{e.usuario_nombre ?? "—"}</span> },
         ]}
       />
@@ -184,7 +181,7 @@ export default function MovimientosPage() {
     <>
       <EncabezadoPagina
         titulo="Movimientos"
-        descripcion="Historial inmutable de entradas, salidas, ajustes, ventas y traslados. Cada fila muestra el saldo antes y después. Cada entrada de mercancía guarda su propio historial de observaciones."
+        descripcion="Historial inmutable de entradas, salidas, ajustes, ventas y traslados. Cada fila muestra el saldo antes y después."
       />
       <div className="mb-4">
         <Pestanas

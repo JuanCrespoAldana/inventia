@@ -4,6 +4,8 @@ import type {
   Alerta,
   ConsolidadoFila,
   EntradaCrear,
+  EntradaDetalle,
+  EntradaResumen,
   InventarioSedePagina,
   Movimiento,
   NivelesActualizar,
@@ -19,6 +21,8 @@ export interface FiltroConsolidado { q?: string; categoria_id?: number | ""; sol
 export interface FiltroMovimientos { sede_id?: number | ""; producto_id?: number | ""; tipo?: string; desde?: string; hasta?: string; pagina?: number; tamano?: number }
 export interface FiltroAlertas { estado?: string; tipo?: string; prioridad?: string; sede_id?: number | ""; q?: string; pagina?: number; tamano?: number }
 
+export interface FiltroEntradas { sede_id?: number | ""; desde?: string; hasta?: string; numero?: number | ""; pagina?: number; tamano?: number }
+
 export const apiInventario = {
   porSede: (f: FiltroInventario) => get<InventarioSedePagina>("/api/inventario", { ...f }),
   consolidado: (f: FiltroConsolidado) => get<Pagina<ConsolidadoFila>>("/api/inventario/consolidado", { ...f }),
@@ -33,4 +37,10 @@ export const apiAlertas = {
   listar: (f: FiltroAlertas) => get<Pagina<Alerta>>("/api/alertas", { ...f }),
   resumen: (sede_id?: number | "") => get<ResumenAlertas>("/api/alertas/resumen", { sede_id }),
   recalcular: () => post<ResultadoRecalculo>("/api/alertas/recalcular"),
+};
+
+/** Entradas de mercancía: consulta de solo lectura (cada entrada tiene su número, fecha, motivo, responsable y líneas). */
+export const apiEntradas = {
+  listar: (f: FiltroEntradas) => get<Pagina<EntradaResumen>>("/api/inventario/entradas", { ...f }),
+  detalle: (id: number) => get<EntradaDetalle>(`/api/inventario/entradas/${id}`),
 };

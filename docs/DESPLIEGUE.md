@@ -79,10 +79,6 @@ docker compose -f infra/docker-compose.yml --env-file infra/.env --profile demo 
 
 Muestra una sola vez las credenciales generadas. **No use datos de demostración en una instalación real.**
 
-Para incluir también datos de ejemplo del SIG (PQRS, calidad, pausas activas y una configuración ambiental de demostración)
-agregue `--con-sig` al comando de la demostración o ejecute `python -m app.cli cargar-demo-sig` en una empresa que ya
-tenga la demostración. Aplica la misma advertencia: los parámetros ambientales de ejemplo no son datos reales.
-
 ### 5. HTTPS
 
 El sistema no termina TLS. Publique el puerto de la interfaz detrás de un proxy inverso con certificado (Caddy,
@@ -189,12 +185,15 @@ Recomendaciones:
    en PostgreSQL).
 4. Compruebe `/api/health/ready` y revise [`CHANGELOG.md`](../CHANGELOG.md) por cambios que requieran acciones.
 
-**De la 1.0 a la 1.1 (Sistema Integrado de Gestión).** La migración `0004_sig` solo agrega tablas y una columna opcional;
-no modifica datos. Al arrancar, la API reparte los 9 permisos nuevos a los roles de fábrica (los roles que creó la empresa
-no los reciben: concédalos en **Roles y permisos**). No hay variables de entorno nuevas. Para que la gestión ambiental
-estime el CO₂, un administrador debe configurar el factor de la red y los parámetros de las categorías de vehículos en
-**SIG → Gestión ambiental → Configuración**; mientras no lo haga, solo cuenta los vehículos vendidos. Si baja a la 1.0 con
-`alembic downgrade 0003_inventia`, **se pierden** los registros del SIG: haga un respaldo antes.
+**De la 1.1 a la 1.2 (retiro del SIG y de los agentes de IA; integridad del modelo).** **Haga un respaldo antes.**
+La migración `0005_integridad_mer` agrega tres restricciones a la base de datos (llave compuesta de las alertas hacia
+`inventario_sede`, un solo traslado por recomendación y ejecución de predicción obligatoria en las recomendaciones). Si
+existen datos que las incumplen, la migración **se detiene con un mensaje que indica cuáles** y no cambia nada; corríjalos
+y vuelva a arrancar. Las alertas sin existencia por sede se eliminan (no tenían a qué referirse). La migración
+`0006_retiro_sig_agentes` elimina las 15 tablas del Sistema Integrado de Gestión (PQRS, no conformidades, garantías,
+evidencias, pausas activas, gestión ambiental, observaciones de entradas) y las llaves de agentes de IA, y retira los 10
+permisos asociados: **esos registros no se conservan**. Se conservan las entradas de inventario y sus movimientos. No hay
+variables de entorno nuevas. Si baja a la 1.1 con `alembic downgrade 0004_sig`, las estructuras se recrean **vacías**.
 
 Con varias réplicas de la API, ejecute las migraciones como un trabajo aparte y arranque las réplicas con
 `RUN_MIGRATIONS=false`.

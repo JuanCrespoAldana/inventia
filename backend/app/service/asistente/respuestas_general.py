@@ -9,7 +9,7 @@ from sqlalchemy import func, select
 from app.config.settings import settings
 from app.dto.asistente_dto import AyudaAsistente, GrupoAyuda
 from app.model.acceso import Rol
-from app.model.auditoria import ApiKey, Auditoria
+from app.model.auditoria import Auditoria
 from app.model.empresa import CONFIGURACION_POR_DEFECTO, Empresa
 from app.model.sede import Sede
 from app.model.usuario import Usuario
@@ -99,7 +99,7 @@ async def gracias(p: Peticion) -> B.Resp:
 @manejador("quien_eres")
 async def quien_eres(p: Peticion) -> B.Resp:
     return B.Resp(
-        "Soy el **asistente de consultas de Inventia**. Entiendo preguntas frecuentes sobre tu operación (inventario, ventas, traslados, alertas, predicción, calidad y administración) "
+        "Soy el **asistente de consultas de Inventia**. Entiendo preguntas frecuentes sobre tu operación (inventario, ventas, traslados, alertas, predicción y administración) "
         "y las respondo con los datos reales de tu empresa, respetando tu rol y tu sede. No soy una inteligencia artificial generativa: trabajo con reglas, así que es mejor que me preguntes de forma directa. "
         "Solo consulto: no registro ni modifico nada.",
         sugerencias=["¿Qué puedes hacer?", "Dame un resumen general"],
@@ -131,9 +131,8 @@ async def fuera_de_alcance(p: Peticion) -> B.Resp:
     if (especifica := respuesta_sin_registro(p)) is not None:
         return especifica
     return B.Resp(
-        "Inventia no maneja ese tema (cartera, clientes, proveedores, nómina, impuestos o contabilidad). Lo que sí registra es el inventario, las ventas, los traslados entre sedes, la calidad (no conformidades y garantías) y las PQRS. "
-        "Si buscas las quejas o reclamos de clientes, pregúntame por las PQRS.",
-        sugerencias=["¿Cuántas PQRS hay pendientes?", "¿Cuánto vendimos este mes?", "¿Qué puedes hacer?"],
+        "Inventia no maneja ese tema (cartera, clientes, proveedores, nómina, impuestos o contabilidad). Lo que sí registra es el inventario, las ventas, los traslados entre sedes, las alertas, la predicción de demanda y las recomendaciones de reposición.",
+        sugerencias=["¿Cuánto vendimos este mes?", "¿Qué hay que reponer?", "¿Qué puedes hacer?"],
     )
 
 
@@ -375,13 +374,13 @@ _MODULOS_AUDITORIA = (
     (r"\bventas?\b", "ventas"), (r"\btraslad\w+", "traslados"), (r"\b(inventario|entradas?|salidas?|ajustes?|stock)\b", "inventario"),
     (r"\b(sesion|acceso|ingreso|login|contrasena)\w*", "auth"), (r"\busuarios?\b", "usuarios"), (r"\broles?\b|\bpermisos?\b", "roles"),
     (r"\bproductos?\b", "productos"), (r"\bcategorias?\b", "categorias"), (r"\bsedes?\b", "sedes"), (r"\brecomend\w+", "recomendaciones"),
-    (r"\bpredic\w+", "prediccion"), (r"\bgarantias?|\bno ?conformidad\w*|\bcalidad\b", "calidad"),
+    (r"\bpredic\w+", "prediccion"),
 )
 _DE_QUIENES = re.compile(r"\b(actividad|acciones|registros|movimientos|historial|operaciones)( recientes?| reciente)? (de|del|de todos|por) (los |las |todos los |todas las )?(usuarios|personas|empleados|equipo|gente|trabajadores)\b")
 _ACCIONES_AUDITORIA = (
-    (r"\banul\w+", ("anular",)), (r"\belimin\w+|\bborr\w+", ("eliminar", "eliminar_actividad", "eliminar_adjunto")), (r"\baprob\w+", ("aprobar",)), (r"\brechaz\w+", ("rechazar",)),
+    (r"\banul\w+", ("anular",)), (r"\belimin\w+|\bborr\w+", ("eliminar",)), (r"\baprob\w+", ("aprobar",)), (r"\brechaz\w+", ("rechazar",)),
     (r"\bconfirm\w+", ("confirmar",)), (r"\bajust\w+", ("ajuste",)), (r"\bregistr\w+", ("registrar", "entrada", "salida")), (r"\bcre[oóa]\w*|\bcrearon\b", ("crear",)),
-    (r"\bcambi\w+|\bmodific\w+|\bedit\w+|\bactualiz\w+", ("actualizar", "editar_actividad", "cambiar_rol_o_sede", "actualizar_parametros")),
+    (r"\bcambi\w+|\bmodific\w+|\bedit\w+|\bactualiz\w+", ("actualizar", "cambiar_rol_o_sede", "actualizar_parametros")),
 )
 
 
@@ -461,12 +460,3 @@ async def empresa_info(p: Peticion) -> B.Resp:
     bloques = [B.lista("Datos", datos), B.tabla("Parámetros de inventario y predicción", [B.col("parametro", "Parámetro"), B.col("valor", "Valor", "entero"), B.col("significa", "Qué significa")],
                                                   [B.fila({"parametro": e, "valor": parametros.get(k, CONFIGURACION_POR_DEFECTO[k]), "significa": s}) for k, (e, s, _) in _PARAMETROS.items()])]
     return B.Resp(texto, bloques, enlaces_a(p, "/empresa"), ["¿Cuál es el plazo de entrega configurado?", "¿Qué sedes tenemos?"])
-
-
-@manejador("agentes_ia")
-async def agentes_ia(p: Peticion) -> B.Resp:
-    activas = int(await p.db.scalar(select(func.count()).select_from(ApiKey).where(ApiKey.empresa_id == p.ctx.empresa_id, ApiKey.activa.is_(True))) or 0)
-    texto = ("Inventia puede conectarse con agentes de IA externos (por ejemplo, Claude) usando **llaves de solo lectura**: cada llave tiene alcances (qué puede consultar) y, si quieres, queda limitada a una sede. "
-             "Se crean y se revocan en Integraciones; la llave completa se muestra una sola vez, al crearla. ")
-    texto += f"Ahora hay **{B.n_de(activas, 'llave activa', 'llaves activas')}**." if activas else "Ahora no hay llaves activas."
-    return B.Resp(texto, enlaces=enlaces_a(p, "/integraciones"), sugerencias=["¿Qué puedes hacer?"])

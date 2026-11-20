@@ -146,22 +146,3 @@ MOTIVO: dict[str, str] = {
     "perdida": "Pérdida", "deterioro": "Deterioro", "consumo_interno": "Consumo interno", "devolucion_proveedor": "Devolución a proveedor",
     "conteo_fisico": "Conteo físico", "correccion": "Corrección", "otro": "Otro",
 }
-ESTADO_PQRS: dict[str, tuple[str, Tono]] = {
-    "pendiente": ("Pendiente", "warning"), "en_revision": ("En revisión", "accent"), "en_proceso": ("En proceso", "accent"), "resuelta": ("Resuelta", "success"),
-}
-TIPO_PQRS: dict[str, str] = {"peticion": "Petición", "queja": "Queja", "reclamo": "Reclamo", "sugerencia": "Sugerencia"}
-ESTADO_NC: dict[str, str] = {
-    "reportado": "Reportado", "en_revision": "En revisión", "en_proceso_solucion": "En solución", "resuelto": "Resuelto", "cerrado": "Cerrado",
-}
-TIPO_NC: dict[str, str] = {
-    "defecto_de_fabrica": "Defecto de fábrica", "dano_en_transporte": "Daño en transporte", "producto_equivocado": "Producto equivocado",
-    "cantidad_incorrecta": "Cantidad incorrecta", "empaque_deteriorado": "Empaque deteriorado",
-    "no_cumple_especificacion": "No cumple la especificación", "otro": "Otro",
-}
-ESTADO_GARANTIA: dict[str, str] = {
-    "reportada": "Reportada", "pendiente_revision": "Pendiente de revisión", "enviada_proveedor": "Enviada al proveedor", "aprobada": "Aprobada",
-    "rechazada": "Rechazada", "solucionada": "Solucionada", "cerrada": "Cerrada",
-}
-TIPO_VEHICULO: dict[str, str] = {
-    "bicicleta_electrica": "Bicicleta eléctrica", "patineta_electrica": "Monopatín eléctrico", "motocicleta_electrica": "Moto eléctrica", "otro": "Otro",
-}

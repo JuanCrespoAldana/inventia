@@ -3,7 +3,52 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa
 [versionado semántico](https://semver.org/lang/es/).
 
-## [Sin publicar]
+## [1.2.0] · 2026-11-20
+
+Línea Base 1. Retira del alcance el **Sistema Integrado de Gestión (SIG)** y los **agentes de IA**, y hace que la **base de
+datos garantice por sí sola tres reglas del modelo entidad–relación**, por indicación de la asesora (revisión del 9 de
+noviembre de 2026). El commit de esta versión se registra al etiquetarla (`git tag v1.2.0`). Decisiones:
+D-41 y D-42 en [`docs/DECISIONES.md`](docs/DECISIONES.md).
+
+### Para quien actualiza una instalación existente
+
+1. **Haga un respaldo de la base de datos antes de actualizar.** La migración `0006_retiro_sig_agentes` elimina 15 tablas con
+   sus registros (PQRS, no conformidades, garantías, evidencias, pausas activas, gestión ambiental, observaciones por entrada y
+   llaves de agentes) y 10 permisos. **Esos datos no se conservan.**
+2. La migración `0005_integridad_mer` agrega tres restricciones. **Se detiene con un mensaje que indica cuáles** si hay una
+   recomendación con más de un traslado o sin ejecución de predicción: corríjalas y repita. Elimina las alertas que no tienen
+   existencia por sede (son datos derivados; el servicio las vuelve a generar).
+3. No hay variables de entorno nuevas. Las llaves de agentes dejan de funcionar (la API `/api/agentes/*` ya no existe).
+4. `alembic downgrade` recrea las estructuras retiradas **vacías**; no devuelve los datos.
+
+### Retirado
+
+- **SIG completo** (versión 1.1): PQRS, Seguridad y Salud en el Trabajo (pausas activas), Calidad (no conformidades y
+  garantías), Gestión ambiental, evidencias adjuntas y observaciones por entrada. Solo se conservan las entradas de
+  inventario, que se consultan en solo lectura (`GET /api/inventario/entradas` y `/{id}`; su consulta, que probaban las
+  pruebas del SIG, pasa a `tests/test_entradas.py`). Salen 38 operaciones de la API, el
+  grupo **SIG** del menú y sus pantallas, y 9 permisos. El registro y la anulación de ventas ya no recalculan indicadores
+  ambientales. (CRF-ALC-01; D-28 a D-33 quedan como historia.)
+- **Agentes de IA** (versión 1.0): llaves de API, `/api/agentes/*`, la pantalla *Agentes de IA*, el permiso
+  `agentes.gestionar`, la carpeta `agents/` (incluido el conector MCP) y la tabla `api_keys`. Salen 9 operaciones. (CRF-ALC-02;
+  D-17 queda como historia.)
+- En total la API pasa de 133 a 86 operaciones, el esquema de 37 a 22 tablas y los permisos de 61 a 51. Con ellos salen los
+  datos de demostración del SIG (`npm run demo:sig`, `--con-sig`, `cargar-demo-sig`), 51 pruebas del backend y las respuestas
+  del asistente sobre el SIG.
+
+### Cambiado
+
+- **Integridad del modelo entidad–relación (CRF-MER-01; D-41; migración `0005_integridad_mer`).** (1) Una alerta pertenece a
+  una existencia por sede: llave foránea compuesta `alertas (sede_id, producto_id)` → `inventario_sede`. (2) Una
+  recomendación da lugar a lo sumo a un traslado: `traslados.recomendacion_id` es único. (3) Toda recomendación nace de una
+  ejecución de predicción: `recomendaciones.ejecucion_id` es obligatorio.
+- **Aprobar una recomendación de traslado reclama primero la recomendación** (actualización condicional) y después crea el
+  traslado: con varias aprobaciones simultáneas avanza una y las demás reciben 409 `estado_cambiado`, nunca un error de integridad.
+- Nueva especificación del MER (`docs/modelo/mer_spec.py`: 21 entidades, 25 reglas, 50 relaciones) y pruebas que la comparan
+  con los modelos (`tests/test_mer_consistente.py`): si el código cambia una llave sin actualizar el MER, fallan.
+- El asistente ya no trata el SIG; glosario de 53 términos, 33 guías y 89 intenciones. La versión que informa pasa a 1.2.0.
+- El recorrido en navegador (`infra/navegador/recorrido.py`) incluye ahora la pantalla del *Asistente*.
+- Prueba de humo del asistente: las 400 frases del corpus se envían a la API con datos reales y ninguna debe terminar en error.
 
 ### Agregado
 
@@ -36,23 +81,19 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 - Variable `DOCS_API_ACTIVA` (por defecto `true`): con `false` se retiran `/api/docs` y `/api/openapi.json`.
 - CI: trabajo informativo de seguridad (`pip-audit`, `npm audit`, Bandit; no bloquea), cobertura de pruebas en la
   salida del backend y configuración de Dependabot (`.github/dependabot.yml`).
-- **Conector MCP para Claude (`agents/servidor_mcp.py`).** Permite conectar Claude Desktop con la llave de un agente y hacerle
-  preguntas en lenguaje natural sobre existencias, alertas, predicciones y recomendaciones. Son cinco herramientas de solo
-  lectura que llaman a las rutas `/api/agentes/*` existentes; no hay cambios en la API ni en la base de datos. Solo usa la
-  biblioteca estándar de Python. Pasos de instalación en `agents/README.md`.
 - **Asistente de consultas dentro de Inventia** (menú *Asistente*, ruta `/asistente`; D-40). Un chat en español para preguntar
-  por existencias, ventas, movimientos, traslados, alertas, cobertura y rotación, predicción, recomendaciones, el SIG
-  (PQRS, no conformidades, garantías, SST, gestión ambiental) y la administración, con comparaciones entre periodos y
+  por existencias, ventas, movimientos, traslados, alertas, cobertura y rotación, predicción, recomendaciones y la
+  administración, con comparaciones entre periodos y
   preguntas de seguimiento («¿y en la Sede Norte?»). Es un motor **por reglas** (sin modelo de lenguaje, sin costo por
   consulta y sin enviar datos a terceros): reconoce la intención, resuelve sedes, categorías, productos y periodos
   contra el directorio de la empresa, corrige errores de escritura frecuentes y responde con cifras, tablas y barras. Solo
   lee. Cada respuesta respeta los permisos y la sede del rol (un rol limitado a una sede nunca ve otras). Si no entiende,
   lo dice y sugiere preguntas. Rutas nuevas: `POST /api/asistente/preguntar` (60/min) y `GET /api/asistente/ayuda`; sin
-  cambios en la base de datos. 98 intenciones; 411 frases de prueba y 73 pruebas automáticas del backend, más pruebas de
+  cambios en la base de datos. 89 intenciones; 400 frases de prueba y 73 pruebas automáticas del backend, más pruebas de
   la pantalla.
 - **Asistente que también explica, guía, compara y atiende varias preguntas a la vez** (ampliación de D-40; sin cambios en
-  la API ni en la base de datos). Además de consultar datos, ahora responde: **qué significa un término** (glosario de 61
-  términos: stock mínimo, cobertura, WAPE, PQRS, punto de reposición…), **cómo se hace una tarea** paso a paso (40 guías con
+  la API ni en la base de datos). Además de consultar datos, ahora responde: **qué significa un término** (glosario de 53
+  términos: stock mínimo, cobertura, WAPE, punto de reposición…), **cómo se hace una tarea** paso a paso (33 guías con
   enlace a la pantalla; si el rol no tiene el permiso, explica los pasos y avisa que los hace quien lo tenga), qué módulos
   tiene el sistema, cómo funciona el asistente y cuáles son sus límites, qué versión se está usando, y **qué cosas Inventia
   no registra** (descuentos, clientes, metas, medios de pago, lotes, órdenes de compra…) en lugar de adivinar. **Compara**
@@ -79,12 +120,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
   OpenAPI y las 214 pruebas del backend pasan. Guía nueva: [`docs/GUIA_ESTRUCTURA.md`](docs/GUIA_ESTRUCTURA.md).
 - Limpieza: eliminados importaciones y variables sin uso en el backend.
 - **Paginado en todas las pantallas con listas largas.** La vista previa de *Reportes* (hasta 200 filas) se muestra de 15 en
-  15; los módulos de permisos de *Roles y permisos* de 5 en 5 (son 19) y la lista de roles de 10 en 10; las llaves de
-  *Agentes de IA*, las actividades y el cumplimiento por persona de SST, las categorías ambientales y las líneas de venta,
-  traslado y entrada, de 10 en 10; las series omitidas de *Predicción de demanda* de 15 en 15 y los ejercicios de SST de 6 en 6.
+  15; los módulos de permisos de *Roles y permisos* de 5 en 5 (son 19) y la lista de roles de 10 en 10; las líneas de venta,
+  traslado y entrada, de 10 en 10; y las series omitidas de *Predicción de demanda* de 15 en 15.
   Se usa el mismo paginador de los demás listados. Como esas listas ya llegan completas del servidor, se pagina en el
   navegador con el hook `usePaginacionLocal` o con la propiedad `paginar` de `Tabla`; el contrato de la API no cambia.
-  Pruebas del frontend: de 133 a 145.
 - `npm run setup` ahora **busca solo un Python compatible** (3.13, luego 3.12 y 3.14) y crea con él `backend/.venv`,
   aunque el `python` que aparece por defecto en la terminal sea otro. Si no hay ninguno, se detiene con un mensaje claro
   (en Windows indica `py install 3.13`). Si `backend/.venv` ya existe con un Python no compatible, avisa cómo
@@ -101,9 +140,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 
 - **Integración continua (GitHub Actions):** el generador de tipos del frontend (`backend/scripts/exportar_openapi.py`) usaba
   SQLite por defecto, que solo se instala con `requirements-dev.txt`; ahora usa el controlador de PostgreSQL, que va en
-  `requirements.txt`, y corre solo con las dependencias de producción. Además, ocho pruebas de calidad
-  (`tests/test_sig_calidad_entradas.py`) calculaban «hoy» con la hora del computador en vez de la zona de la empresa, por lo que
-  fallaban cuando el servidor está en UTC y en Colombia ya son más de las 7 p. m.; ahora usan `hoy_local()`.
+  `requirements.txt`, y corre solo con las dependencias de producción. Además, ocho pruebas calculaban «hoy» con la
+  hora del computador en vez de la zona de la empresa, por lo que fallaban cuando el servidor está en UTC y en Colombia ya son
+  más de las 7 p. m.; ahora usan `hoy_local()` (esas pruebas se retiraron después con el SIG).
 - **Reportes recortados:** cuando la vista previa (200 filas) o el PDF (1.000 filas) se recortan, el resumen suma solo las filas mostradas. Ahora la vista previa, el PDF y la hoja de resumen del Excel lo dicen, y el aviso de la vista previa ya no afirma «primeros 200 de 200 registros».
 - **Un número enorme en la URL ya no produce error 500** (D-37): un identificador o filtro que no cabe en la base de
   datos (p. ej. `?numero=99999999999`) se responde con 422 en unas 30 rutas. Lo encontró el fuzzing con Schemathesis; el

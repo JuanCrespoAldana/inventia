@@ -1,12 +1,8 @@
 import { descargar, get, post, type Parametros } from "@/lib/http";
 import type {
-  AlcanceLlave,
   CatalogoModelos,
   Dashboard,
   Ejecucion,
-  Llave,
-  LlaveCrear,
-  LlaveCreada,
   OpcionesAuditoria,
   Pagina,
   Prediccion,
@@ -53,11 +49,4 @@ export const apiReportes = {
   catalogo: () => get<TipoReporte[]>("/api/reportes"),
   vistaPrevia: (tipo: string, f: FiltroReporte) => get<Reporte>(`/api/reportes/${tipo}`, { ...f, formato: "json" }),
   descargar: (tipo: string, formato: "csv" | "xlsx" | "pdf", f: FiltroReporte) => descargar(`/api/reportes/${tipo}`, { ...(f as Parametros), formato }),
-};
-
-export const apiIntegraciones = {
-  alcances: () => get<AlcanceLlave[]>("/api/integraciones/alcances"),
-  llaves: () => get<Llave[]>("/api/integraciones/llaves"),
-  crear: (d: LlaveCrear) => post<LlaveCreada>("/api/integraciones/llaves", d),
-  revocar: (id: number) => post<Llave>(`/api/integraciones/llaves/${id}/revocar`),
 };

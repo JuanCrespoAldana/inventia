@@ -13,7 +13,7 @@ async def sincronizar_permisos(db: AsyncSession) -> None:
     - Inserta los permisos nuevos y actualiza la descripción de los existentes.
     - Elimina los obsoletos (sus asignaciones caen por ON DELETE CASCADE).
     - Los permisos nuevos se añaden automáticamente a los roles «Administrador» de cada empresa y a los demás
-      roles del SISTEMA cuyo conjunto por defecto los incluya (p. ej. «pqrs.crear» a todos). Los roles creados
+      roles del SISTEMA cuyo conjunto por defecto los incluya (p. ej. «alertas.ver» a todos). Los roles creados
       por la empresa no se tocan: su administrador decide. Solo se actúa sobre permisos NUEVOS, así que si una
       empresa le quitó un permiso a un rol, no se le vuelve a poner.
     """

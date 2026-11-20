@@ -80,7 +80,8 @@ class Recomendacion(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     empresa_id: Mapped[int] = mapped_column(ForeignKey("empresas.id"), nullable=False)
-    ejecucion_id: Mapped[int | None] = mapped_column(ForeignKey("ejecuciones_prediccion.id"), nullable=True)
+    # RGN-21 (CRF-MER-01): toda recomendación nace de una ejecución de predicción.
+    ejecucion_id: Mapped[int] = mapped_column(ForeignKey("ejecuciones_prediccion.id"), nullable=False)
     tipo: Mapped[str] = mapped_column(String(20), nullable=False)
     producto_id: Mapped[int] = mapped_column(ForeignKey("productos.id"), nullable=False, index=True)
     sede_id: Mapped[int] = mapped_column(ForeignKey("sedes.id"), nullable=False, index=True)  # sede con la necesidad

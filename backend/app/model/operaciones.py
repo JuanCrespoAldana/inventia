@@ -88,6 +88,8 @@ class Traslado(MarcaTiempo, Base):
     __tablename__ = "traslados"
     __table_args__ = (
         UniqueConstraint("empresa_id", "numero", name="uq_traslados_empresa_numero"),
+        # RGN-23 (CRF-MER-01): una recomendación da lugar a lo sumo a un traslado (relación 1 a 0..1).
+        UniqueConstraint("recomendacion_id", name="uq_traslados_recomendacion_id"),
         CheckConstraint("sede_origen_id <> sede_destino_id", name="sedes_distintas"),
         Index("ix_traslados_empresa_estado", "empresa_id", "estado"),
     )

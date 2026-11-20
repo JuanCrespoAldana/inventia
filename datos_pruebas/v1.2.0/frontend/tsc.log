@@ -1,0 +1,4 @@
+tsc exit 0
+
+> inventia-frontend@1.2.0 typecheck
+> tsc -b

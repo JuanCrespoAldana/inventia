@@ -179,30 +179,6 @@ INTENCIONES_EXT: tuple[Intencion, ...] = (
         (r"\bcomo (mejorar|optimizar|reducir|evitar|controlar)\b.*\b(inventario|stock|rotacion|agotados|exceso)\b", 9),
         (r"\bcomo (puedo |podria |podemos |hago para |logro |consigo )?(vender|vendo|aumentar|aumento|subir|subo|incrementar|incremento|mejorar|mejoro) (mas|las ventas|mis ventas|ventas|el volumen de ventas)\b|\b(aumentar|subir|incrementar|mejorar) (las |mis )?ventas\b|\bvender mas\b", 10),
     ], ruta="/inventario"),
-    # --------------------------------------------------------------------------------------------- Calidad y SIG
-    _i("calidad_analisis", "Calidad y SIG", "Análisis de calidad (proveedores, productos, tiempos y garantías por vencer)",
-       ("calidad.ver", "calidad.reportar", "calidad.gestionar"),
-       ("¿Qué proveedor tiene más problemas?", "¿Qué producto tiene más no conformidades?", "¿Qué garantías están por vencer?"), [
-        (r"\bproveedor\w*\b.*\b(problemas?|defectos?|fallas?|no ?conformidad\w*|garantias?|danos?|mal estado)\b", 11),
-        (r"\b(problemas?|defectos?|fallas?|no ?conformidad\w*|garantias?)\b.*\bproveedor\w*\b", 11),
-        (r"\b(producto|productos|sede|sedes|tipo|tipos)\b.*\b(mas|mayor)\b.*\b(no ?conformidad\w*|defectos?|garantias?|fallas?|danos?|defectuos\w+)", 11),
-        (r"\b(no ?conformidad\w*|garantias?|defectos?)\b.*\b(por|segun) (proveedor|producto|sede|tipo)\b", 11),
-        (r"\bproveedor\w*\b.*\b(mas|mayor|menos|menor)\b.*\b(reportes?|reclamos?|quejas?|incidencias?|casos|devoluciones|incumplimientos?)\b", 11),
-        (r"\bgarantias? (por vencer|proximas a vencer|a punto de vencer|que vencen|venciendo)\b|\bvencen? (pronto|este mes|esta semana)\b.*\bgarantia|\bgarantia\w*\b.*\b(por vencer|vencer|vencen)\b", 11.5),
-        (r"\b(tiempo|tarda\w*|demor\w+|cuanto)\b.*\b(resol\w+|solucion\w+|cerr\w+)\b.*\b(no ?conformidad\w*|garantias?)\b", 11),
-        (r"\bdefectos? (mas )?(comun\w*|frecuente\w*)\b|\btipos? de (defecto|no ?conformidad)\b", 11),
-    ], ruta="/sig/calidad"),
-    _i("pqrs_analisis", "Calidad y SIG", "Análisis de PQRS (tiempos de respuesta, antiguas, por tipo y sede)", ("pqrs.crear", "pqrs.gestionar"),
-       ("¿Cuánto tardan en responderse las PQRS?", "PQRS más antiguas sin responder"), [
-        (r"\bpqrs\b.*\b(tiempo|demor\w+|tarda\w*)\b|\b(tiempo|cuanto tarda\w*|cuanto demor\w+)\b.*\bpqrs\b|\b(tiempo|cuanto tarda\w*)\b.*\b(responder|respuesta)\b.*\b(queja|reclamo|pqrs)", 11),
-        (r"\b(pqrs|quejas?|reclamos?)\b.*\b(antigua\w*|sin responder|sin respuesta|mas viej\w+|sin atender|mas tiempo)\b", 11),
-        (r"\b(quejas?|reclamos?|pqrs)\b.*\bpor (sede|tipo)\b|\btipo de (pqrs|queja|reclamo)\w* (mas )?(comun|frecuente)\b|\b(pqrs|quejas) mas (comun|frecuente)\w*", 11),
-    ], ruta="/sig/pqrs"),
-    _i("ambiental_equivalencia", "Calidad y SIG", "Equivalencia del CO₂ evitado en árboles", ("ambiental.ver", "ambiental.configurar"),
-       ("¿A cuántos árboles equivale el CO₂ evitado?",), [
-        (r"\b(arboles?|bosques?)\b", 9),
-        (r"\bequivale\w*\b.*\b(co2|carbono|arbol\w*|emisiones)\b", 9),
-    ], ruta="/sig/ambiental"),
     # ------------------------------------------------------------------------------------------ Administración
     _i("usuarios_acceso", "Administración", "Últimos ingresos y usuarios bloqueados", ("usuarios.ver",),
        ("¿Quién entró hoy al sistema?", "¿Hay usuarios bloqueados?"), [

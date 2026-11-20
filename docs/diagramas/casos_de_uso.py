@@ -14,8 +14,7 @@ AZUL, AZUL_CL, GRIS, TEXTO, NARANJA = "#3b5bf0", "#eef1ff", "#52514e", "#0b0b0b"
 CASOS = [  # (id, texto, actores)
     ("CU-03", "Gestionar empresa, sedes, usuarios y roles", ["adm"]),
     ("CU-04", "Gestionar categorías y productos", ["adm"]),
-    ("CU-15", "Gestionar llaves de agentes de IA", ["adm"]),
-    ("CU-17", "Configurar niveles mínimo y máximo", ["enc"]),
+    ("CU-15", "Configurar niveles mínimo y máximo", ["enc"]),
     ("CU-05", "Registrar entradas, salidas y ajustes", ["usu", "enc"]),
     ("CU-06", "Registrar y anular ventas", ["usu", "enc"]),
     ("CU-08", "Solicitar, aprobar y confirmar traslados", ["usu", "enc"]),
@@ -28,7 +27,6 @@ CASOS = [  # (id, texto, actores)
     ("CU-02", "Recuperar contraseña", ["aut"]),
     ("CU-07", "Consultar inventario por sede y consolidado (según permiso)", ["aut"]),
     ("CU-09", "Consultar alertas de inventario", ["aut"]),
-    ("CU-16", "Usar el SIG (PQRS, SST, calidad, gestión ambiental)", ["aut"]),
 ]
 ACTORES = {  # clave: (x, y, etiqueta)
     "adm": (1.2, 1.0, "Administrador\n(todos los permisos)"),

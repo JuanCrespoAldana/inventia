@@ -32,7 +32,7 @@ from app.dto.sede_dto import SedeResumen
 from app.exception.excepciones import ExistenciasInsuficientes, NoEncontrado, ReglaNegocio
 from app.model.catalogo import Categoria, Producto
 from app.model.enums import TipoMovimiento
-from app.model.inventario import EntradaInventario, EntradaObservacion, InventarioSede, Movimiento
+from app.model.inventario import EntradaInventario, InventarioSede, Movimiento
 from app.model.operaciones import Traslado, Venta
 from app.model.sede import Sede
 from app.model.usuario import Usuario
@@ -162,16 +162,13 @@ async def registrar_entrada(db: AsyncSession, ctx: Contexto, datos: EntradaCrear
     sede = await obtener_sede_autorizada(db, ctx, datos.sede_id, requerir_activa=True)
     productos = await productos_de_empresa(db, ctx.empresa_id, [i.producto_id for i in datos.items], requerir_activos=True)
     fecha = ahora_utc()
-    # Cabecera de la entrada: agrupa las líneas y es el punto de anclaje de las observaciones y de las no
-    # conformidades. Las existencias siguen cambiando SOLO a través de los movimientos de abajo.
+    # Cabecera de la entrada: agrupa las líneas. Las existencias cambian SOLO a través de los movimientos de abajo.
     entrada = EntradaInventario(
         empresa_id=ctx.empresa_id, sede_id=sede.id, numero=await siguiente_secuencia(db, ctx.empresa_id, "entrada"),
         motivo=datos.motivo, usuario_id=ctx.usuario_id, fecha=fecha,
     )
     db.add(entrada)
     await db.flush()
-    if datos.observacion:
-        db.add(EntradaObservacion(entrada_id=entrada.id, usuario_id=ctx.usuario_id, fecha=fecha, contenido=datos.observacion))
     ops = [
         Operacion(
             sede.id, productos[i.producto_id], i.cantidad, TipoMovimiento.ENTRADA, datos.motivo, datos.observacion,

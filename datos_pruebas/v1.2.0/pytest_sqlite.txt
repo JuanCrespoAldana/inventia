@@ -1,0 +1,13 @@
+........................................................................ [ 28%]
+.......................................ssssss.....................sss... [ 57%]
+.....ssss......ssssssss.............................s..........s........ [ 86%]
+...............sssssss.............                                      [100%]
+=========================== short test summary info ============================
+SKIPPED [6] tests/test_concurrencia.py: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [3] tests/test_dashboard_reportes.py:215: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [4] tests/test_integridad_mer.py: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [8] tests/test_migraciones.py: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [1] tests/test_prediccion.py:198: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [1] tests/test_recomendaciones.py:229: requiere PostgreSQL: defina TEST_DATABASE_URL
+SKIPPED [7] tests/test_setup_auth.py:274: requiere PostgreSQL: defina TEST_DATABASE_URL
+221 passed, 30 skipped in 142.39s (0:02:22)

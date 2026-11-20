@@ -1,6 +1,6 @@
 """Genera los diagramas del modelo relacional (físico) a partir del esquema real de PostgreSQL.
 
-    python relacional.py esquema.json      # esquema.json: salida de infra/.../volcar_esquema.py (ver docs/MODELO_DATOS.md)
+    python relacional.py esquema.json      # esquema.json: salida de volcar_esquema.py, con la base migrada a `alembic upgrade head`
 
 Muestra llaves primarias (PK), foráneas (FK) y las columnas de negocio más relevantes; el detalle completo está en el
 diccionario de datos (anexo). Las llaves foráneas a ``empresas`` se omiten para legibilidad (todas las tablas de negocio
@@ -35,7 +35,6 @@ CLAVES = {  # columnas de negocio a mostrar además de PK y FK
     "permisos": ["modulo", "descripcion"], "rol_permisos": [],
     "password_reset_tokens": ["codigo_hash", "expires_at", "intentos", "used"],
     "auditoria": ["fecha", "modulo", "accion", "resultado"],
-    "api_keys": ["nombre", "prefijo", "key_hash", "alcances", "expira_en", "activa"],
     "categorias": ["nombre", "activa"],
     "productos": ["codigo", "nombre", "unidad_medida", "costo", "precio_venta", "activo"],
     "inventario_sede": ["cantidad", "stock_minimo", "stock_maximo"],
@@ -49,43 +48,19 @@ CLAVES = {  # columnas de negocio a mostrar además de PK y FK
     "predicciones": ["fecha_inicio", "fecha_fin", "demanda_estimada", "limite_inferior", "limite_superior", "modelo", "confianza", "metricas"],
     "recomendaciones": ["tipo", "cantidad_sugerida", "prioridad", "estado", "justificacion"],
     "entradas_inventario": ["numero", "motivo", "fecha"],
-    "entrada_observaciones": ["fecha", "contenido"],
-    "pqrs": ["numero", "tipo", "asunto", "estado", "respuesta"],
-    "pqrs_historial": ["fecha", "evento", "estado_anterior", "estado_nuevo"],
-    "no_conformidades": ["numero", "tipo", "fecha_deteccion", "cantidad_afectada", "estado", "proveedor"],
-    "no_conformidad_historial": ["fecha", "evento", "estado_nuevo"],
-    "garantias": ["numero", "cantidad", "fecha_compra", "garantia_hasta", "defecto", "estado"],
-    "garantia_historial": ["fecha", "evento", "estado_nuevo"],
-    "sig_adjuntos": ["nombre", "tipo_mime", "tamano", "sha256"],
-    "sst_configuracion": ["pausas_activas", "intervalo_minutos"],
-    "sst_actividades": ["titulo", "area", "duracion_segundos", "activa"],
-    "sst_pausas": ["actividad_titulo", "mostrada_en", "estado", "cerrada_en"],
-    "amb_configuracion": ["factor_red_kgco2_kwh", "factor_red_anio", "factor_red_fuente"],
-    "amb_categorias": ["tipo_vehiculo", "propulsion", "distancia_anual_km", "consumo_kwh_100km", "horizonte_anios"],
-    "amb_registros": ["fecha", "unidades", "estado", "co2_evitado_kg"],
 }
 
 FIGURAS = {
     "relacional_acceso": ("Acceso, organización y auditoría",
-                          ["empresas", "sedes", "usuarios", "roles", "rol_permisos", "permisos", "password_reset_tokens", "auditoria", "api_keys"], []),
-    "relacional_catalogo_inventario": ("Catálogo e inventario",
-                                       ["categorias", "productos", "inventario_sede", "movimientos", "alertas"],
+                          ["empresas", "sedes", "usuarios", "roles", "rol_permisos", "permisos", "password_reset_tokens", "auditoria"], []),
+    "relacional_catalogo_inventario": ("Catálogo, inventario y entradas",
+                                       ["categorias", "productos", "inventario_sede", "movimientos", "alertas", "entradas_inventario"],
                                        ["sedes", "usuarios", "ventas", "traslados"]),
     "relacional_ventas_traslados": ("Ventas y traslados",
                                     ["ventas", "venta_items", "traslados", "traslado_items"],
                                     ["sedes", "usuarios", "productos", "movimientos", "recomendaciones"]),
     "relacional_prediccion": ("Predicción y recomendaciones",
                               ["ejecuciones_prediccion", "predicciones", "recomendaciones"], ["sedes", "productos", "traslados", "usuarios"]),
-    "relacional_sig_pqrs": ("SIG: PQRS y evidencias",
-                            ["pqrs", "pqrs_historial", "sig_adjuntos"], ["sedes", "usuarios", "no_conformidades", "garantias"]),
-    "relacional_sig_entradas": ("SIG: entradas de inventario y observaciones",
-                                ["entradas_inventario", "entrada_observaciones"], ["sedes", "usuarios", "movimientos", "no_conformidades"]),
-    "relacional_sig_calidad": ("SIG: no conformidades y garantías",
-                               ["no_conformidades", "no_conformidad_historial", "garantias", "garantia_historial"],
-                               ["sedes", "usuarios", "productos", "ventas", "entradas_inventario"]),
-    "relacional_sig_sst": ("SIG: pausas activas", ["sst_configuracion", "sst_actividades", "sst_pausas"], ["usuarios", "sedes"]),
-    "relacional_sig_ambiental": ("SIG: gestión ambiental", ["amb_configuracion", "amb_categorias", "amb_registros"],
-                                 ["categorias", "venta_items", "ventas", "productos", "sedes"]),
 }
 
 

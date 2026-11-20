@@ -1,0 +1,102 @@
+Schemathesis v4.33.4
+━━━━━━━━━━━━━━━━━━━━
+
+ ✅  Loaded specification from http://127.0.0.1:8000/api/openapi.json (in
+ 0.72s)
+
+     Base URL:         http://127.0.0.1:8000/
+     Specification:    Open API 3.1.0
+     Operations:       73 selected / 86 total
+
+ ✅  API capabilities:
+
+     Supports NULL byte in headers:                            ✘
+     Accepts backslash and control characters in URL paths:    ✓
+
+ ⏭   Examples (in 0.05s)
+
+     ⏭  73 skipped
+
+ ✅  Coverage (in 25.30s)
+
+     ✅ 73 passed
+
+ ✅  Fuzzing (in 786.47s)
+
+     ✅ 73 passed
+
+ ✅  Stateful (in 88.02s)
+
+     Scenarios:    1038
+     API Links:    87 covered / 235 selected / 235 total
+
+     ✅ 1038 passed
+
+=================================== WARNINGS ===================================
+
+Missing test data: 1 operation repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+  - POST /api/productos
+
+💡 Schemathesis found no operation that creates this data - create it outside the test run and supply the identifiers in your config file
+
+Schema validation mismatch: 29 operations mostly rejected generated data due to validation errors, indicating schema constraints don't match API validation
+
+  - DELETE /api/roles/{rol_id}
+  - GET /api/inventario
+  - GET /api/predicciones
+  - GET /api/productos/{producto_id}
+  - GET /api/recomendaciones/{recomendacion_id}
+  - GET /api/traslados/{traslado_id}
+  - POST /api/asistente/preguntar
+  - POST /api/categorias
+  - POST /api/inventario/ajustes
+  - POST /api/inventario/entradas
+  - POST /api/inventario/salidas
+  - POST /api/productos
+  - POST /api/recomendaciones/{recomendacion_id}/aprobar
+  - POST /api/recomendaciones/{recomendacion_id}/ejecutar
+  - POST /api/recomendaciones/{recomendacion_id}/rechazar
+  - POST /api/roles
+  - POST /api/sedes
+  - POST /api/traslados
+  - POST /api/traslados/{traslado_id}/aprobar
+  - POST /api/traslados/{traslado_id}/cancelar
+  - POST /api/traslados/{traslado_id}/confirmar
+  - POST /api/traslados/{traslado_id}/rechazar
+  - POST /api/usuarios
+  - POST /api/usuarios/{usuario_id}/desbloquear
+  - POST /api/ventas
+  - POST /api/ventas/{venta_id}/anular
+  - PUT /api/productos/{producto_id}
+  - PUT /api/roles/{rol_id}
+  - PUT /api/roles/{rol_id}/permisos
+
+💡 Check your schema constraints - API validation may be stricter than documented
+
+=================================== SUMMARY ====================================
+
+API Operations:
+  Selected: 73/86
+  Tested: 73
+
+Test Phases:
+  ⏭  Examples
+  ✅ Coverage
+  ✅ Fuzzing
+  ✅ Stateful
+
+Warnings:
+  ⚠️ Missing test data: 1 operation repeatedly returned 404 responses
+  ⚠️ Schema validation mismatch: 29 operations mostly rejected generated data
+
+Test cases:
+  60585 generated, 60585 passed
+
+Reports:
+  - JUnit: …/junit-20261120T113359Z.xml
+  - NDJSON: …/ndjson-20261120T113359Z.ndjson
+
+Seed: 20261026
+
+============================ 2 warnings in 900.03s =============================

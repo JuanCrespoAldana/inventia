@@ -157,7 +157,7 @@ RIESGOS = [
      "Mantener una arquitectura modular, documentada y escalable.",
      "Refactorizar el módulo afectado con las pruebas como red de seguridad.",
      "Equipo de desarrollo", "Implementado",
-     "Arquitectura por capas, contrato OpenAPI con tipos generados; el módulo SIG se añadió como módulos independientes con su propia migración."),
+     "Arquitectura por capas, contrato OpenAPI con tipos generados; el SIG se añadió en la versión 1.1.0 como módulos independientes, con su propia migración, y se retiró en la 1.2.0 con otra (CRF-ALC-01)."),
 ]
 
 

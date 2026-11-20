@@ -115,7 +115,7 @@ async def entradas_mercancia(p: Peticion) -> B.Resp:
     if len(motivos) > 1:
         bloques.append(B.barras("Por motivo", [(m, u, f"{B.entero(u)} u.") for m, _, u in motivos]))
     bloques.append(_tabla_lineas(await _lineas(p, cond, p.limite(10)), lineas))
-    return B.Resp(texto, bloques, enlaces_a(p, "/movimientos", "/inventario"), ["¿Qué salidas hubo este mes?", "Ajustes de inventario", "¿Qué no conformidades hay?"])
+    return B.Resp(texto, bloques, enlaces_a(p, "/movimientos", "/inventario"), ["¿Qué salidas hubo este mes?", "Ajustes de inventario", "¿Qué traslados hay pendientes?"])
 
 
 # ----------------------------------------------------------------------------------------------------- salidas
@@ -137,7 +137,7 @@ async def salidas_mercancia(p: Peticion) -> B.Resp:
         bloques.append(B.barras("Por motivo", [(m, u, f"{B.entero(u)} u.") for m, _, u in motivos]))
     bloques.append(_tabla_lineas(await _lineas(p, cond, p.limite(10)), lineas))
     avisos = ["Las ventas no son «salidas»: se consultan con «ventas». Aquí van las pérdidas, el deterioro, el consumo interno y las devoluciones a proveedor."] if not perdidas else []
-    return B.Resp(texto, bloques, enlaces_a(p, "/movimientos"), ["Ajustes de inventario", "¿Cuánto vendimos este mes?", "Calidad: no conformidades"], avisos)
+    return B.Resp(texto, bloques, enlaces_a(p, "/movimientos"), ["Ajustes de inventario", "¿Cuánto vendimos este mes?", "¿Qué traslados hay pendientes?"], avisos)
 
 
 # ----------------------------------------------------------------------------------------------------- ajustes

@@ -16,4 +16,6 @@ Resultados tal como los produjo cada herramienta durante la validación de la ve
 | `seguridad/` | Sonda de 16 comprobaciones (OWASP Top 10:2025), fuzzing de la API (Schemathesis), Bandit, pip-audit y npm audit (antes y después de las correcciones) | `infra/seguridad/` y herramientas citadas |
 | `navegador/` | Registros de los recorridos de pantallas por rol y de los flujos de extremo a extremo en Chromium | `infra/navegador/` |
 
+**Versión 1.2.0.** Las mismas verificaciones repetidas sobre el código de la versión 1.2.0 (20 de noviembre de 2026) están en [`v1.2.0/`](v1.2.0/README.md); las cifras que se citan con una huella de esta carpeta siguen siendo las de la versión 1.1.0. La carga, el volumen y los modelos de predicción solo existen para la 1.1.0.
+
 Para repetir una medición, ver `docs/DESARROLLO.md` (pruebas) y `docs/RENDIMIENTO.md` (carga y escala). Los resultados cambian con el equipo en que se ejecuten; la columna de tiempos es indicativa, no un contrato.

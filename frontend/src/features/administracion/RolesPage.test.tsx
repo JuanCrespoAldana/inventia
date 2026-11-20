@@ -14,12 +14,12 @@ vi.mock("@/api/administracion", () => ({
 const CATALOGO = [
   { codigo: "productos.ver", modulo: "Productos", descripcion: "Consultar productos" },
   { codigo: "ventas.ver", modulo: "Ventas", descripcion: "Consultar ventas" },
-  { codigo: "agentes.gestionar", modulo: "Agentes de IA", descripcion: "Administrar llaves de agentes" },
+  { codigo: "reportes.ventas", modulo: "Reportes", descripcion: "Descargar reportes de ventas" },
 ];
 const rol = (extra: object) => ({ id: 1, clave: null, nombre: "Rol", descripcion: null, alcance: "sede", es_sistema: false, activo: true, permisos: [], total_usuarios: 0, created_at: "2026-01-01T00:00:00Z", ...extra });
 const ROLES = [
   rol({ id: 1, clave: "admin", nombre: "Administrador", alcance: "empresa", es_sistema: true, permisos: CATALOGO.map((p) => p.codigo), total_usuarios: 1 }),
-  rol({ id: 2, nombre: "Auxiliar de ventas", permisos: ["ventas.ver", "agentes.gestionar"] }),
+  rol({ id: 2, nombre: "Auxiliar de ventas", permisos: ["ventas.ver", "reportes.ventas"] }),
   rol({ id: 3, clave: "gerente", nombre: "Gerente", es_sistema: true, permisos: ["ventas.ver"], total_usuarios: 2 }),
 ];
 
@@ -36,7 +36,7 @@ beforeEach(() => {
 
 describe("<RolesPage>", () => {
   it("el rol Administrador se muestra bloqueado: no se puede editar ni eliminar", async () => {
-    abrir(["roles.ver", "roles.editar", "roles.asignar_permisos", "productos.ver", "ventas.ver", "agentes.gestionar"]);
+    abrir(["roles.ver", "roles.editar", "roles.asignar_permisos", "productos.ver", "ventas.ver", "reportes.ventas"]);
     expect(await screen.findByText(/siempre tiene todos los permisos/i)).toBeInTheDocument();
     for (const c of screen.getAllByRole("checkbox")) {
       expect(c).toBeDisabled();
@@ -48,11 +48,11 @@ describe("<RolesPage>", () => {
 
   it("solo permite conceder permisos que quien edita ya tiene (sin escalada de privilegios)", async () => {
     const u = userEvent.setup();
-    abrir(["roles.ver", "roles.editar", "roles.asignar_permisos", "productos.ver", "ventas.ver"]); // no tiene agentes.gestionar
+    abrir(["roles.ver", "roles.editar", "roles.asignar_permisos", "productos.ver", "ventas.ver"]); // no tiene reportes.ventas
     await u.click(await screen.findByRole("button", { name: /Auxiliar de ventas/ }));
     expect(await screen.findByText(/Solo puede conceder permisos que usted mismo tiene/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Administrar llaves de agentes/)).toBeDisabled();
-    expect(screen.getByLabelText(/Administrar llaves de agentes/)).toBeChecked(); // el rol lo conserva
+    expect(screen.getByLabelText(/Descargar reportes de ventas/)).toBeDisabled();
+    expect(screen.getByLabelText(/Descargar reportes de ventas/)).toBeChecked(); // el rol lo conserva
     expect(screen.getByLabelText(/Consultar productos/)).toBeEnabled();
   });
 
@@ -69,12 +69,12 @@ describe("<RolesPage>", () => {
     await waitFor(() => expect(apiRoles.asignarPermisos).toHaveBeenCalledTimes(1));
     const [id, permisos] = vi.mocked(apiRoles.asignarPermisos).mock.calls[0];
     expect(id).toBe(2);
-    expect([...permisos].sort()).toEqual(["productos.ver", "ventas.ver"]); // agentes.gestionar no se envía
+    expect([...permisos].sort()).toEqual(["productos.ver", "ventas.ver"]); // reportes.ventas no se envía
   });
 
   it("descartar devuelve la selección original", async () => {
     const u = userEvent.setup();
-    abrir(["roles.ver", "roles.asignar_permisos", "productos.ver", "ventas.ver", "agentes.gestionar"]);
+    abrir(["roles.ver", "roles.asignar_permisos", "productos.ver", "ventas.ver", "reportes.ventas"]);
     await u.click(await screen.findByRole("button", { name: /Auxiliar de ventas/ }));
     const productos = await screen.findByLabelText(/Consultar productos/);
     await u.click(productos);

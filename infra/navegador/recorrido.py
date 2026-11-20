@@ -21,7 +21,7 @@ alto = 900 if ancho > 700 else 844
 rutas = sys.argv[3].split(",") if len(sys.argv) > 3 else [
     "/", "/inventario", "/inventario/consolidado", "/movimientos", "/productos", "/categorias", "/ventas",
     "/ventas/nueva", "/traslados", "/traslados/nuevo", "/alertas", "/predicciones", "/recomendaciones",
-    "/reportes", "/empresa", "/sedes", "/usuarios", "/roles", "/auditoria", "/integraciones", "/perfil",
+    "/reportes", "/empresa", "/sedes", "/usuarios", "/roles", "/auditoria", "/asistente", "/perfil",
 ]
 
 problemas = []
