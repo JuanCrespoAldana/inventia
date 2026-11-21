@@ -4,8 +4,8 @@ Relaciona cada requisito del documento de grado (RF-001 a RF-038, RN-001 a RN-01
 la parte del sistema que lo implementa y con la evidencia que lo respalda. Los nombres de los requisitos son
 los del documento «Proyecto de Grado» (tablas 8 a 18).
 
-> **Actualización (versión final del documento de grado).** La memoria final amplió la especificación a **56 requisitos
-> funcionales** (RF-039 a RF-056, con prioridad MoSCoW y caso de prueba) y verifica los 49 RNF con una escala de seis
+> **Actualización (versión final del documento de grado).** La memoria final amplió la especificación a **57 requisitos
+> funcionales** (RF-039 a RF-057, con prioridad MoSCoW y caso de prueba) y verifica los 49 RNF con una escala de seis
 > resultados. Las secciones 1 a 5 conservan la numeración y la escala originales; la **sección 6** completa la matriz
 > con los requisitos nuevos y con el resultado de cada RNF en la escala final. Donde difieran, vale la sección 6.
 
@@ -209,8 +209,9 @@ indicación de la asesora (solicitudes de cambio CRF-ALC-01 y CRF-ALC-02 del Ane
 los requisitos RF-056 a RF-067 de la numeración anterior, el requisito no funcional «Integración con agentes», los
 escenarios de aceptación del SIG y sus pruebas. Se conserva la historia en [CHANGELOG.md](../CHANGELOG.md) y en
 [DECISIONES.md](DECISIONES.md) (D-28 a D-33 y las decisiones sobre agentes, marcadas como reemplazadas). La numeración
-vigente es **RF-001 a RF-056** y **RNF-001 a RNF-049**: el panel de control, que se llamaba RF-068, pasa a ser RF-056, y el
-manejo de errores de comunicación, que se llamaba RNF-050, pasa a ser RNF-049.
+vigente es **RF-001 a RF-057** y **RNF-001 a RNF-049**: el panel de control, que se llamaba RF-068, pasa a ser RF-056; el
+manejo de errores de comunicación, que se llamaba RNF-050, pasa a ser RNF-049, y el asistente de consultas se incorpora como
+RF-057 (sección 6).
 
 ---
 
@@ -226,7 +227,7 @@ Los puntos «parciales» y «sin verificar» se desarrollan en [LIMITACIONES.md]
 
 ---
 
-## 6. Requisitos añadidos en la versión final del documento (RF-039 a RF-056)
+## 6. Requisitos añadidos en la versión final del documento (RF-039 a RF-057)
 
 Al contrastar los requisitos con las historias de usuario y los casos de uso se detectaron 18 funciones que el software ya tenía (o debía tener) y que no figuraban como requisito: cierre de sesión, categorías, roles y permisos, empresa, inhabilitar sede, aprobar y confirmar traslados, aprobar recomendaciones, niveles mínimo y máximo, reportes y exportación, evaluación de predicciones, anulación de ventas y panel de control. El documento de grado las numera **RF-039 a RF-056**, con prioridad MoSCoW, versión y caso de prueba (CP-01 a CP-15).
 
@@ -250,8 +251,13 @@ Al contrastar los requisitos con las historias de usuario y los casos de uso se 
 | RF-054 | Evaluar el desempeño de las predicciones | S | 1.2 | 4 operaciones de la API (Predicciones); ver [API.md](API.md) | `ml::rmse_y_mape_se_calculan_con_la_validacion_temporal`, `ml::sin_ventas_en_la_validacion_el_wape_no_existe_pero_si_el_mae` | CP-10 | Aprobado |
 | RF-055 | Anular venta | S | 1.0 | `POST /api/ventas/{venta_id}/anular` | `vt::anular_venta_reintegra_y_no_se_repite`, `vt::plazo_de_anulacion`, `conc::anulacion_simultanea_reintegra_una_sola_vez` | CP-08 | Aprobado |
 | RF-056 | Consultar el panel de control | S | 1.0 | `GET /api/dashboard` | `dash::dashboard_cifras_reales`, `dash::dashboard_sin_datos_no_inventa_cifras`, `dash::dashboard_respeta_permisos_y_sede` | CP-13 | Aprobado |
+| RF-057 | Responder consultas guiadas sobre los datos de la empresa | C | 1.2 | `POST /api/asistente/preguntar` · `GET /api/asistente/ayuda` · pantalla **Asistente** (`/asistente`) | `asis::el_endpoint_exige_sesion_y_valida_el_mensaje`, `asis::responde_con_datos_reales_y_bloques_estructurados`, `asis::el_asistente_solo_consulta_y_no_modifica_nada`, `asis::cada_rol_solo_obtiene_lo_que_su_permiso_permite`, `asis::quien_esta_limitado_a_una_sede_no_ve_otras`, `asis::las_empresas_no_se_ven_entre_si`, `asis::un_contexto_manipulado_no_amplia_el_acceso`; `AsistentePage.test.tsx` | CP-16 | Aprobado |
 
-Prioridad: M = Debe, S = Debería, C = Podría. Versión: 1.0 (primera entrega), 1.2 (exportaciones y evaluación de predicciones).
+Prioridad: M = Debe, S = Debería, C = Podría. Versión: 1.0 (primera entrega), 1.2 (exportaciones, evaluación de predicciones y asistente de consultas).
+
+El **RF-057** nació como la pantalla Asistente, que se construyó sin requisito (decisión D-40, 5 de noviembre de 2026). La auditoría
+de completitud de la Línea Base 1 lo detectó y se incorporó a la especificación con la solicitud de cambio CRF-REQ-02 (Anexo M del
+documento de grado): RU-021, HU-21, RF-057, CU-16, RGN-26 y CP-16. No crea tablas ni guarda el historial de preguntas.
 
 ### 6.1 Resultado de la verificación de los requisitos no funcionales (escala de seis valores)
 

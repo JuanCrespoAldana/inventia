@@ -27,6 +27,7 @@ CASOS = [  # (id, texto, actores)
     ("CU-02", "Recuperar contraseña", ["aut"]),
     ("CU-07", "Consultar inventario por sede y consolidado (según permiso)", ["aut"]),
     ("CU-09", "Consultar alertas de inventario", ["aut"]),
+    ("CU-16", "Consultar al asistente", ["aut"]),
 ]
 ACTORES = {  # clave: (x, y, etiqueta)
     "adm": (1.2, 1.0, "Administrador\n(todos los permisos)"),

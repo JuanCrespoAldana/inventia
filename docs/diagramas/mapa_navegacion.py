@@ -30,6 +30,8 @@ for x, t in [(3.375, "Si olvidó su contraseña"), (5.55, "Primer uso (una sola 
 
 # Panel y encabezado
 panel = nodo(5.9, 6.55, 2.2, 0.8, "Panel de control\n/", "azul", negrita=True)
+asistente = nodo(8.5, 6.55, 1.0, 0.8, "Asistente\n/asistente", "azul", tam=7.6)
+linea([(8.1, 6.95), (8.5, 6.95)], color=AZUL)
 linea([(1.275, 8.5), (1.275, 6.95), (5.9, 6.95)], color=AZUL)
 ax.text(3.0, 7.08, "sesión iniciada", fontsize=7.4, color=AZUL, ha="center")
 ax.add_patch(FancyBboxPatch((9.6, 6.9), 6.2, 2.85, boxstyle="round,pad=0,rounding_size=0.15", fc="none", ec=GRIS_MED, lw=1, ls=(0, (4, 3))))
