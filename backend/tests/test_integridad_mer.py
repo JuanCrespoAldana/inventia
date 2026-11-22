@@ -89,5 +89,7 @@ async def test_dos_aprobaciones_simultaneas_no_producen_un_error_de_integridad(c
     rec = (await listar(admin))[0]
     respuestas = await asyncio.gather(*[admin.post(f"/api/recomendaciones/{rec['id']}/aprobar", {}) for _ in range(6)])
     assert sorted(r.status_code for r in respuestas) == [200, 409, 409, 409, 409, 409], [r.text for r in respuestas]
-    assert {r.json()["codigo"] for r in respuestas if r.status_code == 409} == {"estado_cambiado"}
+    # Las demás pierden la carrera de dos formas, según si leyeron la fila antes o después de que la primera confirmara:
+    # «estado_cambiado» (la actualización condicional no encontró la fila pendiente) o «estado_invalido» (ya la vieron aprobada).
+    assert {r.json()["codigo"] for r in respuestas if r.status_code == 409} <= {"estado_cambiado", "estado_invalido"}
     assert await db.scalar(select(func.count()).select_from(Traslado).where(Traslado.recomendacion_id == rec["id"])) == 1
