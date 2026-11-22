@@ -236,7 +236,7 @@ async def a_salida(db: AsyncSession, ejecuciones: list[EjecucionPrediccion], *, 
     ids = {e.usuario_id for e in ejecuciones}
     nombres = {}
     if ids:
-        nombres = {u.id: u.nombre for u in (await db.scalars(select(Usuario).where(Usuario.id.in_(ids)))).all()}
+        nombres = dict((await db.execute(select(Usuario.id, Usuario.nombre).where(Usuario.id.in_(ids)))).all())
     salidas = []
     for e in ejecuciones:
         resumen = dict(e.resumen or {})

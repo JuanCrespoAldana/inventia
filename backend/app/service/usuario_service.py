@@ -9,6 +9,7 @@ siempre debe quedar al menos un administrador activo; los cambios de rol/sede se
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.dto.comunes_dto import ParametrosPagina
 from app.dto.usuario_dto import UsuarioActualizar, UsuarioCrear, UsuarioSalida
@@ -112,7 +113,8 @@ async def listar(
     total = await db.scalar(select(func.count()).select_from(Usuario).where(*condiciones)) or 0
     filas = (
         await db.scalars(
-            select(Usuario).where(*condiciones).order_by(Usuario.activo.desc(), func.lower(Usuario.nombre))
+            select(Usuario).options(joinedload(Usuario.rol).lazyload(Rol.permisos))  # la lista solo muestra el rol, no sus permisos
+            .where(*condiciones).order_by(Usuario.activo.desc(), func.lower(Usuario.nombre))
             .offset(pag.offset).limit(pag.tamano)
         )
     ).all()

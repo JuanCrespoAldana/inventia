@@ -1,8 +1,8 @@
-"""Auditoría de accesos y operaciones (RF-036, RF-037, RNF-028) y llaves de API para agentes."""
+"""Auditoría de accesos y operaciones (RF-036, RF-037, RNF-028)."""
 
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String, func, text
+from sqlalchemy import DateTime, ForeignKey, Index, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.model.base import Base, BigIntPK, JSONType, proteger_solo_insercion
@@ -32,25 +32,6 @@ class Auditoria(Base):
     detalle: Mapped[dict] = mapped_column(JSONType, nullable=False, default=dict)  # nunca secretos
     ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(40), nullable=True)
-
-
-class ApiKey(Base):
-    """Llave para que un agente de IA consulte información autorizada de solo lectura (RNF-049)."""
-
-    __tablename__ = "api_keys"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    empresa_id: Mapped[int] = mapped_column(ForeignKey("empresas.id"), nullable=False, index=True)
-    sede_id: Mapped[int | None] = mapped_column(ForeignKey("sedes.id"), nullable=True)  # restringe a una sede
-    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
-    prefijo: Mapped[str] = mapped_column(String(12), nullable=False, unique=True)
-    key_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
-    alcances: Mapped[list] = mapped_column(JSONType, nullable=False, default=list)
-    activa: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, server_default=text("true"))
-    creada_por: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
-    creada_en: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    expira_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    ultimo_uso_en: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 proteger_solo_insercion(Auditoria.__table__)

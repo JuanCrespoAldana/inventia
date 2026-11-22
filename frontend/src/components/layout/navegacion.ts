@@ -5,21 +5,14 @@ import {
   Bot,
   Boxes,
   Building2,
-  ClipboardList,
-  BadgeCheck,
   FileBarChart,
-  HeartPulse,
-  KeyRound,
   Layers,
-  Leaf,
   LayoutDashboard,
   MapPin,
-  MessageSquareText,
   PackageSearch,
   Receipt,
   ScrollText,
   ShieldCheck,
-  ShieldPlus,
   Sparkles,
   Tags,
   Truck,
@@ -40,8 +33,6 @@ export interface ItemNavegacion {
 export interface GrupoNavegacion {
   titulo: string | null;
   items: ItemNavegacion[];
-  /** Se muestra como un menú desplegable (con este icono) en lugar de un encabezado fijo. */
-  desplegable?: { icono: LucideIcon; descripcion: string };
 }
 
 const alguno = (...c: string[]) => (s: Sesion) => tieneAlguno(s, ...c);
@@ -86,16 +77,6 @@ export const NAVEGACION: GrupoNavegacion[] = [
     ],
   },
   {
-    titulo: "SIG",
-    desplegable: { icono: ShieldPlus, descripcion: "Sistema Integrado de Gestión" },
-    items: [
-      { ruta: "/sig/pqrs", etiqueta: "PQRS y sugerencias", icono: MessageSquareText, visible: alguno("pqrs.crear", "pqrs.gestionar") },
-      { ruta: "/sig/sst", etiqueta: "Seguridad y Salud en el Trabajo", icono: HeartPulse, visible: alguno("sst.ver", "sst.gestionar") },
-      { ruta: "/sig/calidad", etiqueta: "Calidad", icono: BadgeCheck, visible: alguno("calidad.ver", "calidad.reportar", "calidad.gestionar") },
-      { ruta: "/sig/ambiental", etiqueta: "Gestión ambiental", icono: Leaf, visible: alguno("ambiental.ver", "ambiental.configurar") },
-    ],
-  },
-  {
     titulo: "Administración",
     items: [
       { ruta: "/empresa", etiqueta: "Empresa", icono: Building2, visible: alguno("empresa.ver") },
@@ -103,7 +84,6 @@ export const NAVEGACION: GrupoNavegacion[] = [
       { ruta: "/usuarios", etiqueta: "Usuarios", icono: Users, visible: alguno("usuarios.ver") },
       { ruta: "/roles", etiqueta: "Roles y permisos", icono: ShieldCheck, visible: (s) => tienePermiso(s, "roles.ver", "usuarios.ver") },
       { ruta: "/auditoria", etiqueta: "Auditoría", icono: ScrollText, visible: alguno("auditoria.ver", "auditoria.operaciones") },
-      { ruta: "/integraciones", etiqueta: "Agentes de IA", icono: KeyRound, visible: alguno("agentes.gestionar") },
     ],
   },
 ];
@@ -111,5 +91,3 @@ export const NAVEGACION: GrupoNavegacion[] = [
 export function gruposVisibles(sesion: Sesion): GrupoNavegacion[] {
   return NAVEGACION.map((g) => ({ ...g, items: g.items.filter((i) => i.visible(sesion)) })).filter((g) => g.items.length > 0);
 }
-
-export const ICONO_PERFIL = ClipboardList;

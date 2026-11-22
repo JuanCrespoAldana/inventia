@@ -24,9 +24,7 @@ RNF-001 a RNF-050); la correspondencia punto por punto está en [`docs/TRAZABILI
 | **Recomendaciones** | Reabastecimiento y traslado con explicación en español; aprobación humana obligatoria |
 | **Reportes** | Siete reportes en vista previa, PDF, Excel y CSV |
 | **Auditoría** | Accesos y operaciones; registro inmutable |
-| **SIG** | PQRS y sugerencias con historial; pausas activas automáticas de seguridad y salud en el trabajo; no conformidades y garantías con evidencias e historial (sin tocar el inventario); observaciones por entrada; gestión ambiental con vehículos vendidos y CO₂ evitado estimado según parámetros documentados |
 | **Asistente** | Chat en español dentro de la aplicación para consultar existencias, ventas, alertas, predicción y más, comparar sedes, categorías o productos, y explicar términos y pasos del sistema; motor por reglas (sin servicio de pago), solo lectura y con los permisos y la sede del rol |
-| **Agentes de IA** | API de solo lectura con llaves propias, alcances, vencimiento y revocación |
 
 ## Inicio rápido
 
@@ -54,7 +52,6 @@ npm run setup          # entorno virtual, dependencias y backend/.env
 # edite backend/.env: DATABASE_URL y SECRET_KEY
 npm run migrar
 npm run demo           # opcional: empresa ficticia de movilidad eléctrica con 4 meses de ventas (base vacía); ver docs/DESARROLLO.md
-npm run demo:sig       # opcional: datos de ejemplo del SIG (PQRS, calidad, pausas, ambiental) en una empresa con la demostración
 npm run dev            # interfaz en :5173, API en :8000
 ```
 
@@ -89,7 +86,6 @@ La contraseña se pide por consola sin eco (o se lee de `INVENTIA_ADMIN_PASSWORD
 │   └── app/     controller · dto · service · specification · mapper · model · security · exception · config · util · ml
 ├── frontend/    Interfaz web
 ├── ml/          Experimento reproducible de evaluación de modelos
-├── agents/      Ejemplo de agente de IA (solo lectura)
 ├── infra/       Docker Compose y scripts de respaldo / restauración
 ├── scripts/     Utilidades multiplataforma para npm run …
 └── docs/        Documentación
@@ -136,6 +132,6 @@ Las pruebas que dependen de PostgreSQL (concurrencia, migraciones, disparadores)
 
 ## Estado
 
-Versión **1.1.0** (incluye el Sistema Integrado de Gestión). Backend y frontend completos y probados; la predicción se validó con datos sintéticos de
+Versión **1.2.0** (Línea Base 1: sin el Sistema Integrado de Gestión ni los agentes de IA, y con las reglas del modelo entidad–relación garantizadas por la base de datos). Backend y frontend completos y probados; la predicción se validó con datos sintéticos de
 demostración y debe medirse con las ventas reales de cada empresa antes de apoyarse en ella. Ver
 [`docs/LIMITACIONES.md`](docs/LIMITACIONES.md) para el detalle honesto de lo verificado y lo pendiente.

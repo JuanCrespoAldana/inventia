@@ -89,22 +89,6 @@ Python 3.12 o superior, por eso 3.11 no sirve; 3.15 todavía no se ha probado.
    única; deje el equipo encendido y conectado hasta que termine. Si se interrumpe a la mitad, la empresa queda con
    datos parciales y hay que reiniciar la base (ver «Solución de problemas»).
 
-6. **Datos de demostración del SIG (opcional).** La carga anterior no incluye el módulo SIG. Para ver el módulo con datos:
-
-   ```bash
-   npm run demo:sig                                   # en la empresa que ya tiene la demostración o sus propios datos
-   npm run demo -- --en-empresa-existente --con-sig   # o todo junto, la primera vez
-   ```
-
-   Crea 5 PQRS en distintos estados, 2 entradas con observaciones, 3 no conformidades, 3 garantías, el historial de
-   pausas activas de los últimos 10 días hábiles y la **configuración ambiental de ejemplo** (el factor de la red y los
-   parámetros de las categorías de vehículos), marcada como «valores de demostración» en el campo fuente. Exige que
-   la empresa tenga productos y usuarios operativos (los de la demostración sirven) y no se puede ejecutar dos veces
-   (responde `demo_sig_ya_cargada`). **No la use en una instalación real:** los parámetros ambientales de ejemplo no
-   son datos de ninguna empresa; en producción los define el administrador en **SIG → Gestión ambiental → Configuración**.
-   Esta carga no necesita variables de entorno adicionales.
-
-
 6. **Arrancar.**
 
    ```bash
@@ -126,7 +110,6 @@ Python 3.12 o superior, por eso 3.11 no sirve; 3.15 todavía no se ha probado.
 ├── backend/          API (FastAPI), modelos, migraciones y pruebas
 ├── frontend/         Interfaz (React + TypeScript)
 ├── ml/               Experimentos reproducibles de predicción
-├── agents/           Ejemplo de agente de IA que consulta la API
 ├── infra/            Docker Compose, scripts de respaldo y restauración
 ├── scripts/          Utilidades multiplataforma para npm run …
 ├── docs/             Documentación
@@ -174,13 +157,11 @@ Las pruebas del backend (`backend/tests/`) se organizan por módulo:
 | `test_prediccion.py` | Ejecución de predicciones, permisos, aislamiento |
 | `test_recomendaciones.py` | Reglas de reposición y traslado, ciclo de vida |
 | `test_dashboard_reportes.py` | Panel, reportes JSON/CSV/Excel/PDF, visibilidad de auditoría |
-| `test_agentes.py` | Llaves de agentes, alcances, solo lectura |
-| `test_demo.py` | Carga de la demostración (y de los datos de ejemplo del SIG) en la empresa de la configuración inicial |
-| `test_sig_pqrs_adjuntos.py` | SIG: PQRS, historial, permisos y evidencias adjuntas |
-| `test_sig_calidad_entradas.py` | SIG: entradas con observaciones, no conformidades y garantías (sin tocar el inventario) |
-| `test_sig_sst.py` | SIG: pausas activas (servidor decide, sin repeticiones, sin pausas a administradores) |
-| `test_sig_ambiental.py` | SIG: conteo de vehículos, fórmula, parámetros, anulaciones, sin doble conteo |
-| `test_sig_permisos.py` | SIG: los permisos nuevos llegan a los roles de fábrica al actualizar una instalación existente |
+| `test_entradas.py` | Entradas de mercancía: numeración, detalle, listado con filtros, solo lectura y alcance |
+| `test_demo.py` | Carga de la demostración en la empresa de la configuración inicial |
+| `test_asistente.py` | Asistente de ayuda: intenciones, glosario, guías y respuestas con datos de la empresa |
+| `test_integridad_mer.py` | CRF-MER-01: alertas por existencia, un traslado por recomendación, ejecución obligatoria (PostgreSQL) |
+| `test_mer_consistente.py` | El MER publicado (`docs/modelo/mer_spec.py`) coincide con llaves, unicidad y obligatoriedad de los modelos |
 | `test_flujo_integral.py` | Escenario de 17 pasos de principio a fin |
 | `test_concurrencia.py` | Operaciones simultáneas (PostgreSQL) |
 | `test_migraciones.py` | Migraciones desde cero, hacia atrás, con datos previos (PostgreSQL) |

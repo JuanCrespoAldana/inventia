@@ -34,12 +34,6 @@ const SedesPage = lazy(() => import("@/features/administracion/SedesPage"));
 const UsuariosPage = lazy(() => import("@/features/administracion/UsuariosPage"));
 const RolesPage = lazy(() => import("@/features/administracion/RolesPage"));
 const AuditoriaPage = lazy(() => import("@/features/auditoria/AuditoriaPage"));
-const IntegracionesPage = lazy(() => import("@/features/administracion/IntegracionesPage"));
-
-const PqrsPage = lazy(() => import("@/features/sig/pqrs/PqrsPage"));
-const SstPage = lazy(() => import("@/features/sig/sst/SstPage"));
-const CalidadPage = lazy(() => import("@/features/sig/calidad/CalidadPage"));
-const AmbientalPage = lazy(() => import("@/features/sig/ambiental/AmbientalPage"));
 
 const PERMISOS_REPORTES = [
   "reportes.inventario",
@@ -64,20 +58,17 @@ export default function App() {
         <Route path="/recuperar" element={<RecuperarPage />} />
         <Route path="/configuracion-inicial" element={<ConfiguracionInicialPage />} />
       </Route>
-
       <Route element={<RutaProtegida />}>
         <Route path="/cambiar-password" element={<CambiarPasswordPage />} />
         <Route element={<AppShell />}>
           <Route index element={<PanelPage />} />
           <Route path="/perfil" element={<PerfilPage />} />
           <Route path="/asistente" element={<AsistentePage />} />
-
           <Route path="/inventario" element={<Con permisos={["inventario.ver"]}><ExistenciasPage /></Con>} />
           <Route path="/inventario/consolidado" element={<Con permisos={["inventario.consolidado"]}><ConsolidadoPage /></Con>} />
           <Route path="/movimientos" element={<Con permisos={["movimientos.ver"]}><MovimientosPage /></Con>} />
           <Route path="/productos" element={<Con permisos={["productos.ver"]}><ProductosPage /></Con>} />
           <Route path="/categorias" element={<Con permisos={["categorias.ver"]}><CategoriasPage /></Con>} />
-
           <Route path="/ventas" element={<Con permisos={["ventas.ver", "ventas.registrar"]}><VentasPage /></Con>} />
           <Route path="/ventas/nueva" element={<Con permisos={["ventas.registrar"]}><NuevaVentaPage /></Con>} />
           <Route path="/ventas/:id" element={<Con permisos={["ventas.ver", "ventas.registrar"]}><VentaDetallePage /></Con>} />
@@ -85,23 +76,14 @@ export default function App() {
           <Route path="/traslados/nuevo" element={<Con permisos={["traslados.solicitar"]}><NuevoTrasladoPage /></Con>} />
           <Route path="/traslados/:id" element={<Con permisos={["traslados.ver", "traslados.solicitar"]}><TrasladoDetallePage /></Con>} />
           <Route path="/alertas" element={<Con permisos={["alertas.ver"]}><AlertasPage /></Con>} />
-
           <Route path="/predicciones" element={<Con permisos={["prediccion.ver"]}><PrediccionesPage /></Con>} />
           <Route path="/recomendaciones" element={<Con permisos={["recomendaciones.ver"]}><RecomendacionesPage /></Con>} />
           <Route path="/reportes" element={<Con permisos={PERMISOS_REPORTES}><ReportesPage /></Con>} />
-
-          <Route path="/sig/pqrs" element={<Con permisos={["pqrs.crear", "pqrs.gestionar"]}><PqrsPage /></Con>} />
-          <Route path="/sig/sst" element={<Con permisos={["sst.ver", "sst.gestionar"]}><SstPage /></Con>} />
-          <Route path="/sig/calidad" element={<Con permisos={["calidad.ver", "calidad.reportar", "calidad.gestionar"]}><CalidadPage /></Con>} />
-          <Route path="/sig/ambiental" element={<Con permisos={["ambiental.ver", "ambiental.configurar"]}><AmbientalPage /></Con>} />
-
           <Route path="/empresa" element={<Con permisos={["empresa.ver"]}><EmpresaPage /></Con>} />
           <Route path="/sedes" element={<Con permisos={["sedes.ver"]}><SedesPage /></Con>} />
           <Route path="/usuarios" element={<Con permisos={["usuarios.ver"]}><UsuariosPage /></Con>} />
           <Route path="/roles" element={<Con permisos={["roles.ver"]}><RolesPage /></Con>} />
           <Route path="/auditoria" element={<Con permisos={["auditoria.ver", "auditoria.operaciones"]}><AuditoriaPage /></Con>} />
-          <Route path="/integraciones" element={<Con permisos={["agentes.gestionar"]}><IntegracionesPage /></Con>} />
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Route>

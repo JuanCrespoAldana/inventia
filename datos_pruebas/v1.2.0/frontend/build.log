@@ -1,0 +1,91 @@
+build exit 0
+
+> inventia-frontend@1.2.0 build
+> tsc -b && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 2510 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                        1.11 kB │ gzip:  0.51 kB
+dist/assets/space-grotesk-vietnamese-wght-normal-D0rl6rjA.woff2        6.71 kB
+dist/assets/plus-jakarta-sans-vietnamese-wght-normal-qRpaaN48.woff2    8.35 kB
+dist/assets/space-grotesk-latin-ext-wght-normal-D9tNdqV9.woff2        18.94 kB
+dist/assets/plus-jakarta-sans-latin-ext-wght-normal-DmpS2jIq.woff2    21.72 kB
+dist/assets/space-grotesk-latin-wght-normal-BhU9QXUp.woff2            22.28 kB
+dist/assets/plus-jakarta-sans-latin-wght-normal-eXO_dkmS.woff2        27.34 kB
+dist/assets/index-CK9Th4y3.css                                        49.78 kB │ gzip: 11.60 kB
+dist/assets/check-CqHYhqO9.js                                          0.11 kB │ gzip:  0.13 kB
+dist/assets/chevron-down-BulZyO7n.js                                   0.11 kB │ gzip:  0.13 kB
+dist/assets/plus-DPTnIIra.js                                           0.14 kB │ gzip:  0.14 kB
+dist/assets/arrow-left-DIRuM5lf.js                                     0.15 kB │ gzip:  0.15 kB
+dist/assets/arrow-right-BZADatsf.js                                    0.15 kB │ gzip:  0.15 kB
+dist/assets/search-x8gZ8TYj.js                                         0.16 kB │ gzip:  0.16 kB
+dist/assets/tipos-B1bwS2fG.js                                          0.30 kB │ gzip:  0.23 kB
+dist/assets/refresh-cw-BeLOXkuV.js                                     0.31 kB │ gzip:  0.21 kB
+dist/assets/trash-2-p8-hBwij.js                                        0.31 kB │ gzip:  0.20 kB
+dist/assets/power-C8mjyDLC.js                                          0.38 kB │ gzip:  0.27 kB
+dist/assets/useMutacion-Br13vSS9.js                                    0.41 kB │ gzip:  0.30 kB
+dist/assets/catalogo-nH5_gSul.js                                       0.44 kB │ gzip:  0.21 kB
+dist/assets/usePaginacionLocal-DI9f5bOo.js                             0.52 kB │ gzip:  0.35 kB
+dist/assets/operaciones-BApWV2ik.js                                    0.54 kB │ gzip:  0.24 kB
+dist/assets/useSedeActiva-D2Y3ggBN.js                                  0.56 kB │ gzip:  0.39 kB
+dist/assets/Badge-CyvEng8x.js                                          0.60 kB │ gzip:  0.36 kB
+dist/assets/inventario-Bl243CWK.js                                     0.62 kB │ gzip:  0.28 kB
+dist/assets/FiltrosBarra-BfZV2pWs.js                                   0.71 kB │ gzip:  0.47 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js                               0.72 kB │ gzip:  0.42 kB
+dist/assets/Tabs-DexkSonj.js                                           0.82 kB │ gzip:  0.50 kB
+dist/assets/useCatalogos-DCMdYjz9.js                                   0.91 kB │ gzip:  0.40 kB
+dist/assets/useFiltros-n97g5OJw.js                                     0.94 kB │ gzip:  0.54 kB
+dist/assets/administracion-C-Y6aa-H.js                                 0.96 kB │ gzip:  0.38 kB
+dist/assets/Aviso-DV-sAE4E.js                                          1.08 kB │ gzip:  0.57 kB
+dist/assets/analitica-BqiqONAr.js                                      1.09 kB │ gzip:  0.45 kB
+dist/assets/ConfirmDialog-Dpk3G68R.js                                  1.11 kB │ gzip:  0.64 kB
+dist/assets/Pagination-w1w6oNnB.js                                     1.15 kB │ gzip:  0.63 kB
+dist/assets/SearchInput-Bpl2Y2xc.js                                    1.40 kB │ gzip:  0.79 kB
+dist/assets/format-CtPpCRVj.js                                         1.65 kB │ gzip:  0.63 kB
+dist/assets/PageHeader-C5a0gQrC.js                                     1.86 kB │ gzip:  0.72 kB
+dist/assets/AuthShell-Z0nstGWK.js                                      1.89 kB │ gzip:  0.83 kB
+dist/assets/LoginPage-DMHThzY3.js                                      2.41 kB │ gzip:  1.25 kB
+dist/assets/CambiarPasswordPage-B43GKXvZ.js                            2.42 kB │ gzip:  1.17 kB
+dist/assets/PasswordField-C6_uxzXt.js                                  2.49 kB │ gzip:  1.17 kB
+dist/assets/DataTable-BMsD1w6g.js                                      2.49 kB │ gzip:  1.20 kB
+dist/assets/PerfilPage-DNNWcvUC.js                                     2.58 kB │ gzip:  1.10 kB
+dist/assets/Modal-CIGwSs9N.js                                          2.94 kB │ gzip:  1.42 kB
+dist/assets/NuevaVentaPage-nMr3rXri.js                                 3.13 kB │ gzip:  1.53 kB
+dist/assets/Field-UCi5i0E5.js                                          3.23 kB │ gzip:  1.14 kB
+dist/assets/etiquetas-CBND8a0T.js                                      3.67 kB │ gzip:  1.36 kB
+dist/assets/RecuperarPage-3gs8XJGG.js                                  3.86 kB │ gzip:  1.58 kB
+dist/assets/NuevoTrasladoPage-DrRKsSen.js                              3.90 kB │ gzip:  1.82 kB
+dist/assets/VentasPage-BXqVrOUc.js                                     4.41 kB │ gzip:  1.89 kB
+dist/assets/ConsolidadoPage-DCGTob4K.js                                4.52 kB │ gzip:  1.80 kB
+dist/assets/TrasladosPage-pyB0TfJV.js                                  4.67 kB │ gzip:  2.01 kB
+dist/assets/VentaDetallePage-n5LcU6VK.js                               5.01 kB │ gzip:  2.06 kB
+dist/assets/AlertasPage-DzLpusH8.js                                    5.09 kB │ gzip:  2.08 kB
+dist/assets/EmpresaPage-CICf0lt6.js                                    5.23 kB │ gzip:  2.02 kB
+dist/assets/CategoriasPage-pzv7Hgqw.js                                 5.88 kB │ gzip:  2.42 kB
+dist/assets/AuditoriaPage-Bu4Lkatu.js                                  5.90 kB │ gzip:  2.20 kB
+dist/assets/Button-DBm3aMJ5.js                                         5.94 kB │ gzip:  2.92 kB
+dist/assets/GraficoLineas-B2esIVEB.js                                  6.00 kB │ gzip:  2.50 kB
+dist/assets/ConfiguracionInicialPage-I3pF5Rkd.js                       6.15 kB │ gzip:  2.31 kB
+dist/assets/SedesPage-Csu2Rvwi.js                                      6.22 kB │ gzip:  2.62 kB
+dist/assets/TrasladoDetallePage-BxbTGMKm.js                            7.64 kB │ gzip:  2.73 kB
+dist/assets/fuentes-DrWv1m6B.js                                        7.99 kB │ gzip:  2.99 kB
+dist/assets/ProductosPage-DGSb8Ea_.js                                  8.55 kB │ gzip:  3.23 kB
+dist/assets/ReportesPage-2pEb9fWI.js                                   9.35 kB │ gzip:  3.56 kB
+dist/assets/MovimientosPage-Iv4GVlQe.js                                9.52 kB │ gzip:  2.97 kB
+dist/assets/RolesPage-BK7TCOIj.js                                     11.65 kB │ gzip:  4.30 kB
+dist/assets/UsuariosPage-Cq05iwXh.js                                  12.27 kB │ gzip:  4.38 kB
+dist/assets/RecomendacionesPage-Cd7L_UJx.js                           12.32 kB │ gzip:  4.34 kB
+dist/assets/ExistenciasPage-CruXzRG1.js                               14.18 kB │ gzip:  4.84 kB
+dist/assets/AsistentePage-BwNmMN9y.js                                 14.64 kB │ gzip:  5.03 kB
+dist/assets/PanelPage-BjTHvUkc.js                                     14.75 kB │ gzip:  4.72 kB
+dist/assets/PrediccionesPage-BaWwbZ19.js                              24.02 kB │ gzip:  7.10 kB
+dist/assets/index-gF4qr8qg.js                                         34.18 kB │ gzip: 10.93 kB
+dist/assets/datos-CRnbl0ko.js                                         85.13 kB │ gzip: 28.68 kB
+dist/assets/formularios-CTnV1_Bx.js                                  114.04 kB │ gzip: 35.06 kB
+dist/assets/animacion-DEQxsZ54.js                                    132.44 kB │ gzip: 43.32 kB
+dist/assets/vendor-8cVGyVsb.js                                       220.86 kB │ gzip: 70.72 kB
+
+✓ built in 646ms

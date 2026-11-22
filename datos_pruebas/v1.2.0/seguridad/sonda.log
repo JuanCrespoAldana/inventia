@@ -1,0 +1,18 @@
+rutas documentadas: 86
+OK    A01_rutas_sin_token — 78 de 86 rutas exigen token; públicas: 8; no esperadas: []
+OK    A07_token_firma_alterada — código 401
+OK    A04_token_alg_none — código 401
+OK    A01_rol_limitado_en_administracion — {"/api/usuarios": 403, "/api/empresa": 403}
+OK    A01_auditoria_del_encargado_limitada_a_su_sede_sin_accesos — 100 eventos visibles; de módulo «auth» o de otra sede: 0
+OK    A01_rol_limitado_en_acciones — {"POST /api/usuarios": 403, "POST /api/roles": 403, "POST /api/predicciones/ejecutar": 403}
+OK    A01_aislamiento_por_sede_en_inventario — código 403 al pedir la sede 2 siendo de la sede 1
+OK    A02_cors_origen_no_autorizado — Access-Control-Allow-Origin=None
+OK    A02_cabeceras_de_seguridad_en_api — presentes
+OK    A05_parametros_maliciosos_sin_500 — errores 5xx: []; reflejados: []
+OK    A05_cuerpo_con_html_no_500 — código 422
+OK    A10_cuerpo_malformado_4xx_controlado — incidencias: []
+OK    A10_ruta_inexistente_404 — código 404
+OK    A07_bloqueo_por_intentos — códigos [401, 401, 401, 401, 401, 423]; con la clave correcta después: 423
+OK    A07_mensaje_generico_usuario_inexistente — inexistente -> 401 'Correo o contraseña incorrectos'; existente -> ['Correo o contraseña incorrectos']
+OK    A09_auditoria_registra_intentos_fallidos — 30 eventos recientes consultados
+{'ok': 16, 'falla': 0}

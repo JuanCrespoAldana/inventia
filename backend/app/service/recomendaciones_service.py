@@ -360,7 +360,7 @@ async def salidas(db: AsyncSession, ctx: Contexto, recomendaciones: list[Recomen
     ids_sede = {r.sede_id for r in recomendaciones} | {r.sede_origen_id for r in recomendaciones if r.sede_origen_id}
     sedes = {s.id: s for s in (await db.scalars(select(Sede).where(Sede.id.in_(ids_sede)))).all()}
     revisores = {r.revisada_por for r in recomendaciones if r.revisada_por}
-    nombres = {u.id: u.nombre for u in (await db.scalars(select(Usuario).where(Usuario.id.in_(revisores)))).all()} if revisores else {}
+    nombres = dict((await db.execute(select(Usuario.id, Usuario.nombre).where(Usuario.id.in_(revisores)))).all()) if revisores else {}
     traslados = {
         t.recomendacion_id: t
         for t in (await db.scalars(select(Traslado).where(Traslado.recomendacion_id.in_([r.id for r in recomendaciones])))).all()
@@ -412,6 +412,10 @@ async def aprobar(db: AsyncSession, ctx: Contexto, recomendacion_id: int, coment
         raise Conflicto("Solo se pueden aprobar recomendaciones pendientes", codigo="estado_invalido")
     detalle = {"tipo": r.tipo, "producto_id": r.producto_id, "sede_id": r.sede_id, "cantidad": r.cantidad_sugerida}
     if r.tipo == TipoRecomendacion.TRASLADO:
+        # Se reclama la recomendación ANTES de crear el traslado (RGN-23, CRF-MER-01): la actualización condicional
+        # bloquea la fila y, si dos personas aprueban a la vez, solo una avanza; la otra recibe «estado_cambiado»
+        # en lugar de un error de integridad por el traslado repetido. Todo ocurre en una sola transacción.
+        await _cambiar_estado(db, ctx, r, EstadoRecomendacion.PENDIENTE, EstadoRecomendacion.EJECUTADA, comentario)
         traslado = await traslados_service.crear_traslado(
             db, ctx,
             TrasladoCrear(
@@ -421,7 +425,6 @@ async def aprobar(db: AsyncSession, ctx: Contexto, recomendacion_id: int, coment
             ),
             recomendacion_id=r.id, confirmar=False,
         )
-        await _cambiar_estado(db, ctx, r, EstadoRecomendacion.PENDIENTE, EstadoRecomendacion.EJECUTADA, comentario)
         detalle["traslado_numero"] = traslado.numero
     else:
         await _cambiar_estado(db, ctx, r, EstadoRecomendacion.PENDIENTE, EstadoRecomendacion.APROBADA, comentario)

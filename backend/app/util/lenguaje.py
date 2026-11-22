@@ -563,7 +563,7 @@ def extraer_horizonte(texto: str) -> tuple[int | None, str]:
 
 _SUSTANTIVOS_LIMITE = (
     r"productos?|articulos?|referencias?|items?|alertas?|ventas?|movimientos?|recomendaciones|traslados?|sedes|resultados|"
-    r"mejores|peores|mas|menos|primeros|ultimos|ultimas|registros|usuarios|garantias|quejas|categorias"
+    r"mejores|peores|mas|menos|primeros|ultimos|ultimas|registros|usuarios|categorias"
 )
 
 
@@ -587,7 +587,7 @@ def extraer_limite(texto: str) -> tuple[int | None, str]:
 def extraer_numero_documento(texto: str) -> tuple[int | None, str]:
     """Número de una venta, traslado, radicado… («venta 15», «traslado n.º 3», «factura #20»)."""
     m = re.search(
-        r"\b(?:venta|factura|ticket|comprobante|remision|traslado|pqrs|radicado|entrada|recepcion|garantia|recomendacion)\s*"
+        r"\b(?:venta|factura|ticket|comprobante|remision|traslado|radicado|entrada|recepcion|recomendacion)\s*"
         r"(?:numero|nro|num|no|n)?\.?\s*#?\s*(\d{1,9})\b",
         texto,
     )

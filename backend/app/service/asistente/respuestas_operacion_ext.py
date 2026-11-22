@@ -7,11 +7,9 @@ from datetime import timedelta
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import aliased
 
-from app.model.calidad import Garantia, NoConformidad
 from app.model.catalogo import Categoria, Producto
 from app.model.inventario import Alerta, Movimiento
 from app.model.operaciones import Traslado, TrasladoItem
-from app.model.pqrs import Pqrs
 from app.model.prediccion import Recomendacion
 from app.model.sede import Sede
 from app.model.usuario import Usuario
@@ -315,19 +313,6 @@ async def tareas_pendientes(p: Peticion) -> B.Resp:
             items.append((f"{B.n_de(solicitados, 'traslado')} esperando aprobación", "/traslados", "warning"))
         if aprobados:
             items.append((f"{B.n_de(aprobados, 'traslado')} aprobado{'' if aprobados == 1 else 's'} por confirmar su recepción", "/traslados", "warning"))
-    if p.tiene("pqrs.gestionar"):
-        n = int(await p.db.scalar(select(func.count()).select_from(Pqrs).where(Pqrs.empresa_id == p.ctx.empresa_id, Pqrs.estado == "pendiente", *([Pqrs.sede_id.in_(p.sede_ids)] if p.sede_ids is not None else []))) or 0)
-        if n:
-            items.append((f"{B.n_de(n, 'PQRS')} pendiente{'' if n == 1 else 's'} de respuesta", "/sig/pqrs", "warning"))
-    if p.tiene("calidad.ver", "calidad.gestionar"):
-        sede_nc = [NoConformidad.sede_id.in_(p.sede_ids)] if p.sede_ids is not None else []
-        sede_ga = [Garantia.sede_id.in_(p.sede_ids)] if p.sede_ids is not None else []
-        nc = int(await p.db.scalar(select(func.count()).select_from(NoConformidad).where(NoConformidad.empresa_id == p.ctx.empresa_id, NoConformidad.estado.in_(("reportado", "en_revision", "en_proceso_solucion")), *sede_nc)) or 0)
-        ga = int(await p.db.scalar(select(func.count()).select_from(Garantia).where(Garantia.empresa_id == p.ctx.empresa_id, Garantia.estado.in_(("reportada", "pendiente_revision", "enviada_proveedor")), *sede_ga)) or 0)
-        if nc:
-            items.append((f"{B.n_de(nc, 'no conformidad', 'no conformidades')} abierta{'' if nc == 1 else 's'}", "/sig/calidad", "warning"))
-        if ga:
-            items.append((f"{B.n_de(ga, 'garantía')} sin resolver", "/sig/calidad", "warning"))
     if not items:
         return B.Resp(f"No veo nada pendiente {p.en_alcance} con lo que tu rol puede consultar. Todo al día.", sugerencias=["Dame un resumen general", "¿Cómo está el inventario?"])
     orden = {"danger": 0, "warning": 1, "accent": 2}

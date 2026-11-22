@@ -25,7 +25,7 @@ from app.model.operaciones import Venta, VentaItem
 from app.model.sede import Sede
 from app.model.usuario import Usuario
 from app.security.acceso import Contexto
-from app.service import ambiental_service, auditoria_service, inventario_service
+from app.service import auditoria_service, inventario_service
 from app.service.alcance import obtener_sede_autorizada
 from app.specification.ventas_spec import condiciones_ventas
 from app.util.sql import siguiente_secuencia
@@ -78,8 +78,6 @@ async def registrar_venta(
         for prod, cant, _ in lineas
     ]
     await inventario_service.aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops, fecha=fecha)
-    # Gestión ambiental: cuenta las líneas que sean vehículos (misma transacción: si la venta falla, no se cuenta).
-    await ambiental_service.contabilizar_venta(db, venta, {prod.id: prod for prod, _, _ in lineas})
     await auditoria_service.registrar(
         db, modulo="ventas", accion="registrar", ctx=ctx, entidad="venta", entidad_id=venta.id, sede_id=sede.id,
         detalle={"numero": numero, "total": venta.total, "lineas": len(lineas)},
@@ -128,7 +126,6 @@ async def anular_venta(db: AsyncSession, ctx: Contexto, venta_id: int, motivo: s
         for i in venta.items
     ]
     await inventario_service.aplicar_lote(db, empresa_id=ctx.empresa_id, usuario_id=ctx.usuario_id, operaciones=ops)
-    await ambiental_service.anular_venta(db, venta.id)  # deja de contar para los indicadores ambientales
     await auditoria_service.registrar(
         db, modulo="ventas", accion="anular", ctx=ctx, entidad="venta", entidad_id=venta.id, sede_id=venta.sede_id,
         detalle={"numero": venta.numero, "motivo": motivo, "total": venta.total},
@@ -138,15 +135,25 @@ async def anular_venta(db: AsyncSession, ctx: Contexto, venta_id: int, motivo: s
     return venta
 
 
+def _resumen(v: Venta, sede: Sede, usuario_nombre: str | None) -> VentaResumen:
+    return VentaResumen(
+        id=v.id, numero=v.numero, fecha=v.fecha, fecha_dia=v.fecha_dia, sede=SedeResumen.model_validate(sede),
+        usuario_nombre=usuario_nombre, total=v.total, unidades=sum(i.cantidad for i in v.items),
+        lineas=len(v.items), estado=v.estado, observacion=v.observacion,
+    )
+
+
 async def listar_ventas(db: AsyncSession, ctx: Contexto, pag: ParametrosPagina, **filtros) -> tuple[list[VentaResumen], int]:
     condiciones = condiciones_ventas(ctx, **filtros)
     total = await db.scalar(select(func.count()).select_from(Venta).where(*condiciones)) or 0
-    ventas = (
-        await db.scalars(
-            select(Venta).where(*condiciones).order_by(Venta.fecha.desc(), Venta.id.desc()).offset(pag.offset).limit(pag.tamano)
+    filas = (
+        await db.execute(  # sede y nombre del usuario vienen en la misma consulta de la página
+            select(Venta, Sede, Usuario.nombre)
+            .join(Sede, Sede.id == Venta.sede_id).outerjoin(Usuario, Usuario.id == Venta.usuario_id)
+            .where(*condiciones).order_by(Venta.fecha.desc(), Venta.id.desc()).offset(pag.offset).limit(pag.tamano)
         )
     ).all()
-    return await resumenes(db, list(ventas)), total
+    return [_resumen(*fila) for fila in filas], total
 
 
 async def resumenes(db: AsyncSession, ventas: list[Venta]) -> list[VentaResumen]:
@@ -154,14 +161,7 @@ async def resumenes(db: AsyncSession, ventas: list[Venta]) -> list[VentaResumen]
         return []
     sedes = {s.id: s for s in (await db.scalars(select(Sede).where(Sede.id.in_({v.sede_id for v in ventas})))).all()}
     usuarios = {u.id: u.nombre for u in (await db.execute(select(Usuario.id, Usuario.nombre).where(Usuario.id.in_({v.usuario_id for v in ventas})))).all()}
-    return [
-        VentaResumen(
-            id=v.id, numero=v.numero, fecha=v.fecha, fecha_dia=v.fecha_dia, sede=SedeResumen.model_validate(sedes[v.sede_id]),
-            usuario_nombre=usuarios.get(v.usuario_id), total=v.total, unidades=sum(i.cantidad for i in v.items),
-            lineas=len(v.items), estado=v.estado, observacion=v.observacion,
-        )
-        for v in ventas
-    ]
+    return [_resumen(v, sedes[v.sede_id], usuarios.get(v.usuario_id)) for v in ventas]
 
 
 async def detalle(db: AsyncSession, ctx: Contexto, venta: Venta) -> VentaDetalle:

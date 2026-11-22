@@ -15,6 +15,7 @@ from app.security.acceso import Contexto
 from app.service.asistente import bloques as B
 from app.service.asistente import compuestas
 from app.service.asistente import (  # noqa: F401  (importarlos registra las respuestas)
+    respuestas_acceso,
     respuestas_analitica,
     respuestas_comparar,
     respuestas_conocimiento,
@@ -23,8 +24,6 @@ from app.service.asistente import (  # noqa: F401  (importarlos registra las res
     respuestas_inventario_ext,
     respuestas_movimientos,
     respuestas_operacion_ext,
-    respuestas_sig,
-    respuestas_sig_ext,
     respuestas_ventas,
     respuestas_ventas_ext,
 )
@@ -45,7 +44,7 @@ from app.util.tiempo import hoy_local
 log = logging.getLogger(__name__)
 
 # Intenciones cuya respuesta no depende de las sedes (no se muestra «alcance»).
-_SIN_ALCANCE = SOCIALES | {"mi_perfil", "navegacion", "accion_no_soportada", "reportes_ayuda", "roles_info", "empresa_info", "agentes_ia", "gracias", "despedida"} | SIN_ALCANCE_EXT
+_SIN_ALCANCE = SOCIALES | {"mi_perfil", "navegacion", "accion_no_soportada", "reportes_ayuda", "roles_info", "empresa_info", "gracias", "despedida"} | SIN_ALCANCE_EXT
 # Intenciones que no cambian la memoria de la conversación (saludar o dar las gracias no borra de qué se hablaba).
 _NEUTRAS = SOCIALES | {"mi_perfil", "navegacion", "accion_no_soportada", "reportes_ayuda"}
 
@@ -55,7 +54,7 @@ _PALABRA_SUELTA = {
     "ventas": "ventas_resumen", "venta": "ventas_resumen", "productos": "buscar_producto", "catalogo": "catalogo_conteo",
     "alertas": "alertas_resumen", "traslados": "traslados_lista", "recomendaciones": "recomendaciones", "predicciones": "prediccion_demanda",
     "prediccion": "prediccion_demanda", "sedes": "sedes_info", "usuarios": "usuarios_info", "roles": "roles_info", "reportes": "reportes_ayuda",
-    "movimientos": "movimientos_inventario", "pqrs": "pqrs_resumen", "calidad": "calidad_resumen", "garantias": "garantias", "auditoria": "auditoria",
+    "movimientos": "movimientos_inventario", "auditoria": "auditoria",
     "resumen": "resumen_general", "empresa": "empresa_info", "categorias": "inventario_categoria", "margen": "margen_productos", "agotados": "listar_agotados",
 }
 

@@ -4,9 +4,11 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.config.database import get_db
 from app.exception.excepciones import NoAutenticado, SinPermiso
+from app.model.acceso import Rol
 from app.model.empresa import Empresa
 from app.model.usuario import Usuario
 from app.security.acceso import Contexto
@@ -33,12 +35,22 @@ async def _cargar_contexto(
     except (KeyError, ValueError, TypeError):
         raise sin_sesion from None
 
-    usuario = await db.scalar(select(Usuario).where(Usuario.id == usuario_id))
-    if usuario is None or not usuario.activo or payload.get("pv") != usuario.password_version:
-        raise sin_sesion  # cuenta inhabilitada o contraseña cambiada después de emitir el token
-    empresa = await db.get(Empresa, usuario.empresa_id)
-    if empresa is None or not empresa.activa:
+    # Una sola consulta con usuario, rol, permisos y empresa. Antes eran tres viajes a la base en
+    # cada petición; con una base remota (Neon) cada viaje cuesta decenas de milisegundos. La
+    # empresa queda en el mapa de identidad de la sesión, así que los servicios que luego la
+    # piden con ``db.get(Empresa, ...)`` ya no vuelven a consultarla.
+    consulta = (
+        select(Usuario, Empresa)
+        .join(Empresa, Empresa.id == Usuario.empresa_id)
+        .options(joinedload(Usuario.rol).joinedload(Rol.permisos))
+        .where(Usuario.id == usuario_id)
+    )
+    fila = (await db.execute(consulta)).unique().first()
+    if fila is None:
         raise sin_sesion
+    usuario, empresa = fila
+    if not usuario.activo or not empresa.activa or payload.get("pv") != usuario.password_version:
+        raise sin_sesion  # cuenta o empresa inhabilitadas, o contraseña cambiada tras emitir el token
     return contexto_de_usuario(usuario)
 
 

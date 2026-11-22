@@ -12,20 +12,14 @@ from app.config.database import engine, fabrica_de_sesiones
 from app.config.logging import configurar_logging
 from app.config.settings import settings
 from app.controller import (
-    adjuntos_controller,
-    agentes_controller,
     alertas_controller,
-    ambiental_controller,
     asistente_controller,
     auditoria_controller,
     auth_controller,
-    calidad_controller,
     categorias_controller,
     dashboard_controller,
     empresa_controller,
-    integraciones_controller,
     inventario_controller,
-    pqrs_controller,
     predicciones_controller,
     productos_controller,
     recomendaciones_controller,
@@ -33,7 +27,6 @@ from app.controller import (
     roles_controller,
     sedes_controller,
     setup_controller,
-    sst_controller,
     traslados_controller,
     usuarios_controller,
     ventas_controller,
@@ -70,7 +63,7 @@ app = FastAPI(
         "Todas las rutas (salvo configuración inicial y recuperación de contraseña) exigen "
         "`Authorization: Bearer <token>` y validan permisos y sede en el servidor."
     ),
-    version="1.1.0",
+    version="1.2.0",
     lifespan=ciclo_de_vida,
     docs_url="/api/docs" if settings.docs_api_activa else None,
     redoc_url=None,
@@ -86,7 +79,7 @@ app.add_middleware(
     allow_origins=settings.origenes_permitidos,
     allow_credentials=False,  # el token viaja en la cabecera Authorization, no en cookies
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-API-Key"],
+    allow_headers=["Authorization", "Content-Type"],
     expose_headers=["X-Request-ID", "Content-Disposition"],
 )
 app.add_middleware(ContextoPeticionMiddleware)
@@ -95,8 +88,7 @@ ROUTERS = (
     setup_controller, auth_controller, empresa_controller, sedes_controller, usuarios_controller, roles_controller,
     categorias_controller, productos_controller, inventario_controller, alertas_controller, ventas_controller, traslados_controller,
     predicciones_controller, recomendaciones_controller, auditoria_controller, dashboard_controller, reportes_controller,
-    integraciones_controller, agentes_controller, asistente_controller,
-    pqrs_controller, adjuntos_controller, calidad_controller, sst_controller, ambiental_controller,
+    asistente_controller,
 )
 for modulo in ROUTERS:
     app.include_router(modulo.router)

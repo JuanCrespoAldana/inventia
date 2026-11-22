@@ -308,6 +308,7 @@ async def listar(
     tipo: str | None,
     prioridad: str | None,
     q: str | None,
+    contar: bool = True,
 ):
     condiciones = condiciones_alertas(ctx, sede_ids, estado, tipo, prioridad)
     base = (
@@ -319,7 +320,7 @@ async def listar(
     if q:
         patron = f"%{q.strip().lower()}%"
         base = base.where(func.lower(Producto.nombre).like(patron) | func.lower(Producto.codigo).like(patron))
-    total = await db.scalar(select(func.count()).select_from(base.subquery())) or 0
+    total = (await db.scalar(select(func.count()).select_from(base.subquery())) or 0) if contar else 0
     orden_prioridad = (
         (Alerta.prioridad == "critica", 0), (Alerta.prioridad == "alta", 1), (Alerta.prioridad == "media", 2)
     )

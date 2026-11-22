@@ -6,7 +6,7 @@ no pueden: que la interfaz muestre el resultado, que las pantallas no se desbord
 | Archivo | Para qué sirve |
 |---|---|
 | `recorrido.py` | Abre las 21 pantallas con un rol y un ancho de ventana (1440, 1280, 390 o 320 px); informa errores de consola, excepciones, respuestas HTTP con error y desbordamiento horizontal; guarda una captura por pantalla |
-| `flujos.py` | Nueve flujos completos como administrador: venta y anulación, traslado (solicitar, aprobar, confirmar), usuario nuevo, validación de formulario, rol nuevo con permisos, llave de agente, rechazo de una recomendación, descarga de reportes y cierre de sesión |
+| `flujos.py` | Ocho flujos completos como administrador: venta y anulación, traslado (solicitar, aprobar, confirmar), usuario nuevo, validación de formulario, rol nuevo con permisos, rechazo de una recomendación, descarga de reportes y cierre de sesión |
 | `desborde.py` | Lista los elementos que se salen del ancho de la ventana en las pantallas indicadas |
 
 ```bash
@@ -21,5 +21,5 @@ python flujos.py
 python desborde.py /inventario,/ventas 390
 ```
 
-`flujos.py` **crea registros** (una venta, un traslado, un usuario, un rol y una llave): úselo solo contra una base de pruebas. Los tres terminan con código
+`flujos.py` **crea registros** (una venta, un traslado, un usuario y un rol): úselo solo contra una base de pruebas. Los tres terminan con código
 de salida distinto de cero si encuentran un problema. No sustituyen una prueba de usabilidad con personas ni una prueba en otros navegadores (solo se probó Chromium).

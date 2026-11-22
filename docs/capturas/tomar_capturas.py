@@ -19,8 +19,7 @@ PANTALLAS = [
     ("productos", "/productos"), ("categorias", "/categorias"), ("ventas", "/ventas"), ("nueva_venta", "/ventas/nueva"),
     ("traslados", "/traslados"), ("nuevo_traslado", "/traslados/nuevo"), ("alertas", "/alertas"), ("predicciones", "/predicciones"),
     ("recomendaciones", "/recomendaciones"), ("reportes", "/reportes"), ("auditoria", "/auditoria"), ("roles", "/roles"),
-    ("usuarios", "/usuarios"), ("sedes", "/sedes"), ("empresa", "/empresa"), ("integraciones", "/integraciones"),
-    ("sig_pqrs", "/sig/pqrs"), ("sig_sst", "/sig/sst"), ("sig_calidad", "/sig/calidad"), ("sig_ambiental", "/sig/ambiental"),
+    ("usuarios", "/usuarios"), ("sedes", "/sedes"), ("empresa", "/empresa"),
 ]
 
 with sync_playwright() as p:

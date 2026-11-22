@@ -20,13 +20,11 @@ flowchart TB
 
     DB[(PostgreSQL 16)]
     SMTP[Servidor de correo SMTP]
-    AGENTE[Agente de IA externo<br/>solo lectura]
 
     SPA -- HTTPS · JWT --> NGINX
     NGINX -- /api --> API
     API -- SQL asíncrono --> DB
     API -- códigos de recuperación --> SMTP
-    AGENTE -- X-API-Key --> API
 ```
 
 | Pieza | Tecnología | Responsabilidad |
@@ -55,9 +53,8 @@ backend/app/
 ├── config/         Configuración por variables de entorno, base de datos y registro de eventos.
 ├── util/           Utilidades pequeñas: fechas y zona horaria, niveles de stock, SQL.
 ├── ml/             Cálculo de predicción puro (sin base de datos): modelos, evaluación, pipeline, extracción.
-├── cli.py          Administración desde la terminal (inicializar, predecir, cargar-demo, cargar-demo-sig, sincronizar-permisos).
-├── demo.py         Datos de demostración generados a través de los mismos servicios que usa la API.
-└── demo_sig.py     Datos de demostración del SIG (PQRS, calidad, pausas, ambiental), también a través de los servicios.
+├── cli.py          Administración desde la terminal (inicializar, predecir, cargar-demo, sincronizar-permisos).
+└── demo.py         Datos de demostración generados a través de los mismos servicios que usa la API.
 ```
 
 No hay carpeta `repository`: las consultas a la base de datos están dentro de cada servicio (decisión
@@ -122,9 +119,7 @@ sequenceDiagram
 - La confirmación de un traslado es una «llave»: el `UPDATE` que pasa el estado de `aprobado` a `confirmado` solo
   tiene éxito una vez; si dos personas confirman a la vez, una de ellas recibe un conflicto y no se mueve nada.
 - `movimientos` y `auditoria` son de **solo inserción**: un disparador de PostgreSQL rechaza `UPDATE` y `DELETE`
-  incluso si alguien ejecuta SQL a mano. Los errores se corrigen con un movimiento compensatorio. Lo mismo ocurre con
-  los historiales del SIG (`pqrs_historial`, `no_conformidad_historial`, `garantia_historial`) y con
-  `entrada_observaciones`.
+  incluso si alguien ejecuta SQL a mano. Los errores se corrigen con un movimiento compensatorio.
 - Todas las fechas se guardan en UTC; el «día» de una venta se calcula en la zona horaria de la empresa.
 
 ## Ciclo de un traslado
@@ -153,20 +148,6 @@ Ver [PREDICCION.md](PREDICCION.md). En términos de arquitectura:
 - La ejecución corre como tarea en segundo plano de FastAPI. La interfaz sondea el estado.
 - Las recomendaciones solo leen predicciones y existencias; **no escriben inventario**.
 
-## Integración con agentes de IA
-
-```mermaid
-flowchart LR
-    ADM[Administrador] -- crea llave --> K[(api_keys<br/>solo el hash)]
-    AG[Agente externo] -- X-API-Key --> RA[/api/agentes/*/]
-    RA -- valida alcance, sede y vigencia --> K
-    RA --> D[Inventario · alertas<br/>predicciones · recomendaciones]
-```
-
-Las llaves son independientes de los usuarios, de **solo lectura**, con alcances (`inventario:leer`,
-`alertas:leer`, `predicciones:leer`, `recomendaciones:leer`), vencimiento (90 días por defecto; la interfaz permite
-entre 30 y 730), restricción opcional a una sede y revocación inmediata. Una llave no sirve en la API normal y un token de usuario no sirve en `/api/agentes`.
-
 ## Frontend
 
 ```
@@ -194,32 +175,6 @@ Decisiones de interfaz que conviene conocer:
 - **Sin dependencias externas en tiempo de ejecución:** fuentes e iconos van empaquetados; la política de seguridad
   de contenido solo permite recursos del mismo origen.
 - **Carga diferida por ruta:** cada pantalla se descarga cuando se visita por primera vez.
-
-## Sistema Integrado de Gestión (SIG)
-
-El SIG reutiliza las mismas capas, el mismo contexto de petición y los mismos componentes de interfaz; no agrega
-dependencias ni servicios. Se publica bajo `/api/sig/*` y en el grupo **SIG** del menú (ver D-28 a D-33 en
-[DECISIONES.md](DECISIONES.md)).
-
-| Apartado | Servicios | Cómo se conecta con lo existente |
-|---|---|---|
-| PQRS y sugerencias | `pqrs_service`, `adjuntos_service` | Usa los usuarios, las sedes y los consecutivos por empresa (`secuencias`); cada cambio queda en `auditoria` y en `pqrs_historial` |
-| Seguridad y Salud en el Trabajo | `sst_service` | El servidor decide cuándo toca una pausa; la interfaz (`PausasActivas`) la pide y la muestra. Excluye a quien tenga `sst.gestionar` |
-| Calidad | `calidad_service`, `entradas_service` | Las no conformidades y garantías apuntan a productos, entradas, ventas y sedes, pero **nunca escriben en `inventario_sede` ni en `movimientos`** |
-| Gestión ambiental | `ambiental_service` | `ventas_service` lo invoca dentro de la transacción al registrar y al anular una venta; el índice único por línea de venta evita contarla dos veces |
-
-```mermaid
-flowchart LR
-    V[ventas_service<br/>registrar / anular] -- misma transacción --> A[ambiental_service<br/>amb_registros]
-    I[inventario_service<br/>registrar_entrada] -- misma transacción --> E[entradas_inventario<br/>+ entrada_observaciones]
-    E -. vínculo opcional .-> NC[calidad_service<br/>no conformidades / garantías]
-    NC -. no escribe .-> X[(inventario_sede · movimientos)]
-    P[PausasActivas<br/>en el navegador] -- pide la pausa --> S[sst_service<br/>decide y registra]
-```
-
-Dos puntos de integración con el código anterior conviene conocerlos: `inventario_service.registrar_entrada` ahora crea la
-cabecera de la entrada y enlaza sus movimientos, y `ventas_service` llama a `ambiental_service` al registrar y al anular
-una venta. El resto del SIG no toca los módulos existentes.
 
 ## Despliegue
 

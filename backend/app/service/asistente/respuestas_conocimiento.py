@@ -80,8 +80,7 @@ _GRUPOS_GLOSARIO: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Alertas", ("alerta", "prioridad_alerta", "riesgo_desabastecimiento", "requiere_revision")),
     ("Predicción y recomendaciones", ("prediccion", "horizonte", "confianza", "intervalo", "wape", "linea_base", "modelos", "recomendacion", "reabastecimiento", "punto_reposicion")),
     ("Parámetros de la empresa", ("parametros", "plazo_entrega", "dias_seguridad", "cobertura_objetivo", "umbral_alerta")),
-    ("SIG", ("sig", "pqrs", "sst", "no_conformidad", "garantia", "evidencia", "co2")),
-    ("Administración", ("rol", "permiso", "alcance_sede", "auditoria", "llave_agente", "sede", "categoria", "inteligencia_artificial")),
+    ("Administración", ("rol", "permiso", "alcance_sede", "auditoria", "sede", "categoria", "inteligencia_artificial")),
 )
 
 
@@ -90,7 +89,7 @@ def _indice_glosario(p: Peticion) -> B.Resp:
     bloques = [B.lista(grupo, [por_clave[c].nombre for c in claves if c in por_clave]) for grupo, claves in _GRUPOS_GLOSARIO]
     texto = ("Puedo explicarte los términos que usa el sistema: qué significan, cómo se calculan y dónde se ven. "
              "Pregúntame, por ejemplo, «¿qué es el stock mínimo?» o «¿cómo se calcula la cobertura?». Estos son los que conozco:")
-    return B.Resp(texto, bloques, sugerencias=["¿Qué es el stock mínimo?", "¿Cómo se calcula la cobertura?", "¿Qué significa WAPE?", "¿Qué es una no conformidad?"])
+    return B.Resp(texto, bloques, sugerencias=["¿Qué es el stock mínimo?", "¿Cómo se calcula la cobertura?", "¿Qué significa WAPE?", "¿Qué es una alerta?"])
 
 
 # ============================================================================================ cómo se hace
@@ -157,19 +156,12 @@ _MENU: tuple[tuple[str, tuple[tuple[str, str, str], ...]], ...] = (
         ("/recomendaciones", "Recomendaciones", "qué reponer o trasladar, para aprobar o rechazar."),
         ("/reportes", "Reportes", "informes de inventario, ventas, movimientos, traslados, alertas, predicciones y recomendaciones, en PDF, Excel o CSV."),
     )),
-    ("SIG", (
-        ("/sig/pqrs", "PQRS", "peticiones, quejas, reclamos y sugerencias, con su seguimiento."),
-        ("/sig/sst", "Seguridad y Salud en el Trabajo", "las pausas activas y su cumplimiento."),
-        ("/sig/calidad", "Calidad", "no conformidades y garantías."),
-        ("/sig/ambiental", "Gestión ambiental", "vehículos eléctricos vendidos y CO₂ evitado (estimación)."),
-    )),
     ("Administración", (
         ("/empresa", "Empresa", "datos de la empresa y parámetros de inventario y predicción."),
         ("/sedes", "Sedes", "las ubicaciones de la empresa."),
         ("/usuarios", "Usuarios", "las personas con acceso: altas, bajas, contraseñas y desbloqueos."),
         ("/roles", "Roles y permisos", "qué puede hacer cada rol."),
         ("/auditoria", "Auditoría", "quién hizo qué y cuándo."),
-        ("/integraciones", "Agentes de IA", "llaves para que un asistente externo consulte (solo lectura)."),
     )),
 )
 
@@ -232,7 +224,7 @@ async def asistente_funciona(p: Peticion) -> B.Resp:
     bloques = [
         B.metricas(None, ("Tipos de consulta con tu rol", B.entero(puedo)), ("Respeta tu rol y tu sede", "Sí"), ("Modifica datos", "No")),
         B.lista("Qué entiendo", [
-            "Preguntas sobre existencias, ventas, movimientos, traslados, alertas, predicción, recomendaciones, calidad, PQRS, gestión ambiental y administración.",
+            "Preguntas sobre existencias, ventas, movimientos, traslados, alertas, predicción, recomendaciones y administración.",
             "Productos por nombre o código, sedes, categorías y fechas («hoy», «ayer», «el mes pasado», «del 1 al 15 de octubre», «el primer trimestre»).",
             "Errores de escritura frecuentes, mayúsculas y la falta de tildes.",
             "Preguntas de seguimiento: después de «ventas de la sede Norte» puedes decir «¿y la semana pasada?».",

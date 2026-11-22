@@ -140,29 +140,7 @@ class ConsolidadoFila(BaseModel):
     sedes: list[DesgloseSede]
 
 
-# ---------------- Entradas de mercancía y sus observaciones ----------------
-class EntradaObservacionCrear(EsquemaBase):
-    contenido: Texto(3, 1000)
-    producto_id: int | None = Field(default=None, gt=0, description="Línea de la entrada a la que se refiere (opcional)")
-
-
-class NoConformidadVinculo(BaseModel):
-    id: int
-    numero: int
-    estado: str
-
-
-class EntradaObservacionSalida(BaseModel):
-    id: int
-    fecha: datetime
-    usuario_id: int
-    usuario_nombre: str | None = None
-    contenido: str
-    producto: ProductoResumen | None = None
-    # No conformidades que ya se abrieron a partir de esta observación (evita registrarla dos veces).
-    no_conformidades: list[NoConformidadVinculo] = []
-
-
+# ---------------- Entradas de mercancía ----------------
 class EntradaLinea(BaseModel):
     producto: ProductoResumen
     cantidad: int
@@ -179,13 +157,7 @@ class EntradaResumen(BaseModel):
     usuario_nombre: str | None = None
     unidades: int
     lineas: int
-    observaciones: int
-    no_conformidades: int
 
 
 class EntradaDetalle(EntradaResumen):
     detalle_lineas: list[EntradaLinea]
-    historial_observaciones: list[EntradaObservacionSalida]
-    no_conformidades_vinculadas: list[NoConformidadVinculo]
-    puede_observar: bool = False
-    puede_reportar_calidad: bool = False

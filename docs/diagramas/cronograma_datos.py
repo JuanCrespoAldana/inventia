@@ -18,7 +18,7 @@ ACTIVIDADES = [
     ("OE4", "Catálogo e inventario multisede", 12, 16),
     ("OE4", "Ventas, traslados y alertas", 14, 18),
     ("OE4", "Predicción y recomendaciones", 15, 20),
-    ("OE4", "Reportes, auditoría y módulo SIG", 18, 23),
+    ("OE4", "Reportes y auditoría", 18, 23),
     ("OE5", "Pruebas funcionales y de integración", 16, 23),
     ("OE5", "Pruebas de seguridad (OWASP y fuzzing)", 20, 24),
     ("OE5", "Pruebas de rendimiento y de escala", 21, 25),

@@ -114,33 +114,12 @@ with sync_playwright() as p:
         d.get_by_label("Nombre del rol").fill(f"Auxiliar de consulta {SUF}")
         d.get_by_role("button", name="Crear rol").click()
         expect(pag.get_by_role("heading", name=f"Auxiliar de consulta {SUF}")).to_be_visible(timeout=8000)
-        pag.get_by_label("Consultar productos", exact=False).first.check()
+        # la lista de módulos se pagina de 5 en 5: se usa un permiso del primer grupo visible
+        pag.get_by_label("Consultar categorías", exact=False).first.check()
         pag.get_by_role("button", name="Guardar permisos").click()
         expect(pag.get_by_text("Permisos actualizados.")).to_be_visible(timeout=8000)
 
     paso("rol creado y permisos asignados", rol)
-
-    # ---------------------------------------------------------------- llave de agente
-    def llave():
-        pag.goto(f"{BASE}/integraciones")
-        pag.get_by_role("button", name="Nueva llave").first.click()
-        d = pag.get_by_role("dialog")
-        d.get_by_label("Nombre de la llave").fill(f"Asistente {SUF}")
-        d.get_by_role("checkbox").first.check()
-        d.get_by_role("button", name="Crear llave").click()
-        secreto = pag.get_by_test_id("llave-secreta")
-        expect(secreto).to_be_visible(timeout=8000)
-        valor = secreto.inner_text()
-        assert valor.startswith("inv_") or len(valor) > 20, valor
-        pag.get_by_role("button", name="Copiar").click()
-        expect(pag.get_by_role("button", name="Copiada")).to_be_visible()
-        pag.get_by_role("button", name="Ya la guardé").click()
-        expect(pag.get_by_text(f"Asistente {SUF}").first).to_be_visible()
-        pag.get_by_role("button", name="Revocar").first.click()
-        pag.get_by_role("button", name="Revocar").last.click()
-        expect(pag.get_by_text("Revocada").first).to_be_visible(timeout=8000)
-
-    paso("llave de agente creada, copiada y revocada", llave)
 
     # ---------------------------------------------------------------- recomendación: rechazar con comentario
     def recomendacion():

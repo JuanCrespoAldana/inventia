@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { useBloquearPausas } from "@/lib/bloqueoPausas";
 import { IconButton } from "./Button";
 
 const ENFOCABLES = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -18,16 +17,13 @@ interface ModalProps {
   ancho?: "sm" | "md" | "lg" | "xl";
   /** Evita cerrar con Escape o clic fuera (p. ej. mientras se guarda). */
   bloqueado?: boolean;
-  /** Mientras está abierto no se muestran pausas activas (hay una operación en curso). Solo la pausa misma lo desactiva. */
-  bloqueaPausas?: boolean;
   /** Quita el botón «Cerrar» del encabezado (el diálogo se resuelve solo con sus botones de acción). */
   ocultarCierre?: boolean;
 }
 
 const ANCHOS = { sm: "max-w-md", md: "max-w-lg", lg: "max-w-2xl", xl: "max-w-4xl" };
 
-export function Modal({ abierto, onCerrar, titulo, descripcion, children, pie, ancho = "md", bloqueado = false, bloqueaPausas = true, ocultarCierre = false }: ModalProps) {
-  useBloquearPausas(abierto && bloqueaPausas);
+export function Modal({ abierto, onCerrar, titulo, descripcion, children, pie, ancho = "md", bloqueado = false, ocultarCierre = false }: ModalProps) {
   const idTitulo = useId();
   const idDescripcion = useId();
   const caja = useRef<HTMLDivElement>(null);

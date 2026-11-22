@@ -6,30 +6,32 @@ usarlo con datos reales.
 
 ## Resultado de las pruebas
 
-Última ejecución completa: **26 de octubre de 2026**, sobre la versión 1.1.0.
+Última ejecución completa: **20 de noviembre de 2026**, sobre la versión 1.2.0 (aún sin etiquetar; ver `CHANGELOG.md`). La
+evidencia de esta ejecución está en `datos_pruebas/v1.2.0/`; la de la versión 1.1.0 (26 de octubre de 2026) se conserva en
+`datos_pruebas/`.
 
 Entorno: Linux, Python 3.13, Node.js 22, PostgreSQL 16.15 local, Chromium (Playwright).
 
 | Comprobación | Resultado |
 |---|---|
-| Backend, 214 pruebas, contra **PostgreSQL 16** (`TEST_DATABASE_URL`) | **214 pasaron**, 0 omitidas, 0 fallidas |
-| Backend, mismas pruebas contra **SQLite** (modo rápido, sin variable) | 190 pasaron, 24 omitidas (las que exigen PostgreSQL), 0 fallidas |
-| Frontend, pruebas (vitest) | **133 pasaron** en 21 archivos |
+| Backend, 251 pruebas, contra **PostgreSQL 16** (`TEST_DATABASE_URL`) | **251 pasaron**, 0 omitidas, 0 fallidas (308 s) |
+| Backend, cobertura de líneas (`coverage`, con `concurrency = greenlet,thread`) | **84,6 %** (8.144 de 9.625 instrucciones); sin el asistente de consultas, 90,7 % (5.258 de 5.798), y el asistente solo 75,4 % (2.886 de 3.827); no se mide cobertura de ramas |
+| Backend, mismas pruebas contra **SQLite** (modo rápido, sin variable) | 221 pasaron, 30 omitidas (las que exigen PostgreSQL), 0 fallidas |
+| Frontend, pruebas (vitest) | **109 pasaron** en 18 archivos |
 | Frontend, tipos (`tsc -b`, modo estricto) | Sin errores |
 | Frontend, lint (`oxlint --deny-warnings`) | Sin advertencias |
 | Frontend, compilación de producción (`vite build`) | Correcta |
 | Tipos de la API (`npm run tipos`) | `api.gen.ts` coincide con el OpenAPI actual del backend |
 | Recorrido en navegador (Chromium): 21 pantallas × 4 roles | 0 errores de consola, 0 respuestas HTTP ≥ 400 inesperadas |
-| Recorrido en navegador a 1440, 1280, 390 y 320 px | Sin desbordamiento horizontal |
-| Flujos funcionales en navegador (9) | Todos correctos (ver más abajo) |
-| Recorrido del SIG en navegador (Chromium), administrador y usuario de inventario, a 1440 y 390 px | Pantallas, formularios, detalles y diálogos sin desbordamiento horizontal; permisos aplicados (ver más abajo) |
+| Recorrido en navegador: administrador a 1440, 1280, 390 y 320 px; los otros tres roles a 1440 y 390 px | Sin desbordamiento horizontal en ninguna de las 21 pantallas |
+| Flujos funcionales en navegador (8) | Todos correctos (ver más abajo) |
 
-Las 24 pruebas omitidas en SQLite son las marcadas `postgres`: 6 de concurrencia, 5 de migraciones y disparadores, 7
-de configuración inicial y autenticación (límites con bloqueos de fila), 3 de reportes, 2
-de simultaneidad en predicción y recomendaciones, y 1 de simultaneidad en las pausas activas del SIG. SQLite no puede reproducirlas fielmente (no tiene bloqueos de fila
-ni disparadores equivalentes), por eso **la ejecución que cuenta es la de PostgreSQL**.
+Las 30 pruebas omitidas en SQLite son las marcadas `postgres`: 6 de concurrencia, 8 de migraciones y disparadores, 4 de
+integridad del modelo entidad–relación (CRF-MER-01), 7 de configuración inicial y autenticación (límites con bloqueos de
+fila), 3 de reportes y 2 de simultaneidad en predicción y recomendaciones. SQLite no puede reproducirlas fielmente (no tiene
+bloqueos de fila ni disparadores ni llaves compuestas equivalentes), por eso **la ejecución que cuenta es la de PostgreSQL**.
 
-### Qué cubren las 214 pruebas del backend
+### Qué cubren las 251 pruebas del backend
 
 | Archivo | Pruebas | Qué demuestran |
 |---|---|---|
@@ -37,40 +39,34 @@ ni disparadores equivalentes), por eso **la ejecución que cuenta es la de Postg
 | `test_administracion.py` | 25 | Empresa, sedes, usuarios, roles, **aislamiento entre empresas**, alcance por sede, auditoría |
 | `test_catalogo_inventario.py` | 12 | Catálogo, entradas, salidas, ajustes, mínimos y máximos, alertas, consolidado sin duplicados |
 | `test_ventas_traslados.py` | 12 | Ventas, anulaciones, traslados en tres pasos, invariantes de existencias |
+| `test_entradas.py` | 3 | Entradas de mercancía (RF-017): numeración consecutiva, detalle con líneas y saldo posterior, listado con filtros de número, sede y fechas, solo lectura (sin edición, borrado ni observaciones), alcance por sede, por empresa y por permiso |
 | `test_ml.py` | 21 | Modelos de pronóstico, control de calidad de datos, validación temporal sin fuga de información, WAPE/MAE/RMSE/MAPE, fórmula calibrada del intervalo, regla de preferencia del modelo avanzado |
 | `test_prediccion.py` | 9 | Ejecución completa, omisiones con motivo, permisos, aislamiento, una sola ejecución activa |
 | `test_recomendaciones.py` | 11 | Reglas de reposición y traslado con valores conocidos, ciclo de vida, aprobación humana |
 | `test_dashboard_reportes.py` | 24 | Panel con cifras reales y sin inventar datos, reportes JSON/CSV/Excel/PDF, formato en español, avisos de recorte, auditoría de cada descarga, visibilidad según permisos |
-| `test_demo.py` | 6 | Carga de la demostración en la empresa de la configuración inicial: conserva al administrador, no se repite, exige una sola empresa; y la carga de datos de ejemplo del SIG: coherente, sin duplicar, exige usuarios operativos |
-| `test_agentes.py` | 9 | Llaves, alcances, sede, vencimiento, revocación, solo lectura, aislamiento |
+| `test_demo.py` | 4 | Carga de la demostración en la empresa de la configuración inicial: conserva al administrador, no se repite, exige una sola empresa; y el comando no acepta opciones incompatibles |
 | `test_flujo_integral.py` | 1 | Escenario de **17 pasos**: empresa y administrador inicial, ingreso, sedes, usuarios por rol y sede, catálogo, existencias iniciales, consolidado, entradas y salidas, ventas, traslado, movimientos y reportes, alertas, predicción y recomendaciones, aislamiento entre empresas y entre sedes, auditoría. Un paso (el historial de ventas de 60 días) se inserta directamente en la base, porque la API no permite fechar ventas en el pasado |
 | `test_concurrencia.py` | 6 | Salidas, ventas, confirmaciones, anulaciones y alertas simultáneas; traslados cruzados sin interbloqueo (PostgreSQL) |
-| `test_migraciones.py` | 5 | Migración desde base vacía y `alembic check`, hacia atrás y adelante, con datos de la versión anterior, disparadores de solo inserción y la migración `0004_sig` (conserva datos, se revierte, historiales inalterables, una pausa abierta por persona) (PostgreSQL) |
-| `test_sig_pqrs_adjuntos.py` | 7 | PQRS de principio a fin (envío, consulta, estados, respuesta, historial), filtros, validaciones, aislamiento entre empresas y evidencias: formato por contenido, tamaño, cantidad, visibilidad |
-| `test_sig_calidad_entradas.py` | 12 | Entradas con observaciones acumulativas, no conformidades y garantías con historial, vínculo con la entrada, filtros, alcance por sede y **que ninguna modifique existencias ni movimientos** |
-| `test_sig_sst.py` | 8 | Configuración y contenido iniciales, pausa para operativos y no para la administración, sin repeticiones ni solapamientos, pausa olvidada, registro y cumplimiento, peticiones simultáneas (esta, solo en PostgreSQL) |
-| `test_sig_ambiental.py` | 13 | Fórmula con valores conocidos, conteo sin parámetros («pendiente»), solo categorías de vehículo, anulaciones, ventas anteriores, parámetros que no reescriben el historial, series mensual y anual, permisos, auditoría y ventas simultáneas sin duplicados |
-| `test_sig_permisos.py` | 2 | Al actualizar una instalación existente, los permisos del SIG se reparten a los roles de fábrica y no a los personalizados, y un permiso que la empresa quitó no se devuelve |
+| `test_migraciones.py` | 8 | Migración desde base vacía y `alembic check`, hacia atrás y adelante, con datos de la versión anterior, disparadores de solo inserción, la migración `0004_sig` (conserva datos, se revierte, historiales inalterables), la `0005_integridad_mer` (aplica las tres reglas, se revierte y se detiene con un mensaje si los datos las impiden) y la `0006_retiro_sig_agentes` (retira solo lo previsto, conserva las entradas y se revierte) (PostgreSQL) |
+| `test_integridad_mer.py` | 4 | CRF-MER-01 en PostgreSQL real: una alerta solo puede pertenecer a una existencia por sede, una recomendación da lugar a lo sumo a un traslado, toda recomendación nace de una ejecución y seis aprobaciones simultáneas producen un solo traslado (las demás reciben 409) |
+| `test_mer_consistente.py` | 6 | El MER publicado (`docs/modelo/mer_spec.py`: 21 entidades, 50 relaciones, 25 reglas) coincide con los modelos: cada relación tiene su llave foránea, no sobra ninguna (51 + 8 de `empresa_id` = 59), la cardinalidad la impone la base y cada regla se usa |
+| `test_asistente.py` | 74 | Asistente de consultas: corpus de 400 frases con la intención esperada, respuestas con datos reales, permisos y alcance por sede, glosario, guías, comparaciones, preguntas compuestas y fechas relativas |
 
 ### Flujos comprobados en el navegador
 
 Con la demostración cargada y un navegador real (Chromium) se comprobó, como administrador: registrar y anular una
 venta; solicitar, aprobar y confirmar un traslado; crear un usuario; ver las validaciones en español de un
-formulario; crear un rol y asignarle permisos; crear, copiar y revocar la llave de un agente; rechazar una
-recomendación con comentario; descargar un reporte en Excel y en CSV; y cerrar sesión. También se recorrieron las
-21 pantallas con los roles Administrador, Gerente, Analista de compras y Usuario de inventario, confirmando que cada pantalla sin permiso
-muestra «No tiene acceso a esta sección» en lugar de una pantalla rota.
+formulario; crear un rol y asignarle permisos; rechazar una recomendación con comentario; descargar un reporte en Excel y en
+CSV; y cerrar sesión. También se recorrieron las 21 pantallas (incluida la del asistente de consultas) con los roles
+Administrador, Gerente, Analista de compras y Usuario de inventario, confirmando que cada pantalla sin permiso muestra
+«No tiene acceso a esta sección» en lugar de una pantalla rota.
 
-**Módulo SIG.** Con la demostración y los datos de ejemplo del SIG cargados, en Chromium se recorrió como administrador cada
-pestaña de los cuatro apartados (incluidos los diálogos de detalle, de reporte y de configuración) a 1440 y 390 px, sin
-errores de consola ni respuestas HTTP inesperadas. Como Usuario de inventario se comprobó: el menú SIG, el envío de una PQRS con
-una evidencia y su confirmación, que la **pausa activa aparece sola** al pasar el intervalo (se configuró en 1 minuto para
-la prueba), que **no aparece mientras hay un formulario abierto** y se muestra al cerrarlo, que el administrador **no** la
-recibe pero sí ve la vista previa, y que la API responde `403` cuando ese usuario intenta gestionar PQRS, configurar las
-pausas o los parámetros ambientales.
+**Retiro del SIG y de los agentes (versión 1.2.0).** Se repitió el recorrido completo después de retirar esos módulos: el
+menú ya no los muestra, una dirección antigua del SIG en el navegador redirige al inicio y la API responde `404` en sus
+antiguas rutas (`/api/sig/...`, `/api/agentes`, `/api/adjuntos`, `/api/calidad/...`, `/api/ambiental/...`). Los recorridos anteriores del SIG (versión 1.1.0) quedan como historia en `datos_pruebas/`.
 
-Estos recorridos se hicieron con guiones de Playwright escritos para la verificación; **no forman parte del
-repositorio ni de la integración continua**. Si el equipo quiere pruebas de extremo a extremo permanentes, es el
+Estos recorridos se hacen con los guiones de Playwright de `infra/navegador/`; **no forman parte de la integración
+continua**. Si el equipo quiere pruebas de extremo a extremo permanentes, es el
 siguiente paso natural (ver «Mejoras recomendadas»).
 
 ### Cómo repetir estas pruebas
@@ -125,40 +121,6 @@ funcionar a la primera o pedir ajustes menores; no se debe asumir ninguna de las
 - **La predicción se ejecuta bajo demanda o programada con el CLI.** No hay un planificador interno: use `cron` o el
   programador de tareas de su sistema (ver [`DESPLIEGUE.md`](DESPLIEGUE.md#predicción-programada)).
 
-### Sistema Integrado de Gestión (SIG)
-
-- **No hay avisos por correo ni notificaciones** cuando llega una PQRS, una no conformidad o una garantía: el proyecto no
-  tiene un sistema de notificaciones y no se simuló uno (D-29). La administración debe revisar las bandejas.
-- **La estimación de CO₂ vale tanto como sus parámetros.** El sistema no trae factor de la red ni parámetros de
-  vehículos: los define el administrador y deben documentarse con su fuente. La pantalla sugiere el valor de la UPME para
-  la red colombiana (0,220 kg CO₂e/kWh, año 2024) solo como ayuda: **verifique que siga vigente** antes de usarlo. El
-  resultado es una estimación comparativa con un vehículo de combustión de referencia, no una medición ni una huella de
-  carbono certificada. Los datos de `cargar-demo-sig` son de demostración.
-- **Los parámetros ambientales son por categoría**, no por producto: todos los productos de una categoría marcada como
-  vehículo usan los mismos valores. Los accesorios y repuestos deben estar en otras categorías para no contarse.
-- **Una venta de vehículos cuenta cuando se registra** (el sistema no tiene un estado «borrador»). Una venta anulada
-  deja de sumar, pero el historial conserva el registro marcado como anulado.
-- **Las evidencias viven en la base de datos** (3 MB por archivo, 5 por registro): adecuado para un volumen pequeño; con
-  muchas evidencias convendría moverlas a un almacenamiento de objetos (solo habría que cambiar `adjuntos_service`).
-  No se analizan en busca de virus.
-- **Las pausas activas se programan en el navegador y las decide el servidor.** Si la aplicación está cerrada, o la
-  pestaña no es visible, no hay pausa: aparece al volver (con una cortesía de 2 minutos si ya tocaba). El intervalo es el
-  mismo para toda la empresa (no por persona ni por turno), y el cumplimiento mide pausas mostradas, realizadas u
-  omitidas, no el tiempo real de ejercicio.
-- **Las pausas se aplazan, no se cancelan, mientras hay un diálogo abierto o una venta o traslado a medio armar.** Si una
-  persona deja un diálogo abierto horas, no recibirá pausa en ese tiempo.
-- **Las no conformidades y garantías no descuentan inventario.** Es deliberado (D-30): si la mercancía defectuosa debe
-  salir de las existencias, se registra una salida aparte. Tampoco hay órdenes de devolución ni comunicación con el
-  proveedor desde el sistema: la respuesta del proveedor se transcribe.
-- **No hay módulo de compras**, aunque la solicitud del SIG lo menciona al pedir que lo existente siga funcionando: las
-  recepciones de mercancía se registran como entradas de inventario, y los documentos de respaldo de una garantía
-  (factura de compra, entrada, venta u otro) son una referencia escrita, no un documento de compra del sistema.
-- **Las entradas anteriores a la versión 1.1 no tienen cabecera**: sus movimientos quedan con `entrada_id` nulo, así que
-  no aparecen en «Entradas de mercancía» ni pueden tener observaciones. Las nuevas sí.
-- **El historial de pausas de la demostración se insertó directamente** en la base (excepción documentada en
-  `demo_sig.py`), porque la API no permite fechar una pausa en el pasado; lo demás de la demostración pasa por los servicios.
-- **Bajar la migración (`downgrade`) borra los registros del SIG.**
-
 ### Seguridad
 
 Los controles implementados y las responsabilidades de quien despliega están en [`SEGURIDAD.md`](SEGURIDAD.md). Los
@@ -192,8 +154,12 @@ límites conocidos son:
 - **Sin lectores de código de barras ni integración con puntos de venta**; las ventas se registran en la aplicación o
   por la API. No hay importación masiva de productos ni de ventas desde Excel/CSV.
 - **Productos sin lotes, series ni fechas de vencimiento.** El inventario es por cantidad, no por lote.
+- **Las entradas de mercancía se consultan, no se editan:** cada una tiene su número, sede, motivo y productos, sin observaciones
+  propias; un error se corrige con un ajuste por conteo físico o una salida. Las entradas anteriores a la versión 1.1 no tienen
+  cabecera (sus movimientos quedan con `entrada_id` nulo), así que no aparecen en «Entradas de mercancía».
+- **No hay módulo de compras:** las recepciones de mercancía se registran como entradas de inventario.
 - **Los traslados entre sedes no contemplan recepciones parciales:** se confirman completos o se cancelan.
-- **Sin notificaciones por correo ni móviles**: las alertas y las solicitudes del SIG se ven en la aplicación.
+- **Sin notificaciones por correo ni móviles**: las alertas se ven en la aplicación.
 - **Idioma único** (español). Los números y fechas se pueden cambiar con `VITE_LOCALE` y `VITE_MONEDA`, pero los textos
   no están preparados para traducirse.
 - **Los reportes no tienen programación ni envío automático**; se generan a pedido.
@@ -203,7 +169,7 @@ límites conocidos son:
 ### Asistente de consultas
 
 - **Es un motor por reglas, no un modelo de lenguaje** (decisión D-40). Entiende las preguntas habituales de inventario,
-  ventas, alertas, predicción, SIG y administración, con errores de escritura frecuentes y sin tildes. Atiende hasta tres
+  ventas, alertas, predicción y administración, con errores de escritura frecuentes y sin tildes. Atiende hasta tres
   preguntas por mensaje si están claramente separadas («¿…? ¿…?», «… y además …»); una frase muy larga o con una
   formulación poco común puede no entenderse. Cuando no entiende, lo dice y sugiere
   preguntas; no inventa una respuesta.
@@ -234,8 +200,8 @@ límites conocidos son:
   60 días): 1,5 minutos con la base en el mismo equipo, pero cada consulta paga la latencia de red con servicios como
   Neon. No se midió contra Neon; cuente de 20 a 60 minutos. Es una carga única, no se puede reanudar si se
   interrumpe (ver [`DESARROLLO.md`](DESARROLLO.md#solución-de-problemas)).
-- **Las migraciones destructivas hacia atrás (`downgrade`) pueden perder datos** de las tablas nuevas. Haga respaldo
-  antes de actualizar.
+- **La migración `0006_retiro_sig_agentes` elimina 15 tablas con sus datos** (SIG y agentes de IA); su `downgrade` las recrea
+  **vacías**. Las migraciones hacia atrás pueden perder datos: haga un respaldo antes de actualizar.
 
 ## Mejoras recomendadas
 
@@ -250,7 +216,7 @@ En orden aproximado de valor:
    [`PREDICCION.md`](PREDICCION.md)).
 4. Doble factor de autenticación y revocación de sesiones individuales.
 5. Importación masiva de productos y ventas desde CSV/Excel.
-6. Notificaciones por correo para las alertas críticas y para las PQRS, no conformidades y garantías nuevas.
+6. Notificaciones por correo para las alertas críticas.
 7. Planificador de tareas propio (predicción nocturna) y límite de solicitudes compartido entre réplicas (por
    ejemplo con Redis).
 8. Auditoría de accesibilidad y pruebas con lector de pantalla.

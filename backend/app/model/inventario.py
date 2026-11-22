@@ -6,10 +6,10 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     Integer,
     String,
-    Text,
     UniqueConstraint,
     func,
     text,
@@ -77,8 +77,7 @@ class Movimiento(Base):
 
 
 class EntradaInventario(Base):
-    """Cabecera de una entrada de mercancía (recepción). Agrupa los movimientos de sus líneas y es el punto
-    al que se asocian las observaciones de la recepción y, si hay un problema, las no conformidades.
+    """Cabecera de una entrada de mercancía (recepción). Agrupa los movimientos de sus líneas.
     No modifica existencias por sí misma: eso sigue haciéndolo únicamente ``Movimiento``."""
 
     __tablename__ = "entradas_inventario"
@@ -98,23 +97,6 @@ class EntradaInventario(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
-class EntradaObservacion(Base):
-    """Observación de una entrada (estado de la mercancía, empaque, novedades con el proveedor...).
-
-    Es independiente de los datos del producto y se acumula: agregar una observación nueva NUNCA reemplaza las
-    anteriores. Solo se inserta (en PostgreSQL un disparador impide UPDATE y DELETE)."""
-
-    __tablename__ = "entrada_observaciones"
-    __table_args__ = (Index("ix_entrada_observaciones_entrada_fecha", "entrada_id", "fecha"),)
-
-    id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
-    entrada_id: Mapped[int] = mapped_column(ForeignKey("entradas_inventario.id"), nullable=False)
-    producto_id: Mapped[int | None] = mapped_column(ForeignKey("productos.id"), nullable=True)  # línea concreta
-    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"), nullable=False)
-    fecha: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    contenido: Mapped[str] = mapped_column(Text, nullable=False)
-
-
 class Secuencia(Base):
     """Consecutivos por empresa (número de venta, de traslado) sin huecos ni duplicados concurrentes."""
 
@@ -130,6 +112,11 @@ class Alerta(Base):
 
     __tablename__ = "alertas"
     __table_args__ = (
+        # RGN-13 (CRF-MER-01): una alerta pertenece a una existencia por sede. La llave compuesta reemplaza a las
+        # llaves simples hacia sedes y productos: no puede haber una alerta de un producto que la sede no maneja.
+        ForeignKeyConstraint(
+            ["sede_id", "producto_id"], ["inventario_sede.sede_id", "inventario_sede.producto_id"]
+        ),
         Index("ix_alertas_empresa_estado", "empresa_id", "estado"),
         # Solo puede haber UNA alerta activa por sede-producto-tipo (evita duplicados concurrentes).
         Index(
@@ -145,8 +132,8 @@ class Alerta(Base):
 
     id: Mapped[int] = mapped_column(BigIntPK, primary_key=True, autoincrement=True)
     empresa_id: Mapped[int] = mapped_column(ForeignKey("empresas.id"), nullable=False)
-    sede_id: Mapped[int] = mapped_column(ForeignKey("sedes.id"), nullable=False)
-    producto_id: Mapped[int] = mapped_column(ForeignKey("productos.id"), nullable=False)
+    sede_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    producto_id: Mapped[int] = mapped_column(Integer, nullable=False)
     tipo: Mapped[str] = mapped_column(String(30), nullable=False)
     prioridad: Mapped[str] = mapped_column(String(10), nullable=False)
     estado: Mapped[str] = mapped_column(String(10), nullable=False, default="activa")
@@ -157,6 +144,5 @@ class Alerta(Base):
 
 
 proteger_solo_insercion(Movimiento.__table__)
-proteger_solo_insercion(EntradaObservacion.__table__)
 
-__all__ = ["InventarioSede", "Movimiento", "EntradaInventario", "EntradaObservacion", "Secuencia", "Alerta"]
+__all__ = ["InventarioSede", "Movimiento", "EntradaInventario", "Secuencia", "Alerta"]

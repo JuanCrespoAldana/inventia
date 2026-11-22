@@ -30,6 +30,8 @@ for x, t in [(3.375, "Si olvidó su contraseña"), (5.55, "Primer uso (una sola 
 
 # Panel y encabezado
 panel = nodo(5.9, 6.55, 2.2, 0.8, "Panel de control\n/", "azul", negrita=True)
+asistente = nodo(8.5, 6.55, 1.0, 0.8, "Asistente\n/asistente", "azul", tam=7.6)
+linea([(8.1, 6.95), (8.5, 6.95)], color=AZUL)
 linea([(1.275, 8.5), (1.275, 6.95), (5.9, 6.95)], color=AZUL)
 ax.text(3.0, 7.08, "sesión iniciada", fontsize=7.4, color=AZUL, ha="center")
 ax.add_patch(FancyBboxPatch((9.6, 6.9), 6.2, 2.85, boxstyle="round,pad=0,rounding_size=0.15", fc="none", ec=GRIS_MED, lw=1, ls=(0, (4, 3))))
@@ -45,8 +47,7 @@ GRUPOS = [
     ("INVENTARIO", "azul", [("Existencias", "/inventario"), ("Consolidado", "/inventario/consolidado"), ("Movimientos", "/movimientos"), ("Productos", "/productos"), ("Categorías", "/categorias")]),
     ("OPERACIÓN", "verde", [("Ventas", "/ventas  ▸  /ventas/nueva · /ventas/:id"), ("Traslados", "/traslados  ▸  /traslados/nuevo · /traslados/:id"), ("Alertas", "/alertas")]),
     ("INTELIGENCIA", "naranja", [("Predicción de demanda", "/predicciones"), ("Recomendaciones", "/recomendaciones"), ("Reportes", "/reportes")]),
-    ("SIG", "amarillo", [("PQRS y sugerencias", "/sig/pqrs"), ("Seguridad y Salud en el Trabajo", "/sig/sst"), ("Calidad", "/sig/calidad"), ("Gestión ambiental", "/sig/ambiental")]),
-    ("ADMINISTRACIÓN", "gris", [("Empresa", "/empresa"), ("Sedes", "/sedes"), ("Usuarios", "/usuarios"), ("Roles y permisos", "/roles"), ("Auditoría", "/auditoria"), ("Agentes de IA", "/integraciones")]),
+    ("ADMINISTRACIÓN", "gris", [("Empresa", "/empresa"), ("Sedes", "/sedes"), ("Usuarios", "/usuarios"), ("Roles y permisos", "/roles"), ("Auditoría", "/auditoria")])
 ]
 W, GAP, TOP = 2.95, 0.12, 5.6
 centros = []

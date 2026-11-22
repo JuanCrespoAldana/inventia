@@ -10,7 +10,7 @@
 #
 # ADVERTENCIA: envía peticiones POST/PUT/PATCH/DELETE con datos aleatorios. Usarlo SOLO contra una copia desechable.
 # Se excluyen las rutas de autenticación, la configuración inicial, la ejecución de predicciones (trabajo pesado), las
-# rutas de agentes (usan otra llave), el restablecimiento de contraseñas y la edición o inhabilitación de usuarios: con
+# el restablecimiento de contraseñas y la edición o inhabilitación de usuarios: con
 # datos aleatorios el fuzzer termina cambiando la contraseña o el rol del propio administrador (el sistema reacciona bien
 # e invalida su sesión) y el resto de la corrida quedaría sin permisos, con lo que ya no probaría nada.
 # Requiere: pip install schemathesis
@@ -25,7 +25,7 @@ esac
 SALIDA="${SALIDA:-resultados_fuzz}"
 # Las exclusiones se combinan en UNA sola expresión sobre «MÉTODO /ruta» (Schemathesis exige que se cumplan todos los
 # filtros de exclusión a la vez, así que varios filtros no sumarían exclusiones).
-EXCLUIR='^(\w+ /api/(auth|setup|agentes)|\w+ /api/predicciones/ejecutar|\w+ /api/usuarios/\{[^}]+\}/restablecer-password|(PUT|PATCH|DELETE) /api/usuarios/)'
+EXCLUIR='^(\w+ /api/(auth|setup)|\w+ /api/predicciones/ejecutar|\w+ /api/usuarios/\{[^}]+\}/restablecer-password|(PUT|PATCH|DELETE) /api/usuarios/)'
 mkdir -p "$SALIDA"
 st run "$URL/api/openapi.json" \
   --header "Authorization: Bearer $(cat "$TOKEN_FILE")" \

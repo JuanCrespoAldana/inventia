@@ -3,7 +3,11 @@
 Registro de las decisiones técnicas y funcionales que no estaban resueltas por el documento de grado, o en las que
 la implementación se aparta de él por una razón concreta. Cada una indica el motivo, la alternativa descartada y
 dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D-28` coinciden con los citados en
-`backend/app/security/permisos.py`.
+`backend/app/security/permisos.py` hasta la versión 1.1.
+
+> **Versión 1.2.0.** Las decisiones **D-17** y **D-28 a D-33** corresponden al Sistema Integrado de Gestión y a los agentes
+> de IA, que se retiraron del alcance (D-42). Se conservan como historia, marcadas «Reemplazada en 1.2.0»: el código y las
+> tablas que describen ya no existen. Las decisiones **D-41** y **D-42** son nuevas.
 
 ## Índice
 
@@ -25,7 +29,7 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D
 | [D-14](#d-14) | Predicción: línea base, margen mínimo y omisión honesta |
 | [D-15](#d-15) | La predicción es de toda la empresa, no de una sede |
 | [D-16](#d-16) | Predicción en segundo plano dentro de la API |
-| [D-17](#d-17) | Agentes de IA con llaves propias de solo lectura |
+| [D-17](#d-17) | Agentes de IA con llaves propias de solo lectura *(reemplazada en 1.2.0)* |
 | [D-18](#d-18) | Tiempo en UTC; el «día» es el de la empresa |
 | [D-19](#d-19) | Estados como texto, sin tipos `ENUM` de PostgreSQL |
 | [D-20](#d-20) | Migraciones al arrancar el contenedor |
@@ -36,12 +40,12 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D
 | [D-25](#d-25) | Reportes: CSV con coma y marca de orden de bytes |
 | [D-26](#d-26) | Directorio de sedes para filtros |
 | [D-27](#d-27) | Un solo color de acento y escala de radios fija |
-| [D-28](#d-28) | Sistema Integrado de Gestión (SIG): alcance, roles y permisos |
-| [D-29](#d-29) | PQRS: historial inmutable y sin avisos por correo |
-| [D-30](#d-30) | Entradas de inventario con observaciones; las no conformidades no mueven existencias |
-| [D-31](#d-31) | Evidencias adjuntas guardadas en la base de datos, con límites estrictos |
-| [D-32](#d-32) | Pausas activas: el servidor decide, el navegador solo muestra |
-| [D-33](#d-33) | Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados |
+| [D-28](#d-28) | Sistema Integrado de Gestión (SIG): alcance, roles y permisos *(reemplazada en 1.2.0)* |
+| [D-29](#d-29) | PQRS: historial inmutable y sin avisos por correo *(reemplazada en 1.2.0)* |
+| [D-30](#d-30) | Entradas de inventario con observaciones; las no conformidades no mueven existencias *(reemplazada en 1.2.0)* |
+| [D-31](#d-31) | Evidencias adjuntas guardadas en la base de datos, con límites estrictos *(reemplazada en 1.2.0)* |
+| [D-32](#d-32) | Pausas activas: el servidor decide, el navegador solo muestra *(reemplazada en 1.2.0)* |
+| [D-33](#d-33) | Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados *(reemplazada en 1.2.0)* |
 | [D-34](#d-34) | Métricas de error: el WAPE decide; RMSE y MAPE acompañan |
 | [D-35](#d-35) | Reportes en PDF con ReportLab, para leer e imprimir |
 | [D-36](#d-36) | Intervalo de predicción calibrado con datos reales de la demostración |
@@ -49,6 +53,8 @@ dónde se refleja en el código. Los identificadores `D-03`, `D-04`, `D-05` y `D
 | [D-38](#d-38) | Las recomendaciones se validan por simulación, no solo con pruebas unitarias |
 | [D-39](#d-39) | Estructura por capas con los nombres de carpeta de Spring y sin capa `repository` |
 | [D-40](#d-40) | El asistente de consultas funciona por reglas, sin modelo de lenguaje, y solo lee |
+| [D-41](#d-41) | La base de datos impone tres reglas del modelo entidad–relación (CRF-MER-01) |
+| [D-42](#d-42) | Retiro del Sistema Integrado de Gestión y de los agentes de IA (CRF-ALC-01 y CRF-ALC-02) |
 
 ---
 
@@ -112,7 +118,7 @@ Todo lo que la tabla 19 concede está concedido. Lo siguiente es lo que la imple
 
 | Rol | Permisos añadidos | Motivo |
 |---|---|---|
-| Administrador | Predicción y recomendaciones (D-03); reportes de traslados y alertas; llaves de agentes | Que nunca quede un proceso sin responsable |
+| Administrador | Predicción y recomendaciones (D-03); reportes de traslados y alertas | Que nunca quede un proceso sin responsable |
 | Encargado de sede | Anular ventas, configurar niveles, recalcular alertas (D-05); reportes de traslados, alertas y recomendaciones | Operación diaria de la sede |
 | Usuario de inventario | Leer sedes (D-04); reporte de alertas | Mostrar nombres y filtros; ver qué reponer |
 | Gerente | Leer categorías (D-04); reportes de traslados, alertas y recomendaciones | Seguimiento completo sin poder operar |
@@ -229,6 +235,8 @@ esta se cierra como fallida al arrancar.
 <a id="d-17"></a>
 ## D-17 · Agentes de IA con llaves propias de solo lectura
 
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): los agentes de IA y sus llaves se retiraron del alcance. Se conserva como historia del proyecto.
+
 **Contexto.** RNF-049 pide que los agentes consulten información autorizada.
 
 **Decisión.** Los agentes usan **llaves de API** propias (`X-API-Key`), no cuentas de usuario: de solo lectura,
@@ -308,6 +316,8 @@ La coherencia visual (RNF-044) se obtiene reutilizando los mismos componentes en
 <a id="d-28"></a>
 ## D-28 · Sistema Integrado de Gestión (SIG): alcance, roles y permisos
 
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): el SIG se retiró del alcance y sus 9 permisos ya no existen. Se conserva como historia del proyecto.
+
 **Contexto.** La versión 1.1 añade un módulo SIG con cuatro apartados (PQRS y sugerencias, Seguridad y Salud en el
 Trabajo, Calidad y Gestión ambiental). La matriz de casos de uso del documento de grado no lo contemplaba, así que
 sus permisos no tienen una fila de origen.
@@ -340,6 +350,8 @@ nuevos en una instalación que ya existía).
 <a id="d-29"></a>
 ## D-29 · PQRS: historial inmutable y sin avisos por correo
 
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): el módulo de PQRS se retiró con el SIG. Se conserva como historia del proyecto.
+
 **Contexto.** El requisito pide notificar a la administración «solo si ya existe un sistema real de notificaciones».
 En el proyecto solo existe el correo de recuperación de contraseña; no hay cola, bandeja ni notificaciones internas.
 
@@ -356,6 +368,8 @@ que el resto del sistema no necesita. Queda como mejora (ver `LIMITACIONES.md`).
 
 <a id="d-30"></a>
 ## D-30 · Entradas de inventario con observaciones; las no conformidades no mueven existencias
+
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): las no conformidades, garantías y observaciones por entrada se retiraron con el SIG; la entrada de inventario sigue existiendo como cabecera de los movimientos, en solo lectura. Se conserva como historia del proyecto.
 
 **Contexto.** Antes, una entrada de mercancía era solo un movimiento por producto, sin un registro que la agrupara ni
 un lugar donde anotar observaciones. El SIG necesita enlazar una no conformidad o una garantía con la recepción de origen
@@ -378,6 +392,8 @@ sin que la persona vuelva a escribir los datos.
 <a id="d-31"></a>
 ## D-31 · Evidencias adjuntas guardadas en la base de datos, con límites estrictos
 
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): las evidencias adjuntas se retiraron con el SIG. Se conserva como historia del proyecto.
+
 **Decisión.** Las evidencias de PQRS, no conformidades y garantías se guardan en `sig_adjuntos` (columna binaria), no en
 el disco ni en un servicio externo. Motivos: la aplicación se despliega en contenedores sin volumen compartido, y así
 las copias de seguridad de la base de datos incluyen las evidencias y el aislamiento por empresa se resuelve con las
@@ -396,6 +412,8 @@ credenciales, costos y una dependencia nueva para un volumen pequeño de archivo
 
 <a id="d-32"></a>
 ## D-32 · Pausas activas: el servidor decide, el navegador solo muestra
+
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): las pausas activas se retiraron con el SIG. Se conserva como historia del proyecto.
 
 **Contexto.** Las pausas deben aparecer solas a las personas que no administran, con un intervalo configurable, sin
 repetirse ni solaparse y sin interrumpir una operación crítica.
@@ -429,6 +447,8 @@ y no habría registro confiable.
 
 <a id="d-33"></a>
 ## D-33 · Gestión ambiental: lo real se cuenta, lo estimado exige parámetros documentados
+
+> **Reemplazada en la versión 1.2.0** (ver [D-42](#d-42)): la gestión ambiental se retiró con el SIG. Se conserva como historia del proyecto.
 
 **Contexto.** El requisito pide mostrar CO₂ evitado sin inventar cifras, distinguir lo real de lo estimado, no contar
 ventas anuladas ni contar dos veces, y contar solo las categorías configuradas como vehículos.
@@ -605,9 +625,9 @@ repetidas lo justifica.
 ## D-40 · El asistente de consultas funciona por reglas, sin modelo de lenguaje, y solo lee
 
 **Decisión.** La pantalla **Asistente** responde preguntas en español sobre inventario, ventas, movimientos, traslados, alertas,
-cobertura y rotación, predicción, recomendaciones, SIG y administración con un motor **por reglas** dentro del backend
+cobertura y rotación, predicción, recomendaciones y administración con un motor **por reglas** dentro del backend
 (`app/service/asistente/`), sin llamar a ningún modelo de lenguaje externo. El motor normaliza el texto (sin tildes ni
-mayúsculas, plurales, errores de escritura frecuentes), puntúa unas 100 intenciones con expresiones regulares, resuelve sedes,
+mayúsculas, plurales, errores de escritura frecuentes), puntúa unas 90 intenciones con expresiones regulares, resuelve sedes,
 categorías, productos y periodos contra el directorio de la empresa y ejecuta consultas SQL de solo lectura parametrizadas.
 Cada respuesta es una lista de bloques (métricas, tabla, barras, lista) más texto, enlaces y sugerencias. Recuerda solo el turno
 anterior (sede, producto, categoría y periodo) para preguntas como «¿y en la Sede Norte?». Además de consultar datos, tiene
@@ -636,8 +656,67 @@ revalida contra el directorio de la empresa y contra las sedes del rol en cada p
 acceso). El texto se limita en longitud y la interfaz lo muestra como texto, nunca como HTML.
 
 **Descartado.** Conectar un modelo de lenguaje por API (costo, datos hacia terceros, respuestas no verificables y dependencia de
-un proveedor). Se mantiene el conector MCP para Claude Desktop (`agents/`) para quien ya tenga ese servicio: usa las mismas rutas
-de solo lectura de los agentes y no reemplaza al asistente interno.
+un proveedor). El conector MCP para Claude Desktop (`agents/`) que existía hasta la versión 1.1 se retiró con los agentes (D-42).
 
 **Código.** `backend/app/service/asistente/`, `backend/app/controller/asistente_controller.py`, `frontend/src/features/asistente/`.
 **Pruebas.** `backend/tests/test_asistente.py` y `backend/tests/asistente_corpus.py`.
+
+---
+
+<a id="d-41"></a>
+## D-41 · La base de datos impone tres reglas del modelo entidad–relación (CRF-MER-01)
+
+**Contexto.** La revisión del modelo entidad–relación (observaciones 1, 4 y 5 de la asesora, 9 de noviembre de 2026) encontró
+tres reglas de negocio que el modelo exigía y que solo el código de la aplicación cuidaba; con SQL directo o un error de
+programación se podían violar.
+
+**Decisión.** Pasan a ser restricciones de PostgreSQL (migración `0005_integridad_mer`):
+
+| Regla | Restricción |
+|---|---|
+| RGN-13: una alerta pertenece a una existencia por sede | Llave foránea **compuesta** `alertas (sede_id, producto_id)` → `inventario_sede` (`fk_alertas_sede_id_inventario_sede`), que reemplaza a las llaves simples hacia `sedes` y `productos` |
+| RGN-23: una recomendación da lugar a lo sumo a un traslado | `UNIQUE (traslados.recomendacion_id)` (`uq_traslados_recomendacion_id`) |
+| RGN-21: toda recomendación nace de una ejecución de predicción | `recomendaciones.ejecucion_id` **NOT NULL** |
+
+Al aprobar una recomendación de traslado, el servicio la **reclama primero** con una actualización condicional (pendiente →
+ejecutada) y solo después crea el traslado: de varias aprobaciones simultáneas avanza una y las demás reciben un 409
+(`estado_cambiado`), nunca un error de integridad.
+
+**Por qué.** Una regla que solo vive en el código se puede romper sin que nadie se entere; en la base de datos, el motor la
+hace cumplir siempre. El costo es una migración que toca datos: por eso `0005` **se detiene con un mensaje claro** si hay
+recomendaciones con más de un traslado o sin ejecución (no las corrige por su cuenta) y elimina solo las alertas sin fila de
+existencia, que son datos derivados que el servicio vuelve a calcular. `downgrade` restituye las llaves anteriores.
+
+**Descartado.** Dejar las reglas solo en el servicio con una prueba (no protege contra SQL directo) y una llave compuesta
+adicional hacia `sedes` y `productos` (redundante: `inventario_sede` ya las referencia).
+
+**Código.** `model/inventario.py`, `model/operaciones.py`, `model/prediccion.py`, `service/recomendaciones_service.py`,
+`alembic/versions/0005_integridad_mer.py`. **Especificación.** `docs/modelo/mer_spec.py`.
+**Pruebas.** `test_integridad_mer.py` (4) y `test_mer_consistente.py` (6): el MER publicado coincide con las llaves, la
+unicidad y la obligatoriedad de los modelos.
+
+---
+
+<a id="d-42"></a>
+## D-42 · Retiro del Sistema Integrado de Gestión y de los agentes de IA (CRF-ALC-01 y CRF-ALC-02)
+
+**Contexto.** En la revisión del 9 de noviembre de 2026 la asesora señaló que el SIG (PQRS, seguridad y salud en el trabajo,
+calidad y gestión ambiental, con las observaciones por entrada) y la interfaz de lectura para agentes externos se agregaron
+después de la primera entrega y no responden a ningún objetivo específico del trabajo.
+
+**Decisión.** Se retiran del código, la base de datos, la API, la interfaz, las pruebas y la documentación (versión 1.2.0):
+
+- API: 47 operaciones menos (38 del SIG y 9 de agentes y de gestión de sus llaves).
+- Base de datos: migración `0006_retiro_sig_agentes`; 15 tablas y 10 permisos menos (de 37 a 22 tablas; de 61 a 51 permisos).
+  Se conservan `entradas_inventario` y `movimientos.entrada_id`, que son parte del núcleo (la entrada se consulta en solo lectura).
+- Interfaz: el grupo **SIG** del menú, sus pantallas, la pantalla de agentes y la carpeta `agents/`.
+- El registro y la anulación de ventas ya no recalculan indicadores ambientales; el asistente ya no responde sobre el SIG.
+
+**Por qué.** Mantener alcance fuera de los objetivos aumenta lo que hay que probar, documentar y defender sin aportar a lo que
+el trabajo demuestra. La historia no se borra: queda en `CHANGELOG.md`, en esta página (D-17 y D-28 a D-33) y en la migración.
+
+**Consecuencias.** Quien actualice desde la 1.1 **pierde los registros** de las 15 tablas retiradas: debe hacer un respaldo
+antes (ver [DESPLIEGUE.md](DESPLIEGUE.md)). `downgrade` recrea las estructuras vacías, pero no devuelve los datos.
+
+**Código.** `alembic/versions/0006_retiro_sig_agentes.py`; ver `CHANGELOG.md` para la lista completa de lo retirado.
+**Pruebas.** `test_migraciones.py` (la migración sube, baja y vuelve a subir; conserva las entradas y retira solo lo previsto).

@@ -29,7 +29,7 @@ Otros archivos del backend:
 | `cli.py` | Comandos de terminal: inicializar, predecir, cargar datos de demostración, sincronizar permisos |
 | `demo.py`, `demo_sig.py` | Datos de demostración (se generan usando los mismos servicios que usa la API) |
 | `../alembic/` | Migraciones de la base de datos |
-| `../tests/` | Pruebas automáticas (214) |
+| `../tests/` | Pruebas automáticas (251) |
 | `../scripts/` | Scripts de apoyo (por ejemplo, exportar el contrato OpenAPI) |
 
 ## 2. Recorrido de una petición: `GET /api/ventas?estado=registrada`
@@ -52,18 +52,18 @@ transacción, descuenta las existencias, registra la auditoría y hace un único
 
 ## 3. Dónde agregar algo nuevo
 
-Para un módulo nuevo llamado `garantias`, en este orden:
+Para un módulo nuevo llamado `proveedores`, en este orden:
 
-1. **`model/garantias.py`**: la entidad. Luego se genera la migración (`python -m alembic revision --autogenerate`) y se
+1. **`model/proveedores.py`**: la entidad. Luego se genera la migración (`python -m alembic revision --autogenerate`) y se
    importa el módulo en `model/__init__.py`.
-2. **`dto/garantias_dto.py`**: los esquemas de entrada y de salida.
-3. **`specification/garantias_spec.py`**: solo si el listado tiene filtros dinámicos.
-4. **`mapper/garantias_mapper.py`**: solo si la conversión entidad → DTO se repite y no consulta la base.
-5. **`service/garantias_service.py`**: la lógica. Recibe `(db, ctx, ...)`, filtra por `ctx.empresa_id`, registra auditoría y hace
+2. **`dto/proveedores_dto.py`**: los esquemas de entrada y de salida.
+3. **`specification/proveedores_spec.py`**: solo si el listado tiene filtros dinámicos.
+4. **`mapper/proveedores_mapper.py`**: solo si la conversión entidad → DTO se repite y no consulta la base.
+5. **`service/proveedores_service.py`**: la lógica. Recibe `(db, ctx, ...)`, filtra por `ctx.empresa_id`, registra auditoría y hace
    un solo `commit`.
-6. **`controller/garantias_controller.py`**: las rutas; cada una con `requiere("permiso")`. Se registra en la lista `ROUTERS` de `main.py`.
+6. **`controller/proveedores_controller.py`**: las rutas; cada una con `requiere("permiso")`. Se registra en la lista `ROUTERS` de `main.py`.
 7. **`security/permisos.py`**: los permisos nuevos (y a qué roles de fábrica se asignan).
-8. **`tests/test_garantias.py`**, y `npm run tipos` (en `frontend/`) para regenerar los tipos del frontend.
+8. **`tests/test_proveedores.py`**, y `npm run tipos` (en `frontend/`) para regenerar los tipos del frontend.
 
 ## 4. Diferencias con Spring que conviene tener presentes
 
