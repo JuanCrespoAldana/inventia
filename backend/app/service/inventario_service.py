@@ -15,6 +15,7 @@ from datetime import datetime
 
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.dto.catalogo_dto import ProductoResumen
 from app.dto.comunes_dto import ParametrosPagina
@@ -373,7 +374,24 @@ async def consolidado(
 # --------------------------------------------------------------------------- movimientos
 
 
+def _salida_movimiento(
+    m: Movimiento, producto: Producto, sede: Sede, contraparte: Sede | None,
+    usuario_nombre: str | None, venta_numero: str | None, traslado_numero: str | None, entrada_numero: str | None,
+) -> MovimientoSalida:
+    return MovimientoSalida(
+        id=m.id, fecha=m.fecha, tipo=m.tipo, motivo=m.motivo, delta=m.delta, saldo_anterior=m.saldo_anterior,
+        saldo_posterior=m.saldo_posterior, observacion=m.observacion,
+        producto=ProductoResumen.model_validate(producto),
+        sede=SedeResumen.model_validate(sede),
+        sede_contraparte=SedeResumen.model_validate(contraparte) if contraparte else None,
+        usuario_id=m.usuario_id, usuario_nombre=usuario_nombre,
+        venta_id=m.venta_id, venta_numero=venta_numero, traslado_id=m.traslado_id,
+        traslado_numero=traslado_numero, entrada_id=m.entrada_id, entrada_numero=entrada_numero,
+    )
+
+
 async def movimientos_a_salidas(db: AsyncSession, movimientos: list[Movimiento]) -> list[MovimientoSalida]:
+    """Completa movimientos ya cargados con producto, sedes, usuario y documentos (una consulta por tipo)."""
     if not movimientos:
         return []
     productos = {p.id: p for p in (await db.scalars(select(Producto).where(Producto.id.in_({m.producto_id for m in movimientos})))).all()}
@@ -387,16 +405,9 @@ async def movimientos_a_salidas(db: AsyncSession, movimientos: list[Movimiento])
     entrada_ids = {m.entrada_id for m in movimientos if m.entrada_id}
     entradas = {i: n for i, n in (await db.execute(select(EntradaInventario.id, EntradaInventario.numero).where(EntradaInventario.id.in_(entrada_ids)))).all()} if entrada_ids else {}
     return [
-        MovimientoSalida(
-            id=m.id, fecha=m.fecha, tipo=m.tipo, motivo=m.motivo, delta=m.delta, saldo_anterior=m.saldo_anterior,
-            saldo_posterior=m.saldo_posterior, observacion=m.observacion,
-            producto=ProductoResumen.model_validate(productos[m.producto_id]),
-            sede=SedeResumen.model_validate(sedes[m.sede_id]),
-            sede_contraparte=SedeResumen.model_validate(sedes[m.sede_contraparte_id]) if m.sede_contraparte_id else None,
-            usuario_id=m.usuario_id, usuario_nombre=usuarios.get(m.usuario_id),
-            venta_id=m.venta_id, venta_numero=ventas.get(m.venta_id), traslado_id=m.traslado_id,
-            traslado_numero=traslados.get(m.traslado_id),
-            entrada_id=m.entrada_id, entrada_numero=entradas.get(m.entrada_id),
+        _salida_movimiento(
+            m, productos[m.producto_id], sedes[m.sede_id], sedes[m.sede_contraparte_id] if m.sede_contraparte_id else None,
+            usuarios.get(m.usuario_id), ventas.get(m.venta_id), traslados.get(m.traslado_id), entradas.get(m.entrada_id),
         )
         for m in movimientos
     ]
@@ -406,14 +417,27 @@ async def listar_movimientos(
     db: AsyncSession,
     ctx: Contexto,
     pag: ParametrosPagina,
+    *,
+    contar: bool = True,
     **filtros,
 ) -> tuple[list[MovimientoSalida], int]:
+    """Página de movimientos con todo lo que se muestra, en una sola consulta (más una de conteo si
+    ``contar``): producto, sedes, usuario y documentos se traen por unión en vez de consultas aparte."""
     condiciones = condiciones_movimientos(ctx, **filtros)
-    total = await db.scalar(select(func.count()).select_from(Movimiento).where(*condiciones)) or 0
+    total = (await db.scalar(select(func.count()).select_from(Movimiento).where(*condiciones)) or 0) if contar else 0
+    contraparte = aliased(Sede)
     filas = (
-        await db.scalars(
-            select(Movimiento).where(*condiciones).order_by(Movimiento.fecha.desc(), Movimiento.id.desc())
+        await db.execute(
+            select(Movimiento, Producto, Sede, contraparte, Usuario.nombre, Venta.numero, Traslado.numero, EntradaInventario.numero)
+            .join(Producto, Producto.id == Movimiento.producto_id)
+            .join(Sede, Sede.id == Movimiento.sede_id)
+            .outerjoin(contraparte, contraparte.id == Movimiento.sede_contraparte_id)
+            .outerjoin(Usuario, Usuario.id == Movimiento.usuario_id)
+            .outerjoin(Venta, Venta.id == Movimiento.venta_id)
+            .outerjoin(Traslado, Traslado.id == Movimiento.traslado_id)
+            .outerjoin(EntradaInventario, EntradaInventario.id == Movimiento.entrada_id)
+            .where(*condiciones).order_by(Movimiento.fecha.desc(), Movimiento.id.desc())
             .offset(pag.offset).limit(pag.tamano)
         )
     ).all()
-    return await movimientos_a_salidas(db, list(filas)), total
+    return [_salida_movimiento(*fila) for fila in filas], total

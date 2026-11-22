@@ -1,9 +1,10 @@
 """Motor de base de datos asíncrono y sesión por petición."""
 
+import time
 from collections.abc import AsyncIterator
 from ipaddress import ip_address
 
-from sqlalchemy import make_url
+from sqlalchemy import event, exc, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from app.config.settings import settings
@@ -28,23 +29,47 @@ def _requiere_ssl(url_texto: str) -> bool:
         return True
 
 
+# Una conexión que se usó hace menos de estos segundos se entrega sin comprobarla; una que estuvo
+# inactiva más tiempo se comprueba antes (Neon cierra las conexiones inactivas). Con ``pool_pre_ping``
+# se comprobaba en CADA petición, lo que añade un viaje completo a la base remota por petición.
+SEGUNDOS_INACTIVA_PARA_COMPROBAR = 20
+
+
+def _comprobar_conexiones_inactivas(motor: AsyncEngine) -> None:
+    sync_engine = motor.sync_engine
+
+    @event.listens_for(sync_engine, "checkin")
+    def _al_devolver(dbapi_connection, registro) -> None:
+        registro.info["ultimo_uso"] = time.monotonic()
+
+    @event.listens_for(sync_engine, "checkout")
+    def _al_entregar(dbapi_connection, registro, _proxy) -> None:
+        ultimo_uso = registro.info.get("ultimo_uso")
+        if ultimo_uso is not None and time.monotonic() - ultimo_uso < SEGUNDOS_INACTIVA_PARA_COMPROBAR:
+            return
+        try:
+            sync_engine.dialect.do_ping(dbapi_connection)
+        except Exception as error:  # noqa: BLE001 - cualquier fallo significa conexión inservible
+            raise exc.DisconnectionError("Conexión inactiva descartada") from error
+
+
 def crear_engine(url: str | None = None, **extra) -> AsyncEngine:
     """Crea el motor. ``extra`` permite, p. ej., ``poolclass=NullPool`` en las migraciones."""
     url = url or settings.database_url
     parsed = make_url(url)
     kwargs: dict = {"echo": False}
+    con_pool = False
     if parsed.drivername.startswith("postgresql+asyncpg"):
         if _requiere_ssl(url):
             kwargs["connect_args"] = {"ssl": "require"}
         if "poolclass" not in extra:
-            kwargs.update(
-                pool_size=settings.db_pool_size,
-                max_overflow=settings.db_max_overflow,
-                pool_pre_ping=True,  # Neon cierra conexiones inactivas
-                pool_recycle=1800,
-            )
+            con_pool = True
+            kwargs.update(pool_size=settings.db_pool_size, max_overflow=settings.db_max_overflow, pool_recycle=1800)
     kwargs.update(extra)
-    return create_async_engine(url, **kwargs)
+    motor = create_async_engine(url, **kwargs)
+    if con_pool:
+        _comprobar_conexiones_inactivas(motor)
+    return motor
 
 
 engine: AsyncEngine = crear_engine()

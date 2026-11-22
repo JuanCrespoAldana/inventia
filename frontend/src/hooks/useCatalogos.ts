@@ -1,6 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { apiRoles, apiSedes } from "@/api/administracion";
-import { apiCategorias, apiProductos } from "@/api/catalogo";
+import { apiCategorias } from "@/api/catalogo";
 import { useAuth } from "@/auth/AuthContext";
 
 const CINCO_MIN = 5 * 60_000;
@@ -40,16 +40,4 @@ export function useCategorias(soloActivas = true) {
 export function useRoles() {
   const { tieneAlguno } = useAuth();
   return useQuery({ queryKey: ["catalogo", "roles"], queryFn: apiRoles.listar, enabled: tieneAlguno("roles.ver", "usuarios.ver"), staleTime: CINCO_MIN });
-}
-
-/** Búsqueda de productos activos para el selector con autocompletado. */
-export function useBuscarProductos(q: string) {
-  const { tiene } = useAuth();
-  return useQuery({
-    queryKey: ["catalogo", "productos", q],
-    queryFn: async () => (await apiProductos.listar({ q, activo: true, tamano: 12 })).items,
-    enabled: tiene("productos.ver"),
-    placeholderData: keepPreviousData,
-    staleTime: 30_000,
-  });
 }

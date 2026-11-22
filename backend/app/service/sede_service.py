@@ -131,25 +131,18 @@ async def estadisticas(db: AsyncSession, empresa_id: int, sede_ids: list[int]) -
     """Usuarios y unidades en existencia por sede, para mostrar en el listado."""
     if not sede_ids:
         return {}
-    usuarios = dict(
-        (
-            await db.execute(
-                select(Usuario.sede_id, func.count()).where(
-                    Usuario.empresa_id == empresa_id, Usuario.sede_id.in_(sede_ids), Usuario.activo.is_(True)
-                ).group_by(Usuario.sede_id)
-            )
-        ).all()
+    usuarios = (
+        select(func.count()).select_from(Usuario)
+        .where(Usuario.empresa_id == empresa_id, Usuario.sede_id == Sede.id, Usuario.activo.is_(True))
+        .correlate(Sede).scalar_subquery()
     )
-    existencias = dict(
-        (
-            await db.execute(
-                select(InventarioSede.sede_id, func.coalesce(func.sum(InventarioSede.cantidad), 0)).where(
-                    InventarioSede.empresa_id == empresa_id, InventarioSede.sede_id.in_(sede_ids)
-                ).group_by(InventarioSede.sede_id)
-            )
-        ).all()
+    unidades = (
+        select(func.coalesce(func.sum(InventarioSede.cantidad), 0))
+        .where(InventarioSede.empresa_id == empresa_id, InventarioSede.sede_id == Sede.id)
+        .correlate(Sede).scalar_subquery()
     )
-    return {s: {"usuarios": int(usuarios.get(s, 0)), "unidades": int(existencias.get(s, 0))} for s in sede_ids}
+    filas = {i: (u, c) for i, u, c in (await db.execute(select(Sede.id, usuarios, unidades).where(Sede.id.in_(sede_ids)))).all()}
+    return {s: {"usuarios": int(filas.get(s, (0, 0))[0]), "unidades": int(filas.get(s, (0, 0))[1])} for s in sede_ids}
 
 
 __all__ = ["crear", "listar", "obtener", "actualizar", "cambiar_estado", "estadisticas", "NoEncontrado"]

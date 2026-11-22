@@ -5,7 +5,6 @@ import {
   Bot,
   Boxes,
   Building2,
-  ClipboardList,
   FileBarChart,
   Layers,
   LayoutDashboard,
@@ -92,5 +91,3 @@ export const NAVEGACION: GrupoNavegacion[] = [
 export function gruposVisibles(sesion: Sesion): GrupoNavegacion[] {
   return NAVEGACION.map((g) => ({ ...g, items: g.items.filter((i) => i.visible(sesion)) })).filter((g) => g.items.length > 0);
 }
-
-export const ICONO_PERFIL = ClipboardList;

@@ -56,7 +56,7 @@ def directorio_de_la_demostracion():
 
 
 async def test_el_corpus_de_preguntas_se_clasifica_bien(cliente, db):
-    admin = await crear_empresa(db, cliente, correo="duena@empresa.example")
+    await crear_empresa(db, cliente, correo="duena@empresa.example")
     usuario = await db.scalar(select(Usuario).where(Usuario.email == "duena@empresa.example"))
     ctx = contexto_de_usuario(usuario)
     directorio = directorio_de_la_demostracion()

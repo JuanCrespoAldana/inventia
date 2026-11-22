@@ -360,7 +360,7 @@ async def salidas(db: AsyncSession, ctx: Contexto, recomendaciones: list[Recomen
     ids_sede = {r.sede_id for r in recomendaciones} | {r.sede_origen_id for r in recomendaciones if r.sede_origen_id}
     sedes = {s.id: s for s in (await db.scalars(select(Sede).where(Sede.id.in_(ids_sede)))).all()}
     revisores = {r.revisada_por for r in recomendaciones if r.revisada_por}
-    nombres = {u.id: u.nombre for u in (await db.scalars(select(Usuario).where(Usuario.id.in_(revisores)))).all()} if revisores else {}
+    nombres = dict((await db.execute(select(Usuario.id, Usuario.nombre).where(Usuario.id.in_(revisores)))).all()) if revisores else {}
     traslados = {
         t.recomendacion_id: t
         for t in (await db.scalars(select(Traslado).where(Traslado.recomendacion_id.in_([r.id for r in recomendaciones])))).all()

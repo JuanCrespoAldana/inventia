@@ -72,23 +72,3 @@ export function hace(valor: string | null | undefined, ahora: number = Date.now(
   if (dias < 30) return `hace ${dias} ${dias === 1 ? "día" : "días"}`;
   return fecha(valor);
 }
-
-/** Fecha de hoy en formato ISO local (yyyy-mm-dd) para valores por defecto de filtros. */
-export function hoyISO(desplazamientoDias = 0): string {
-  const d = new Date();
-  d.setDate(d.getDate() + desplazamientoDias);
-  const dos = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${dos(d.getMonth() + 1)}-${dos(d.getDate())}`;
-}
-
-export function pluralizar(n: number, singular: string, plural: string): string {
-  return `${entero(n)} ${n === 1 ? singular : plural}`;
-}
-
-/** Tamaño de archivo legible: 1,2 MB, 340 KB. */
-export function tamanoArchivo(bytes: number | null | undefined): string {
-  if (bytes === null || bytes === undefined || !Number.isFinite(bytes)) return VACIO;
-  if (bytes < 1024) return `${entero(bytes)} B`;
-  if (bytes < 1024 * 1024) return `${decimal(bytes / 1024, 0)} KB`;
-  return `${decimal(bytes / (1024 * 1024), 1)} MB`;
-}

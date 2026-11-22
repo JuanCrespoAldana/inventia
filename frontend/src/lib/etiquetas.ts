@@ -108,11 +108,6 @@ export const UNIDADES_MEDIDA: Record<string, string> = {
   metro: "Metro",
 };
 
-export const ALCANCE_ROL: Record<string, string> = {
-  empresa: "Toda la empresa",
-  sede: "Una sede",
-};
-
 export const RESULTADO_AUDITORIA: Record<string, { etiqueta: string; tono: Tono }> = {
   exitoso: { etiqueta: "Exitoso", tono: "success" },
   fallido: { etiqueta: "Fallido", tono: "danger" },

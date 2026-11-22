@@ -280,7 +280,7 @@ El documento de grado verifica cada RNF con una métrica y una evidencia, y usa 
 | RNF-013 | Capacidad de almacenamiento | Cumple con salvedad | Mediana 25 ms, p95 160 ms, 0 fallos con la base ×50. No se probó con decenas de millones de filas. |
 | RNF-014 | Operaciones simultáneas | Cumple | 50 usuarios: 2.255 peticiones, 0 fallos, 0 violaciones; 6 pruebas de concurrencia (salidas, ventas, confirmaciones, anulaciones). |
 | RNF-015 | Requisitos del equipo | Parcial | Probado en Chromium. Firefox, Safari y Edge no se probaron. |
-| RNF-016 | Backend definido | Cumple | backend/pyproject.toml y app/main.py. |
+| RNF-016 | Backend definido | Cumple | backend/requirements.txt y app/main.py. |
 | RNF-017 | Frontend definido | Cumple | tsc -b sin errores, oxlint sin advertencias, vite build correcto. |
 | RNF-018 | Base de datos definida | Cumple | 22 tablas, 228 columnas y 59 claves foráneas (la base migrada hasta la revisión 0006 coincide con el MER); 251 pruebas pasan contra PostgreSQL 16. |
 | RNF-019 | Arquitectura centralizada | Cumple | Prueba del consolidado y arquitectura de una sola base central. |

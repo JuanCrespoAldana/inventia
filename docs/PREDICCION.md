@@ -259,7 +259,7 @@ para prometer una precisión en una empresa real. La demanda por serie es en su 
 | Unidades por día (empresa) | media 171,6 · mediana 177 · mín. 97 · máx. 227 |
 | Día de la semana (índice, promedio = 1) | lun 1,04 · mar 0,98 · mié 0,99 · jue 1,05 · vie 1,15 · sáb 1,11 · dom 0,69 |
 | Clasificación ABC por valor vendido | A: 13 productos (36 %) = 81,5 % del valor · B: 11 (31 %) = 13,8 % · C: 12 (33 %) = 4,7 % |
-| Patrón de demanda por serie (Syntetos–Boylan–Croston; ADI = 1,32 y CV² = 0,49) | 39 suaves · 67 intermitentes · 0 erráticas · 1 irregular (107 series) |
+| Patrón de demanda por serie (clasificación por ADI y CV², con umbrales 1,32 y 0,49) | 39 suaves · 67 intermitentes · 0 erráticas · 1 irregular (107 series) |
 | Series con más de 60 % de días sin venta | 32 de 107 |
 
 ### 11.2 Validación interna: los seis modelos frente a la línea base

@@ -135,29 +135,3 @@ export function Casilla({ etiqueta, descripcion, className, ...resto }: CasillaP
     </div>
   );
 }
-
-interface InterruptorProps {
-  activo: boolean;
-  onChange: (activo: boolean) => void;
-  etiqueta: string;
-  disabled?: boolean;
-}
-
-export function Interruptor({ activo, onChange, etiqueta, disabled }: InterruptorProps) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={activo}
-      aria-label={etiqueta}
-      disabled={disabled}
-      onClick={() => onChange(!activo)}
-      className={cn(
-        "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition disabled:cursor-not-allowed disabled:opacity-50",
-        activo ? "border-accent bg-accent" : "border-line-strong bg-surface-3",
-      )}
-    >
-      <span className={cn("inline-block size-4 rounded-full bg-white shadow transition-transform", activo ? "translate-x-6" : "translate-x-1")} />
-    </button>
-  );
-}

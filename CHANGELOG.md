@@ -3,6 +3,30 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). El proyecto usa
 [versionado semántico](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+Limpieza y optimización posteriores a la etiqueta `v1.2.0`. No cambia el comportamiento, el esquema, la interfaz ni el número de pruebas.
+
+### Optimizado
+
+Cada consulta a una base remota (Neon) cuesta un viaje de ida y vuelta, así que se redujeron las consultas por petición sin cambiar lo que se responde:
+
+- **Sesión**: usuario, rol, permisos y empresa se cargan en una sola consulta (antes eran tres en cada petición autenticada). Se siguen verificando la cuenta activa, la empresa activa y la versión de la contraseña. La empresa queda cargada para los servicios que la piden después.
+- **Panel**: de 24 a 11 consultas. Las ventas del período actual y del anterior, las anuladas y el inventario se calculan con menos consultas; el panel ya no cuenta filas que no muestra.
+- **Listados**: movimientos y ventas traen sede, producto y nombre de usuario en la misma consulta de la página; estadísticas de sedes en una consulta; usuarios, ejecuciones de predicción y recomendaciones ya no cargan el rol con todos sus permisos solo para mostrar un nombre.
+- **Conexiones a la base**: se comprueba la conexión solo cuando estuvo inactiva más de 20 segundos (antes, en cada petición con `pool_pre_ping`). Una conexión que Neon cierre estando inactiva se reemplaza sola; si el servidor la cerrara justo en esos 20 segundos, esa petición falla una vez y el frontend la reintenta.
+- **nginx**: `gzip_vary` y `gzip_proxied` para que la compresión de la API y de los archivos estáticos sea correcta detrás de un proxy.
+
+### Corregido
+
+- `docs/TRAZABILIDAD.md`: el RNF-016 citaba `backend/pyproject.toml`, que no existe; la evidencia es `backend/requirements.txt`.
+- `docs/PREDICCION.md`: la clasificación del patrón de demanda se describe por sus umbrales (ADI y CV²), sin atribuirla a autores que la memoria ya no cita.
+
+### Retirado
+
+- Código del frontend que ningún archivo usaba: el componente `charts/Columnas.tsx`, el interruptor `Interruptor`, el hook `useBuscarProductos`, las funciones `hoyISO`, `pluralizar` y `tamanoArchivo`, y las constantes `ALCANCE_ROL` e `ICONO_PERFIL`.
+- Pruebas del backend: una variable sin uso (`test_asistente.py`) y nombres ambiguos (`test_entradas.py`).
+
 ## [1.2.0] · 2026-11-20
 
 Línea Base 1. Retira del alcance el **Sistema Integrado de Gestión (SIG)** y los **agentes de IA**, y hace que la **base de

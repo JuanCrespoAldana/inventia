@@ -39,7 +39,7 @@ async def test_cada_recepcion_queda_numerada_y_su_detalle_muestra_lo_recibido(cl
     d = (await ana.get(f"/api/inventario/entradas/{res['entrada_id']}")).json()
     assert d["numero"] == 1 and d["unidades"] == 14 and d["lineas"] == 2 and d["sede"]["id"] == norte["id"]
     assert d["usuario_nombre"] == "Ana Operaria" and d["motivo"] == "compra"
-    assert sorted((l["producto"]["codigo"], l["cantidad"], l["saldo_posterior"]) for l in d["detalle_lineas"]) == [
+    assert sorted((linea["producto"]["codigo"], linea["cantidad"], linea["saldo_posterior"]) for linea in d["detalle_lineas"]) == [
         ("ACC-001", 10, 10), ("BAT-001", 4, 4),
     ]
     assert not {"observaciones", "historial_observaciones"} & d.keys()  # retirado con el SIG (versión 1.2.0)
@@ -48,7 +48,7 @@ async def test_cada_recepcion_queda_numerada_y_su_detalle_muestra_lo_recibido(cl
     segunda = await entrada(ana, norte["id"], {casco["id"]: 5})
     assert segunda["entrada_numero"] == 2 and segunda["entrada_id"] != res["entrada_id"]
     d2 = (await ana.get(f"/api/inventario/entradas/{segunda['entrada_id']}")).json()
-    assert [(l["cantidad"], l["saldo_posterior"]) for l in d2["detalle_lineas"]] == [(5, 15)]
+    assert [(linea["cantidad"], linea["saldo_posterior"]) for linea in d2["detalle_lineas"]] == [(5, 15)]
     assert (await ana.get(f"/api/inventario/entradas/{res['entrada_id']}")).json() == d
 
     # La entrada no se edita ni se borra (RF-017): la API no ofrece esas operaciones.
