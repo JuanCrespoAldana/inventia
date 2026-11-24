@@ -12,7 +12,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-0f172a?style=flat-square&logo=postgresql&logoColor=4169E1)
 ![Docker](https://img.shields.io/badge/Docker-0f172a?style=flat-square&logo=docker&logoColor=2496ED)
 
-[Qué es](#qué-es) · [Funcionalidades](#funcionalidades) · [Cómo funciona](#cómo-funciona) · [Predicción](#predicción-de-demanda) · [Inicio rápido](#inicio-rápido) · [Documentación](#documentación)
+[Qué es](#qué-es) · [Funcionalidades](#funcionalidades) · [Capturas](#capturas) · [Cómo funciona](#cómo-funciona) · [Predicción](#predicción-de-demanda) · [Inicio rápido](#inicio-rápido) · [Documentación](#documentación)
 
 </div>
 
@@ -38,6 +38,52 @@ Es el proyecto de grado de Ingeniería de Sistemas. Los requisitos provienen del
 | **Reportes** | Siete reportes con vista previa y exportación a PDF, Excel y CSV |
 | **Auditoría** | Registro inmutable de accesos y operaciones |
 | **Asistente** | Chat en español para consultar y comparar datos y explicar el sistema; motor por reglas, solo lectura y limitado por los permisos y la sede del rol |
+
+## Capturas
+
+Las capturas usan la empresa ficticia de demostración (movilidad eléctrica) con cuatro meses de ventas generadas. En la carpeta [docs/capturas](docs/capturas) están todas las pantallas, en escritorio y celular.
+
+![Pantalla de inicio de sesión](docs/capturas/login_escritorio.png)
+
+*Inicio de sesión: no hay registro público; las cuentas las crea el administrador de cada empresa.*
+
+![Panel de control con ventas, valor del inventario y alertas activas](docs/capturas/panel_escritorio.png)
+
+*Panel de control: ventas del período, valor del inventario, alertas activas, recomendaciones por revisar y productos más vendidos.*
+
+![Existencias por sede](docs/capturas/existencias_escritorio.png)
+
+*Existencias por sede, con mínimos, máximos y estado de cada producto.*
+
+![Inventario consolidado de todas las sedes](docs/capturas/consolidado_escritorio.png)
+
+*Inventario consolidado: las existencias de todas las sedes sumadas por producto.*
+
+![Alertas de inventario por prioridad](docs/capturas/alertas_escritorio.png)
+
+*Alertas por prioridad, con el motivo explicado y la sede afectada.*
+
+![Predicción de demanda por producto y sede](docs/capturas/predicciones_escritorio.png)
+
+*Predicción de demanda: demanda estimada con intervalo, cobertura en días, modelo elegido y nivel de confianza.*
+
+![Recomendaciones de reabastecimiento y traslado](docs/capturas/recomendaciones_escritorio.png)
+
+*Recomendaciones de reabastecimiento y traslado explicadas en español; ninguna se ejecuta sin la aprobación de una persona.*
+
+![Reportes con vista previa y exportación](docs/capturas/reportes_escritorio.png)
+
+*Reportes con vista previa y exportación a PDF, Excel y CSV.*
+
+### En el celular
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/capturas/panel_movil.png" alt="Panel de control en el celular" width="240"><br><sub>Panel de control</sub></td>
+    <td align="center"><img src="docs/capturas/alertas_movil.png" alt="Alertas de inventario en el celular" width="240"><br><sub>Alertas</sub></td>
+    <td align="center"><img src="docs/capturas/predicciones_movil.png" alt="Predicción de demanda en el celular" width="240"><br><sub>Predicción</sub></td>
+  </tr>
+</table>
 
 ## Cómo funciona
 
